@@ -12,6 +12,7 @@ TagManager:
   - carBack
   - Limit10RoadEnter
   - Limit15RoadEnter
+  - CrossRoad
   layers:
   - Default
   - TransparentFX

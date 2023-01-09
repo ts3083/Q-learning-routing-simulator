@@ -15,7 +15,9 @@ public class Car : MonoBehaviour
     public int current_speed = init_speed; // 초기 속도 10
 
     // 차량 정지 및 직진 신호
-    bool forward_signal = false;
+    bool signal = false;
+    string signal_str;
+    int temp = 0;
 
     public float timer = 0.0f;
     float Passtime;
@@ -54,20 +56,34 @@ public class Car : MonoBehaviour
 
     private void Start()
     {
-        InvokeRepeating("InvokeTrafficSignal", 3f, 5f);
+        InvokeRepeating("InvokeTrafficSignal", 1f, 2f);
     }
 
     private void InvokeTrafficSignal()
     {
-        if (forward_signal)
+        if (signal)
         {
-            forward_signal = false;
+            signal = false;
             Debug.Log("red light");
+            temp++;
         }
         else
         {
-            forward_signal = true;
+            signal = true;
             Debug.Log("green light");
+
+            if (temp % 3 == 0) // 직진
+            {
+                signal_str = "straight";
+            }
+            else if (temp % 3 == 1) // 좌 
+            {
+                signal_str = "left";
+            }
+            else if (temp % 3 == 2) // 우
+            {
+                signal_str = "right";
+            }
         }
     }
 
@@ -116,7 +132,7 @@ public class Car : MonoBehaviour
     private void OnTriggerEnter(Collider other) 
     {
         // speed 10 제한 도로에 진입하는 경우
-        if (other.CompareTag("Limit10RoadEnter"))
+        if (other.CompareTag("Limit30RoadEnter"))
         {
             //isRoad_30 = true;
             BackTriggerSettingBySpeed(10);
@@ -124,12 +140,22 @@ public class Car : MonoBehaviour
             Debug.Log(direction);
         }
         // speed 15 제한 도로에 진입하는 경우
-        else if (other.CompareTag("Limit15RoadEnter"))
+        else if (other.CompareTag("Limit60RoadEnter"))
         {
             //isRoad_30 = true;
-            BackTriggerSettingBySpeed(15);
+            BackTriggerSettingBySpeed(20);
             direction = decideDirection(); // 진행방향 랜덤 결정
             Debug.Log(direction);
+        }
+        else if (other.CompareTag("OnlyLeft60RoadEnter"))
+        {
+            BackTriggerSettingBySpeed(20);
+            direction = "left";
+        }
+        else if (other.CompareTag("OnlyRight60RoadEnter"))
+        {
+            BackTriggerSettingBySpeed(20);
+            direction = "right";
         }
 
         // carBack과 충돌하는 경우
@@ -150,7 +176,7 @@ public class Car : MonoBehaviour
         if (other.CompareTag("NarrowRoadExit") && isCrossRoad == false) // 이미 CrossRoad와 만났다면 신호 무시
         {
             //isRoad_30 = false;
-            if (forward_signal)
+            if (signal && signal_str.Equals(direction))
             {
                 BackTriggerSettingBySpeed(init_speed);
             }
@@ -315,17 +341,11 @@ public class Car : MonoBehaviour
             current_speed = init_speed;
             speedLimit = init_speed;
         }
-        else if (speed_ == 10)
+        else if (speed_ == 10) 
         {
             carBack.transform.localPosition = new Vector3(0, 0, -4);
             current_speed = speed[0];
             speedLimit = speed[0];
-        }
-        else if (speed_ == 15)
-        {
-            carBack.transform.localPosition = new Vector3(0, 0, -5);
-            current_speed = speed[1];
-            speedLimit = speed[1];
         }
         else if (speed_ == 20)
         {

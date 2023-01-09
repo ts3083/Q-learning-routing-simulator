@@ -10,9 +10,11 @@ TagManager:
   - WideRoadEnter
   - WideRoadExit
   - carBack
-  - Limit10RoadEnter
-  - Limit15RoadEnter
   - CrossRoad
+  - Limit30RoadEnter
+  - Limit60RoadEnter
+  - OnlyLeft60RoadEnter
+  - OnlyRight60RoadEnter
   layers:
   - Default
   - TransparentFX

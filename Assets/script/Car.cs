@@ -118,7 +118,6 @@ public class Car : MonoBehaviour
         // speed 10 제한 도로에 진입하는 경우
         if (other.CompareTag("Limit10RoadEnter"))
         {
-            Debug.Log("10 제한 도로 진입!");
             //isRoad_30 = true;
             BackTriggerSettingBySpeed(10);
             direction = decideDirection(); // 진행방향 랜덤 결정
@@ -127,16 +126,29 @@ public class Car : MonoBehaviour
         // speed 15 제한 도로에 진입하는 경우
         else if (other.CompareTag("Limit15RoadEnter"))
         {
-            Debug.Log("15 제한 도로 진입!");
             //isRoad_30 = true;
             BackTriggerSettingBySpeed(15);
             direction = decideDirection(); // 진행방향 랜덤 결정
             Debug.Log(direction);
         }
-        // 좁은 도로에서 탈출하는 경우 - 속도 0km/h
-        else if(other.CompareTag("NarrowRoadExit"))
+
+        // carBack과 충돌하는 경우
+        if (other.CompareTag("carBack"))
         {
-            Debug.Log("신호대기");
+            current_speed = 0;
+        }
+
+        if (other.CompareTag("CrossRoad"))
+        {
+            isCrossRoad = true;
+        }
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        // 좁은 도로에서 탈출하는 경우 - 속도 0km/h
+        if (other.CompareTag("NarrowRoadExit") && isCrossRoad == false) // 이미 CrossRoad와 만났다면 신호 무시
+        {
             //isRoad_30 = false;
             if (forward_signal)
             {
@@ -147,23 +159,13 @@ public class Car : MonoBehaviour
                 BackTriggerSettingBySpeed(0);
             }
         }
-
-        // carBack과 충돌하는 경우
-        if (other.CompareTag("carBack"))
-        {
-            current_speed = 0;
-        }
-    }
-
-    private void OnTriggerStay(Collider other)
-    {
-        if (other.CompareTag("NarrowRoadExit"))
-        {
-            if (forward_signal && current_speed == 0)
-            {
-                BackTriggerSettingBySpeed(init_speed);
-            }
-        }
+        //if (other.CompareTag("NarrowRoadExit"))
+        //{
+        //    if (forward_signal && current_speed == 0)
+        //    {
+        //        BackTriggerSettingBySpeed(init_speed);
+        //    }
+        //}
 
         if (other.CompareTag("CrossRoad"))
         {
@@ -185,99 +187,114 @@ public class Car : MonoBehaviour
         {
             BackTriggerSettingBySpeed(speedLimit);
         }
+        if (other.CompareTag("CrossRoad"))
+        {
+            isCrossRoad = false;
+        }
     }
 
     private void drive(string direction)
     {
-        if (beforeRotation == 0)
+        if(isCrossRoad) // 길 건너는 중이면 실행
         {
-            // 좌회전
-            if (direction == "left")
+            if (beforeRotation == 0)
             {
-                transform.eulerAngles -= Vector3.up * lRotateFactor;
-                if (rotation.y > 180 && rotation.y <= 270)
+                // 좌회전
+                if (direction == "left")
                 {
-                    transform.eulerAngles = new Vector3(0, 270, 0);
-                    beforeRotation = 270;
+                    transform.eulerAngles -= Vector3.up * lRotateFactor;
+                    if (rotation.y > 180 && rotation.y <= 270)
+                    {
+                        isCrossRoad = false;
+                        transform.eulerAngles = new Vector3(0, 270, 0);
+                        beforeRotation = 270;
+                    }
+                }
+                // 우회전
+                else if (direction == "right")
+                {
+                    transform.eulerAngles += Vector3.up * rRotateFactor;
+                    if (rotation.y > 90 && rotation.y <= 180)
+                    {
+                        isCrossRoad = false;
+                        transform.eulerAngles = new Vector3(0, 90, 0);
+                        beforeRotation = 90;
+                    }
                 }
             }
-            // 우회전
-            else if (direction == "right")
+            else if (beforeRotation == 270)
             {
-                transform.eulerAngles += Vector3.up * rRotateFactor;
-                if (rotation.y > 90 && rotation.y <= 180)
+                // 좌회전
+                if (direction == "left")
                 {
-                    transform.eulerAngles = new Vector3(0, 90, 0);
-                    beforeRotation = 90;
+                    transform.eulerAngles -= Vector3.up * lRotateFactor;
+                    if (rotation.y > 90 && rotation.y <= 180)
+                    {
+                        isCrossRoad = false;
+                        transform.eulerAngles = new Vector3(0, 180, 0);
+                        beforeRotation = 180;
+                    }
+                }
+                // 우회전
+                else if (direction == "right")
+                {
+                    transform.eulerAngles += Vector3.up * rRotateFactor;
+                    if (rotation.y > 0 && rotation.y <= 90)
+                    {
+                        isCrossRoad = false;
+                        transform.eulerAngles = new Vector3(0, 0, 0);
+                        beforeRotation = 0;
+                    }
                 }
             }
-        }
-        else if (beforeRotation == 270)
-        {
-            // 좌회전
-            if (direction == "left")
+            else if (beforeRotation == 180)
             {
-                transform.eulerAngles -= Vector3.up * lRotateFactor;
-                if (rotation.y > 90 && rotation.y <= 180)
+                // 좌회전
+                if (direction == "left")
                 {
-                    transform.eulerAngles = new Vector3(0, 180, 0);
-                    beforeRotation = 180;
+                    transform.eulerAngles -= Vector3.up * lRotateFactor;
+                    if (rotation.y > 0 && rotation.y <= 90)
+                    {
+                        isCrossRoad = false;
+                        transform.eulerAngles = new Vector3(0, 90, 0);
+                        beforeRotation = 90;
+                    }
+                }
+                // 우회전
+                else if (direction == "right")
+                {
+                    transform.eulerAngles += Vector3.up * rRotateFactor;
+                    if (rotation.y > 270 && rotation.y <= 360)
+                    {
+                        isCrossRoad = false;
+                        transform.eulerAngles = new Vector3(0, 270, 0);
+                        beforeRotation = 270;
+                    }
                 }
             }
-            // 우회전
-            else if (direction == "right")
+            else if (beforeRotation == 90)
             {
-                transform.eulerAngles += Vector3.up * rRotateFactor;
-                if (rotation.y > 0 && rotation.y <= 90)
+                // 좌회전
+                if (direction == "left")
                 {
-                    transform.eulerAngles = new Vector3(0, 0, 0);
-                    beforeRotation = 0;
+                    transform.eulerAngles -= Vector3.up * lRotateFactor;
+                    if (rotation.y > 270 && rotation.y <= 360)
+                    {
+                        isCrossRoad = false;
+                        transform.eulerAngles = new Vector3(0, 0, 0);
+                        beforeRotation = 0;
+                    }
                 }
-            }
-        }
-        else if (beforeRotation == 180)
-        {
-            // 좌회전
-            if (direction == "left")
-            {
-                transform.eulerAngles -= Vector3.up * lRotateFactor;
-                if (rotation.y > 0 && rotation.y <= 90)
+                // 우회전
+                else if (direction == "right")
                 {
-                    transform.eulerAngles = new Vector3(0, 90, 0);
-                    beforeRotation = 90;
-                }
-            }
-            // 우회전
-            else if (direction == "right")
-            {
-                transform.eulerAngles += Vector3.up * rRotateFactor;
-                if (rotation.y > 270 && rotation.y <= 360)
-                {
-                    transform.eulerAngles = new Vector3(0, 270, 0);
-                    beforeRotation = 270;
-                }
-            }
-        }
-        else if (beforeRotation == 90)
-        {
-            // 좌회전
-            if (direction == "left")
-            {
-                transform.eulerAngles -= Vector3.up * lRotateFactor;
-                if (rotation.y > 270 && rotation.y <= 360)
-                {
-                    transform.eulerAngles = new Vector3(0, 0, 0);
-                    beforeRotation = 0;
-                }
-            }
-            // 우회전
-            else if (direction == "right")
-            {
-                transform.eulerAngles += Vector3.up * rRotateFactor;
-                if (rotation.y > 180 && rotation.y <= 270)
-                {
-                    transform.eulerAngles = new Vector3(0, 180, 0);
-                    beforeRotation = 180;
+                    transform.eulerAngles += Vector3.up * rRotateFactor;
+                    if (rotation.y > 180 && rotation.y <= 270)
+                    {
+                        isCrossRoad = false;
+                        transform.eulerAngles = new Vector3(0, 180, 0);
+                        beforeRotation = 180;
+                    }
                 }
             }
         }

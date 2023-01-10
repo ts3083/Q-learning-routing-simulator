@@ -18,7 +18,7 @@ public class Car : MonoBehaviour
     bool signal = false;
     bool isCrossed = false;
     bool moveDirection = false;
-    string signal_str;
+    public List<string> signal_str;
     int temp = 0;
 
     public float timer = 0.0f;
@@ -41,9 +41,9 @@ public class Car : MonoBehaviour
     private bool isCarStopped = false;
     
     private string direction;
-    private float lRotateFactor = 0.8f; // 사거리에서 좌회전시 회전량 결정 요소
-    private float rRotateFactor = 1.7f; // 사거리에서 우회전시 회전량 결정 요소
-    private GameObject carBack;
+    private float lRotateFactor = 0.96f; // 사거리에서 좌회전시 회전량 결정 요소
+    private float rRotateFactor = 1.6f; // 사거리에서 우회전시 회전량 결정 요소
+    private GameObject carBack; // 차량 뒷면 트리거
 
     void Awake()
     {
@@ -73,33 +73,24 @@ public class Car : MonoBehaviour
         else
         {
             signal = true;
-            if (temp % 7 == 0) // 1에서 3, 3에서 1로 직진
+            if (temp % 3 == 0) // 1에서 3, 3에서 1로 직진 & 1에서 4, 3에서 2로 좌회전
             {
-                signal_str = "straight1-3";
+                signal_str.Clear();
+                signal_str.Add("straight1-3");
+                signal_str.Add("left1-4");
+                signal_str.Add("left3-2");
             }
-            else if (temp % 7 == 1) // 2에서 4, 4에서 2로 직진
+            else if (temp % 3 == 1) // 2에서 4, 4에서 2로 직진 & 2에서 1, 4에서 3으로 좌회전
             {
-                signal_str = "straight2-4";
+                signal_str.Clear();
+                signal_str.Add("straight2-4");
+                signal_str.Add("left2-1");
+                signal_str.Add("left4-3");
             }
-            else if (temp % 7 == 2) // 우회전
+            else if (temp % 3 == 2) // 우회전
             {
-                signal_str = "right";
-            }
-            else if (temp % 7 == 3) // 1에서 4로 좌회전
-            {
-                signal_str = "left1-4";
-            }
-            else if (temp % 7 == 4) // 2에서 1로 좌회전
-            {
-                signal_str = "left2-1";
-            }
-            else if (temp % 7 == 5) // 3에서 2로 좌회전
-            {
-                signal_str = "left3-2";
-            }
-            else if (temp % 7 == 6) // 4에서 3로 좌회전
-            {
-                signal_str = "left4-3";
+                signal_str.Clear();
+                signal_str.Add("right");
             }
         }
     }
@@ -281,7 +272,7 @@ public class Car : MonoBehaviour
         if (other.CompareTag("NarrowRoadExit") && isCrossed == false) // 이미 CrossRoad와 만났다면 신호 무시
         {
             //isRoad_30 = false;
-            if (signal && signal_str.Equals(direction))
+            if (signal && signal_str.Contains(direction))
             {
                 BackTriggerSettingBySpeed(init_speed);
             }
@@ -325,6 +316,7 @@ public class Car : MonoBehaviour
         }
     }
 
+    // 좌회전 & 우회전
     private void drive(string direction)
     {
         if(moveDirection) // 길 건너는 중이면 실행
@@ -466,20 +458,24 @@ public class Car : MonoBehaviour
         return s[Random.Range(0, 2)];
     }
 
+    // 차량 후면 트리거(차량간 거리 조절) 위치 조정
     private void BackTriggerSettingBySpeed(int speed_)
     {
+        // 초기 속도(init_speed)인 경우
         if (speed_ == init_speed)
         {
-            carBack.transform.localPosition = new Vector3(0, 0, -3);
+            carBack.transform.localPosition = new Vector3(0, 0, -3.5f);
             current_speed = init_speed;
             speedLimit = init_speed;
         }
+        // 속도가 10인 경우
         else if (speed_ == 10) 
         {
             carBack.transform.localPosition = new Vector3(0, 0, -4);
             current_speed = speed[0];
             speedLimit = speed[0];
         }
+        // 속도가 20인 경우
         else if (speed_ == 20)
         {
             carBack.transform.localPosition = new Vector3(0, 0, -6);
@@ -487,17 +483,12 @@ public class Car : MonoBehaviour
             speedLimit = speed[2];
 
         }
+        // 그 이외의 경우
         else
         {
-            carBack.transform.localPosition = new Vector3(0, 0, -3);
+            carBack.transform.localPosition = new Vector3(0, 0, -3.5f);
             current_speed = 0;
             speedLimit = 0;
         }
-    }
-
-    // 신호
-    private void trafficLight()
-    {
-
     }
 }

@@ -12,13 +12,13 @@ public class Car : MonoBehaviour
     private int[] speed = new int[] { 30, 60 };
     // 현재 차량의 위치에 따른 속도가 다름 => current speed 변수 선언
     private static int init_speed = 10;
-    private int current_speed = init_speed; // 초기 속도 10
+    public int current_speed = init_speed; // 초기 속도 10
 
     // 차량 정지 및 직진 신호
-    bool signal = false;
+    public bool signal;
     bool moveDirection = false;
     public List<string> signal_str;
-    int temp = 0;
+    //int temp = 0;
 
     public float timer = 0.0f;
     float Passtime;
@@ -39,9 +39,9 @@ public class Car : MonoBehaviour
     private bool isRoad_60 = false; // 속도 제한 60km/h의 도로인 경우
     private bool isCarStopped = false;
     
-    private string direction;
-    public float lRotateFactor = 0.96f; // 사거리에서 좌회전시 회전량 결정 요소
-    public float rRotateFactor = 1.6f; // 사거리에서 우회전시 회전량 결정 요소
+    public string direction;
+    public float lRotateFactor; // 사거리에서 좌회전시 회전량 결정 요소
+    public float rRotateFactor; // 사거리에서 우회전시 회전량 결정 요소
     private GameObject carBack; // 차량 뒷면 트리거
     public string RSU_type;
     public int lineNum; // 자동차가 위치한 차선
@@ -56,45 +56,45 @@ public class Car : MonoBehaviour
         //carBack.transform.localPosition = new Vector3(0, 0, -2);
         //carBack.transform.Translate(new Vector3(0, 0, -2), Space.Self);
         BackTriggerSettingBySpeed(init_speed);
-        direction = decideDirectionByRoadNum1(); // 진행방향 랜덤 결정
+        direction = decideDirection(); // 진행방향 랜덤 결정
     }
 
     private void Start()
     {
-        InvokeRepeating("InvokeTrafficSignal", 1f, 2f);
+        //InvokeRepeating("InvokeTrafficSignal", 1f, 2f);
     }
 
-    private void InvokeTrafficSignal()
-    {
-        if (signal)
-        {
-            signal = false;
-            temp++;
-        }
-        else
-        {
-            signal = true;
-            if (temp % 3 == 0) // 1에서 3, 3에서 1로 직진 & 1에서 4, 3에서 2로 좌회전
-            {
-                signal_str.Clear();
-                signal_str.Add("straight1-3");
-                signal_str.Add("left1-4");
-                signal_str.Add("left3-2");
-            }
-            else if (temp % 3 == 1) // 2에서 4, 4에서 2로 직진 & 2에서 1, 4에서 3으로 좌회전
-            {
-                signal_str.Clear();
-                signal_str.Add("straight2-4");
-                signal_str.Add("left2-1");
-                signal_str.Add("left4-3");
-            }
-            else if (temp % 3 == 2) // 우회전
-            {
-                signal_str.Clear();
-                signal_str.Add("right");
-            }
-        }
-    }
+    //private void InvokeTrafficSignal()
+    //{
+    //    if (signal)
+    //    {
+    //        signal = false;
+    //        temp++;
+    //    }
+    //    else
+    //    {
+    //        signal = true;
+    //        if (temp % 3 == 0) // 1에서 3, 3에서 1로 직진 & 1에서 4, 3에서 2로 좌회전
+    //        {
+    //            signal_str.Clear();
+    //            signal_str.Add("straight1-3");
+    //            signal_str.Add("left1-4");
+    //            signal_str.Add("left3-2");
+    //        }
+    //        else if (temp % 3 == 1) // 2에서 4, 4에서 2로 직진 & 2에서 1, 4에서 3으로 좌회전
+    //        {
+    //            signal_str.Clear();
+    //            signal_str.Add("straight2-4");
+    //            signal_str.Add("left2-1");
+    //            signal_str.Add("left4-3");
+    //        }
+    //        else if (temp % 3 == 2) // 우회전
+    //        {
+    //            signal_str.Clear();
+    //            signal_str.Add("right");
+    //        }
+    //    }
+    //}
 
     //private void InvokeTrafficSignal()
     //{
@@ -303,7 +303,16 @@ public class Car : MonoBehaviour
         if (other.CompareTag("NarrowRoadExit")) // 이미 CrossRoad와 만났다면 신호 무시
         {
             //isRoad_30 = false;
-            if (signal && signal_str.Contains(direction))
+            //if (signal && signal_str.Contains(direction))
+            //{
+            //    BackTriggerSettingBySpeed(init_speed);
+            //}
+            //else
+            //{
+            //    BackTriggerSettingBySpeed(0);
+            //}
+
+            if(direction == "right" || (signal && signal_str.Contains(direction)))
             {
                 BackTriggerSettingBySpeed(init_speed);
             }
@@ -332,11 +341,16 @@ public class Car : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        //if (other.CompareTag("NarrowRoadExit"))
-        //{
-        //    Debug.Log("도로 탈출!");
-        //    speed = 0;
-        //}
+        if (other.CompareTag("CrossRoad"))
+        {
+            Debug.Log("교차로 탈출!");
+            signal_str.Clear();
+        }
+
+        if (other.CompareTag("carBack"))
+        {
+            current_speed = speedLimit;
+        }
     }
 
     // 좌회전 & 우회전
@@ -445,6 +459,31 @@ public class Car : MonoBehaviour
                 }
             }
         }
+    }
+
+    // 시작시 무작위 진행방향 결정
+    private string decideDirection()
+    {
+        string temp;
+        switch (beforeRotation)
+        {
+            case 0:
+                temp = decideDirectionByRoadNum3();
+                break;
+            case 90:
+                temp = decideDirectionByRoadNum2();
+                break;
+            case 180:
+                temp = decideDirectionByRoadNum1();
+                break;
+            case 270:
+                temp = decideDirectionByRoadNum4();
+                break;
+            default:
+                temp = decideDirectionByRoadNum1();
+                break;
+        }
+        return temp;
     }
 
     private string decideDirectionByRoadNum1()

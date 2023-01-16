@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.18028305, g: 0.22571313, b: 0.3069213, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2500,7 +2500,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 144701544}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 884f87ab5cea64081a154a618d172f65, type: 3}
+  m_Script: {fileID: 11500000, guid: d2fd8555bf0928749b0ff7edd82d4d0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   signal: 0
@@ -3173,7 +3173,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 65485476237114915, guid: ae918a24f13c5784ea89fc59b6e39038, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 65485476237114915, guid: ae918a24f13c5784ea89fc59b6e39038, type: 3}
       propertyPath: m_TagString
@@ -6087,7 +6087,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 408545512}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 884f87ab5cea64081a154a618d172f65, type: 3}
+  m_Script: {fileID: 11500000, guid: d2fd8555bf0928749b0ff7edd82d4d0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   signal: 0
@@ -12156,7 +12156,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 65485476237114915, guid: ae918a24f13c5784ea89fc59b6e39038, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 65485476237114915, guid: ae918a24f13c5784ea89fc59b6e39038, type: 3}
       propertyPath: m_TagString
@@ -13118,7 +13118,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 65485476237114915, guid: ae918a24f13c5784ea89fc59b6e39038, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 65485476237114915, guid: ae918a24f13c5784ea89fc59b6e39038, type: 3}
       propertyPath: m_TagString
@@ -13864,7 +13864,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 954831826}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 884f87ab5cea64081a154a618d172f65, type: 3}
+  m_Script: {fileID: 11500000, guid: d2fd8555bf0928749b0ff7edd82d4d0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   signal: 0
@@ -19505,7 +19505,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 65485476237114915, guid: ae918a24f13c5784ea89fc59b6e39038, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 65485476237114915, guid: ae918a24f13c5784ea89fc59b6e39038, type: 3}
       propertyPath: m_TagString
@@ -20910,7 +20910,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1518644229}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 884f87ab5cea64081a154a618d172f65, type: 3}
+  m_Script: {fileID: 11500000, guid: d2fd8555bf0928749b0ff7edd82d4d0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   signal: 0
@@ -25972,7 +25972,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1826263458}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 884f87ab5cea64081a154a618d172f65, type: 3}
+  m_Script: {fileID: 11500000, guid: d2fd8555bf0928749b0ff7edd82d4d0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   signal: 0
@@ -26372,7 +26372,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1869750067}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 884f87ab5cea64081a154a618d172f65, type: 3}
+  m_Script: {fileID: 11500000, guid: d2fd8555bf0928749b0ff7edd82d4d0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   signal: 0

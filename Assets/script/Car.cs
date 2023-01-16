@@ -9,14 +9,13 @@ public class Car : MonoBehaviour
     [Range(0, 360)]
     
     // 차량 속도 선언 - 10, 15, 20
-    private int[] speed = new int[] { 10, 15, 20 };
+    private int[] speed = new int[] { 30, 60 };
     // 현재 차량의 위치에 따른 속도가 다름 => current speed 변수 선언
     private static int init_speed = 10;
-    public int current_speed = init_speed; // 초기 속도 10
+    private int current_speed = init_speed; // 초기 속도 10
 
     // 차량 정지 및 직진 신호
     bool signal = false;
-    bool isCrossed = false;
     bool moveDirection = false;
     public List<string> signal_str;
     int temp = 0;
@@ -41,9 +40,11 @@ public class Car : MonoBehaviour
     private bool isCarStopped = false;
     
     private string direction;
-    private float lRotateFactor = 0.96f; // 사거리에서 좌회전시 회전량 결정 요소
-    private float rRotateFactor = 1.6f; // 사거리에서 우회전시 회전량 결정 요소
+    public float lRotateFactor = 0.96f; // 사거리에서 좌회전시 회전량 결정 요소
+    public float rRotateFactor = 1.6f; // 사거리에서 우회전시 회전량 결정 요소
     private GameObject carBack; // 차량 뒷면 트리거
+    public string RSU_type;
+    public int lineNum; // 자동차가 위치한 차선
 
     void Awake()
     {
@@ -54,7 +55,7 @@ public class Car : MonoBehaviour
         beforeRotation = transform.eulerAngles.y;
         //carBack.transform.localPosition = new Vector3(0, 0, -2);
         //carBack.transform.Translate(new Vector3(0, 0, -2), Space.Self);
-        BackTriggerSettingBySpeed(20);
+        BackTriggerSettingBySpeed(init_speed);
         direction = decideDirectionByRoadNum1(); // 진행방향 랜덤 결정
     }
 
@@ -157,99 +158,129 @@ public class Car : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        // 앞 차와 충돌하는 경우
-        //if (collision.collider.CompareTag("SportCar2"))
+        //앞 차와 충돌하는 경우
+        //if (collision.collider.CompareTag("carBack"))
         //{
         //    Debug.Log("충돌!");
         //    speed = 0;
         //}
     }
-    
+
+    private void OnCollisionExit(Collision collision)
+    {
+        
+    }
+
     private void OnTriggerEnter(Collider other) 
     {
-        // speed 10 제한 도로에 진입하는 경우
+        // speed 30 제한 도로에 진입하는 경우
         if (other.CompareTag("Limit30RoadEnterByRoadNum1"))
         {
             //isRoad_30 = true;
-            BackTriggerSettingBySpeed(10);
+            BackTriggerSettingBySpeed(30);
             direction = decideDirectionByRoadNum1(); // 진행방향 랜덤 결정
             Debug.Log(direction);
         }
         else if (other.CompareTag("Limit30RoadEnterByRoadNum2"))
         {
-            BackTriggerSettingBySpeed(10);
+            BackTriggerSettingBySpeed(30);
             direction = decideDirectionByRoadNum2(); // 진행방향 랜덤 결정
             Debug.Log(direction);
         }
         else if (other.CompareTag("Limit30RoadEnterByRoadNum3"))
         {
-            BackTriggerSettingBySpeed(10);
+            BackTriggerSettingBySpeed(30);
             direction = decideDirectionByRoadNum3(); // 진행방향 랜덤 결정
             Debug.Log(direction);
         }
         else if (other.CompareTag("Limit30RoadEnterByRoadNum4"))
         {
-            BackTriggerSettingBySpeed(10);
+            BackTriggerSettingBySpeed(30);
             direction = decideDirectionByRoadNum4(); // 진행방향 랜덤 결정
             Debug.Log(direction);
         }
-        // speed 15 제한 도로에 진입하는 경우
+        else if (other.CompareTag("OnlyLeft30RoadEnter4-3"))
+        {
+            BackTriggerSettingBySpeed(30);
+            direction = "left4-3";
+        }
+        else if (other.CompareTag("OnlyLeft30RoadEnter1-4"))
+        {
+            BackTriggerSettingBySpeed(30);
+            direction = "left1-4";
+        }
+        else if (other.CompareTag("OnlyLeft30RoadEnter2-1"))
+        {
+            BackTriggerSettingBySpeed(30);
+            direction = "left2-1";
+        }
+        else if (other.CompareTag("OnlyLeft30RoadEnter3-2"))
+        {
+            BackTriggerSettingBySpeed(30);
+            direction = "left3-2";
+        }
+        else if (other.CompareTag("OnlyRight30RoadEnter"))
+        {
+            BackTriggerSettingBySpeed(30);
+            direction = "right";
+        }
+        // speed 60 제한 도로에 진입하는 경우
         else if (other.CompareTag("Limit60RoadEnterByRoadNum1"))
         {
             //isRoad_30 = true;
-            BackTriggerSettingBySpeed(20);
+            BackTriggerSettingBySpeed(60);
             direction = decideDirectionByRoadNum1(); // 진행방향 랜덤 결정
             Debug.Log(direction);
         }
         else if (other.CompareTag("Limit60RoadEnterByRoadNum2"))
         {
             //isRoad_30 = true;
-            BackTriggerSettingBySpeed(20);
+            BackTriggerSettingBySpeed(60);
             direction = decideDirectionByRoadNum2(); // 진행방향 랜덤 결정
             Debug.Log(direction);
         }
         else if (other.CompareTag("Limit60RoadEnterByRoadNum3"))
         {
             //isRoad_30 = true;
-            BackTriggerSettingBySpeed(20);
+            BackTriggerSettingBySpeed(60);
             direction = decideDirectionByRoadNum3(); // 진행방향 랜덤 결정
             Debug.Log(direction);
         }
         else if (other.CompareTag("Limit60RoadEnterByRoadNum4"))
         {
             //isRoad_30 = true;
-            BackTriggerSettingBySpeed(20);
+            BackTriggerSettingBySpeed(60);
             direction = decideDirectionByRoadNum4(); // 진행방향 랜덤 결정
             Debug.Log(direction);
         }
         else if (other.CompareTag("OnlyLeft60RoadEnter4-3"))
         {
-            BackTriggerSettingBySpeed(20);
+            BackTriggerSettingBySpeed(60);
             direction = "left4-3";
         }
         else if (other.CompareTag("OnlyLeft60RoadEnter1-4"))
         {
-            BackTriggerSettingBySpeed(20);
+            BackTriggerSettingBySpeed(60);
             direction = "left1-4";
         }
         else if (other.CompareTag("OnlyLeft60RoadEnter2-1"))
         {
-            BackTriggerSettingBySpeed(20);
+            BackTriggerSettingBySpeed(60);
             direction = "left2-1";
         }
         else if (other.CompareTag("OnlyLeft60RoadEnter3-2"))
         {
-            BackTriggerSettingBySpeed(20);
+            BackTriggerSettingBySpeed(60);
             direction = "left3-2";
         }
         else if (other.CompareTag("OnlyRight60RoadEnter"))
         {
-            BackTriggerSettingBySpeed(20);
+            BackTriggerSettingBySpeed(60);
             direction = "right";
         }
         else if (other.CompareTag("ExceptStraight60RoadEnterByRoadNum1"))
         {
-            BackTriggerSettingBySpeed(20);
+            BackTriggerSettingBySpeed(60);
             direction = decideDirection_exceptStraightByRoadNum1();
         }
 
@@ -258,18 +289,18 @@ public class Car : MonoBehaviour
         {
             current_speed = 0;
         }
-
-        if (other.CompareTag("CrossRoad"))
+        
+        if (other.CompareTag("CrossRoad") || other.CompareTag("Corner"))
         {
             moveDirection = true;
-            isCrossed = true;
+            BackTriggerSettingBySpeed(init_speed);
         }
     }
 
     private void OnTriggerStay(Collider other)
     {
         // 좁은 도로에서 탈출하는 경우 - 속도 0km/h
-        if (other.CompareTag("NarrowRoadExit") && isCrossed == false) // 이미 CrossRoad와 만났다면 신호 무시
+        if (other.CompareTag("NarrowRoadExit")) // 이미 CrossRoad와 만났다면 신호 무시
         {
             //isRoad_30 = false;
             if (signal && signal_str.Contains(direction))
@@ -289,8 +320,9 @@ public class Car : MonoBehaviour
         //    }
         //}
 
-        if (other.CompareTag("CrossRoad"))
+        if (other.CompareTag("CrossRoad") || other.CompareTag("Corner"))
         {
+            current_speed = init_speed;
             if (direction.Contains("left") || direction.Contains("right"))
             {
                 drive(direction);
@@ -305,15 +337,6 @@ public class Car : MonoBehaviour
         //    Debug.Log("도로 탈출!");
         //    speed = 0;
         //}
-        if (other.CompareTag("carBack"))
-        {
-            BackTriggerSettingBySpeed(speedLimit);
-        }
-        if (other.CompareTag("CrossRoad"))
-        {
-            moveDirection = false;
-            isCrossed = false;
-        }
     }
 
     // 좌회전 & 우회전
@@ -464,29 +487,36 @@ public class Car : MonoBehaviour
         // 초기 속도(init_speed)인 경우
         if (speed_ == init_speed)
         {
-            carBack.transform.localPosition = new Vector3(0, 0, -3.5f);
+            carBack.transform.localPosition = new Vector3(0, 0, -3f);
             current_speed = init_speed;
             speedLimit = init_speed;
         }
-        // 속도가 10인 경우
-        else if (speed_ == 10) 
+        // 속도가 30인 경우
+        else if (speed_ == 30) 
         {
-            carBack.transform.localPosition = new Vector3(0, 0, -4);
+            carBack.transform.localPosition = new Vector3(0, 0, -5f);
             current_speed = speed[0];
             speedLimit = speed[0];
         }
-        // 속도가 20인 경우
-        else if (speed_ == 20)
+        // 속도가 60인 경우
+        else if (speed_ == 60)
         {
-            carBack.transform.localPosition = new Vector3(0, 0, -6);
-            current_speed = speed[2];
-            speedLimit = speed[2];
+            carBack.transform.localPosition = new Vector3(0, 0, -10f);
+            current_speed = speed[1];
+            speedLimit = speed[1];
 
         }
         // 그 이외의 경우
         else
         {
-            carBack.transform.localPosition = new Vector3(0, 0, -3.5f);
+            if(speedLimit == 30)
+            {
+                carBack.transform.localPosition = new Vector3(0, 0, -5.0f);
+            }
+            else if(speedLimit == 60)
+            {
+                carBack.transform.localPosition = new Vector3(0, 0, -10.0f);
+            }
             current_speed = 0;
             speedLimit = 0;
         }

@@ -25,6 +25,15 @@ TagManager:
   - OnlyLeft60RoadEnter2-1
   - OnlyLeft60RoadEnter3-2
   - ExceptStraight60RoadEnterByRoadNum1
+  - Corner
+  - OnlyRight30RoadEnter
+  - OnlyLeft30RoadEnter4-3
+  - OnlyLeft30RoadEnter1-4
+  - OnlyLeft30RoadEnter2-1
+  - OnlyLeft30RoadEnter3-2
+  - RSU_narrow_corner
+  - RSU_narrow_crossRoad4
+  - RSU_narrow_crossRoad3
   layers:
   - Default
   - TransparentFX

@@ -431,7 +431,7 @@ public class Car : MonoBehaviour
 
         if (other.CompareTag("CrossRoad") || other.CompareTag("Corner"))
         {
-            //BackTriggerSettingBySpeed(init_speed);
+            BackTriggerSettingBySpeed(init_speed);
             if (direction.Contains("left") || direction.Contains("right"))
             {
                 drive(direction);

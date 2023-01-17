@@ -28,7 +28,7 @@ public class RSU : MonoBehaviour
                 isCrossRoad4 = false;
             }
             
-            InvokeRepeating("InvokeTrafficSignal", 1f, 2f);
+            InvokeRepeating("InvokeTrafficSignal", 3f, 4f);
     }
     }
 

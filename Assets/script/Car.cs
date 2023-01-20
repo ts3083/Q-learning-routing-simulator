@@ -16,14 +16,14 @@ public class Car : MonoBehaviour
 
     // 차량 정지 및 직진 신호
     public bool signal;
-    bool moveDirection = false;
+    public bool moveDirection = false;
     public List<string> signal_str;
     //int temp = 0;
 
     public float timer = 0.0f;
     float Passtime;
     int waitingTime = 200;
-    private float beforeRotation; // 회전 이전의 rotation
+    public float beforeRotation; // 회전 이전의 rotation
     private Vector3 rotation;
     public int way = 4;
     public int turn = 3;
@@ -51,12 +51,13 @@ public class Car : MonoBehaviour
     private GameObject FR;
     private GameObject SportCar2;
     private GameObject steering_wheel;
-    public string RSU_type;
+    public string RSU_type = "unknown";
     public int lineNum; // 자동차가 위치한 차선
 
     int CarLayerName;
     int RotateLayerName;
 
+    // 교차로에서 차량에 적용되는 레이어 - 현재 사용X
     void setLayerCar()
     {
         this.gameObject.layer = CarLayerName;
@@ -71,6 +72,7 @@ public class Car : MonoBehaviour
         carBack.gameObject.layer = CarLayerName;
     }
 
+    // 교차로에서 차량에 적용되는 레이어 - 현재 사용X
     void setLayerRotateCar()
     {
         this.gameObject.layer = RotateLayerName;
@@ -103,14 +105,14 @@ public class Car : MonoBehaviour
         //carBack.transform.Translate(new Vector3(0, 0, -2), Space.Self);
         BackTriggerSettingBySpeed(init_speed);
         direction = decideDirection(); // 진행방향 랜덤 결정
-
         CarLayerName = LayerMask.NameToLayer("Car");
         RotateLayerName = LayerMask.NameToLayer("RotateCar");
-        setLayerCar();
-        if (direction.Equals("right"))
-        {
-            setLayerRotateCar();
-        }
+        //setLayerCar();
+        //if (direction.Equals("right"))
+        //{
+        //    setLayerRotateCar();
+        //}
+        beforeRotation = transform.eulerAngles.y;
     }
 
     private void Start()
@@ -233,40 +235,40 @@ public class Car : MonoBehaviour
             //isRoad_30 = true;
             BackTriggerSettingBySpeed(30);
             direction = decideDirectionByRoadNum1(); // 진행방향 랜덤 결정
-            if (direction.Equals("right"))
-            {
-                setLayerRotateCar();
-            }
+            //if (direction.Equals("right"))
+            //{
+            //    setLayerRotateCar();
+            //}
             Debug.Log(direction);
         }
         else if (other.CompareTag("Limit30RoadEnterByRoadNum2"))
         {
             BackTriggerSettingBySpeed(30);
             direction = decideDirectionByRoadNum2(); // 진행방향 랜덤 결정
-            if (direction.Equals("right"))
-            {
-                setLayerRotateCar();
-            }
+            //if (direction.Equals("right"))
+            //{
+            //    setLayerRotateCar();
+            //}
             Debug.Log(direction);
         }
         else if (other.CompareTag("Limit30RoadEnterByRoadNum3"))
         {
             BackTriggerSettingBySpeed(30);
             direction = decideDirectionByRoadNum3(); // 진행방향 랜덤 결정
-            if (direction.Equals("right"))
-            {
-                setLayerRotateCar();
-            }
+            //if (direction.Equals("right"))
+            //{
+            //    setLayerRotateCar();
+            //}
             Debug.Log(direction);
         }
         else if (other.CompareTag("Limit30RoadEnterByRoadNum4"))
         {
             BackTriggerSettingBySpeed(30);
             direction = decideDirectionByRoadNum4(); // 진행방향 랜덤 결정
-            if (direction.Equals("right"))
-            {
-                setLayerRotateCar();
-            }
+            //if (direction.Equals("right"))
+            //{
+            //    setLayerRotateCar();
+            //}
             Debug.Log(direction);
         }
         else if (other.CompareTag("OnlyLeft30RoadEnter4-3"))
@@ -293,10 +295,10 @@ public class Car : MonoBehaviour
         {
             BackTriggerSettingBySpeed(30);
             direction = "right";
-            if (direction.Equals("right"))
-            {
-                setLayerRotateCar();
-            }
+            //if (direction.Equals("right"))
+            //{
+            //    setLayerRotateCar();
+            //}
         }
         // speed 60 제한 도로에 진입하는 경우
         else if (other.CompareTag("Limit60RoadEnterByRoadNum1"))
@@ -304,10 +306,10 @@ public class Car : MonoBehaviour
             //isRoad_30 = true;
             BackTriggerSettingBySpeed(60);
             direction = decideDirectionByRoadNum1(); // 진행방향 랜덤 결정
-            if (direction.Equals("right"))
-            {
-                setLayerRotateCar();
-            }
+            //if (direction.Equals("right"))
+            //{
+            //    setLayerRotateCar();
+            //}
             Debug.Log(direction);
         }
         else if (other.CompareTag("Limit60RoadEnterByRoadNum2"))
@@ -315,10 +317,10 @@ public class Car : MonoBehaviour
             //isRoad_30 = true;
             BackTriggerSettingBySpeed(60);
             direction = decideDirectionByRoadNum2(); // 진행방향 랜덤 결정
-            if (direction.Equals("right"))
-            {
-                setLayerRotateCar();
-            }
+            //if (direction.Equals("right"))
+            //{
+            //    setLayerRotateCar();
+            //}
             Debug.Log(direction);
         }
         else if (other.CompareTag("Limit60RoadEnterByRoadNum3"))
@@ -326,10 +328,10 @@ public class Car : MonoBehaviour
             //isRoad_30 = true;
             BackTriggerSettingBySpeed(60);
             direction = decideDirectionByRoadNum3(); // 진행방향 랜덤 결정
-            if (direction.Equals("right"))
-            {
-                setLayerRotateCar();
-            }
+            //if (direction.Equals("right"))
+            //{
+            //    setLayerRotateCar();
+            //}
             Debug.Log(direction);
         }
         else if (other.CompareTag("Limit60RoadEnterByRoadNum4"))
@@ -337,10 +339,10 @@ public class Car : MonoBehaviour
             //isRoad_30 = true;
             BackTriggerSettingBySpeed(60);
             direction = decideDirectionByRoadNum4(); // 진행방향 랜덤 결정
-            if (direction.Equals("right"))
-            {
-                setLayerRotateCar();
-            }
+            //if (direction.Equals("right"))
+            //{
+            //    setLayerRotateCar();
+            //}
             Debug.Log(direction);
         }
         else if (other.CompareTag("OnlyLeft60RoadEnter4-3"))
@@ -376,10 +378,10 @@ public class Car : MonoBehaviour
         {
             BackTriggerSettingBySpeed(60);
             direction = decideDirection_exceptStraightByRoadNum1();
-            if (direction.Equals("right"))
-            {
-                setLayerRotateCar();
-            }
+            //if (direction.Equals("right"))
+            //{
+            //    setLayerRotateCar();
+            //}
         }
 
         // carBack과 충돌하는 경우
@@ -392,15 +394,15 @@ public class Car : MonoBehaviour
         {
             moveDirection = true;
             isCrossRoad = true;
-            setLayerRotateCar();
-            //BackTriggerSettingBySpeed(init_speed);
+            //setLayerRotateCar();
+            BackTriggerSettingBySpeed(init_speed);
         }
     }
 
     private void OnTriggerStay(Collider other)
     {
         // 좁은 도로에서 탈출하는 경우 - 속도 0km/h
-        if (other.CompareTag("NarrowRoadExit") && isCrossRoad == false) // 이미 CrossRoad와 만났다면 신호 무시
+        if (other.CompareTag("NarrowRoadExit") && !isCrossRoad) // 이미 CrossRoad와 만났다면 신호 무시
         {
             //isRoad_30 = false;
             //if (signal && signal_str.Contains(direction))
@@ -431,7 +433,7 @@ public class Car : MonoBehaviour
 
         if (other.CompareTag("CrossRoad") || other.CompareTag("Corner"))
         {
-            //BackTriggerSettingBySpeed(init_speed);
+            BackTriggerSettingBySpeed(init_speed);
             if (direction.Contains("left") || direction.Contains("right"))
             {
                 drive(direction);
@@ -447,7 +449,7 @@ public class Car : MonoBehaviour
             signal_str.Clear();
             moveDirection = false;
             isCrossRoad = false;
-            setLayerCar();
+            //setLayerCar();
         }
 
         if (other.CompareTag("carBack"))
@@ -461,13 +463,14 @@ public class Car : MonoBehaviour
     {
         if(moveDirection) // 길 건너는 중이면 실행
         {
+            //Debug.Log(rotation.y);
             if (beforeRotation == 0)
             {
                 // 좌회전
                 if (direction.Contains("left"))
                 {
                     transform.eulerAngles -= Vector3.up * lRotateFactor;
-                    if (rotation.y > 180 && rotation.y <= 270)
+                    if (rotation.y >= 180 && rotation.y <= 270)
                     {
                         moveDirection = false;
                         transform.eulerAngles = new Vector3(0, 270, 0);
@@ -478,7 +481,7 @@ public class Car : MonoBehaviour
                 else if (direction.Contains("right"))
                 {
                     transform.eulerAngles += Vector3.up * rRotateFactor;
-                    if (rotation.y > 90 && rotation.y <= 180)
+                    if (rotation.y >= 90 && rotation.y <= 180)
                     {
                         moveDirection = false;
                         transform.eulerAngles = new Vector3(0, 90, 0);
@@ -492,7 +495,7 @@ public class Car : MonoBehaviour
                 if (direction.Contains("left"))
                 {
                     transform.eulerAngles -= Vector3.up * lRotateFactor;
-                    if (rotation.y > 90 && rotation.y <= 180)
+                    if (rotation.y >= 90 && rotation.y <= 180)
                     {
                         moveDirection = false;
                         transform.eulerAngles = new Vector3(0, 180, 0);
@@ -503,7 +506,7 @@ public class Car : MonoBehaviour
                 else if (direction.Contains("right"))
                 {
                     transform.eulerAngles += Vector3.up * rRotateFactor;
-                    if (rotation.y > 0 && rotation.y <= 90)
+                    if (rotation.y >= 0 && rotation.y <= 90)
                     {
                         moveDirection = false;
                         transform.eulerAngles = new Vector3(0, 0, 0);
@@ -517,7 +520,7 @@ public class Car : MonoBehaviour
                 if (direction.Contains("left"))
                 {
                     transform.eulerAngles -= Vector3.up * lRotateFactor;
-                    if (rotation.y > 0 && rotation.y <= 90)
+                    if (rotation.y >= 0 && rotation.y <= 90)
                     {
                         moveDirection = false;
                         transform.eulerAngles = new Vector3(0, 90, 0);
@@ -528,7 +531,7 @@ public class Car : MonoBehaviour
                 else if (direction.Contains("right"))
                 {
                     transform.eulerAngles += Vector3.up * rRotateFactor;
-                    if (rotation.y > 270 && rotation.y <= 360)
+                    if (rotation.y >= 270 && rotation.y <= 360)
                     {
                         moveDirection = false;
                         transform.eulerAngles = new Vector3(0, 270, 0);
@@ -542,7 +545,7 @@ public class Car : MonoBehaviour
                 if (direction.Contains("left"))
                 {
                     transform.eulerAngles -= Vector3.up * lRotateFactor;
-                    if (rotation.y > 270 && rotation.y <= 360)
+                    if (rotation.y >= 270 && rotation.y <= 360)
                     {
                         moveDirection = false;
                         transform.eulerAngles = new Vector3(0, 0, 0);
@@ -553,7 +556,7 @@ public class Car : MonoBehaviour
                 else if (direction.Contains("right"))
                 {
                     transform.eulerAngles += Vector3.up * rRotateFactor;
-                    if (rotation.y > 180 && rotation.y <= 270)
+                    if (rotation.y >= 180 && rotation.y <= 270)
                     {
                         moveDirection = false;
                         transform.eulerAngles = new Vector3(0, 180, 0);

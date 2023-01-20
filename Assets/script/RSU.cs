@@ -28,8 +28,8 @@ public class RSU : MonoBehaviour
                 isCrossRoad4 = false;
             }
             
-            InvokeRepeating("InvokeTrafficSignal", 1f, 2f);
-    }
+            InvokeRepeating("InvokeTrafficSignal", 4f, 2f);
+        }
     }
 
     // Update is called once per frame
@@ -137,4 +137,9 @@ public class RSU : MonoBehaviour
             }
         }
     }
+
+    //private string DecideCarDirection()
+    //{
+        
+    //}
 }

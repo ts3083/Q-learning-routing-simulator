@@ -35,8 +35,6 @@ public class Car : MonoBehaviour
     public string[] a;
     private List<GameObject> carList; // scene에 존재하는 차량(SportsCar2) 저장, test
     private int speedLimit = 30; // 속도 제한
-    private bool isRoad_30 = false; // 속도 제한 30km/h의 도로인 경우
-    private bool isRoad_60 = false; // 속도 제한 60km/h의 도로인 경우
     private bool isCrossRoad = false;
     
     public string direction;
@@ -51,7 +49,7 @@ public class Car : MonoBehaviour
     private GameObject FR;
     private GameObject SportCar2;
     private GameObject steering_wheel;
-    public string RSU_type = "unknown";
+    public bool getDirection; // 자동차가 RSU로부터 방향을 결정 받았는지 여부
     public int lineNum; // 자동차가 위치한 차선
 
     int CarLayerName;
@@ -104,7 +102,7 @@ public class Car : MonoBehaviour
         //carBack.transform.localPosition = new Vector3(0, 0, -2);
         //carBack.transform.Translate(new Vector3(0, 0, -2), Space.Self);
         BackTriggerSettingBySpeed(init_speed);
-        direction = decideDirection(); // 진행방향 랜덤 결정
+        //direction = decideDirection(); // 진행방향 랜덤 결정
         CarLayerName = LayerMask.NameToLayer("Car");
         RotateLayerName = LayerMask.NameToLayer("RotateCar");
         //setLayerCar();
@@ -113,44 +111,13 @@ public class Car : MonoBehaviour
         //    setLayerRotateCar();
         //}
         beforeRotation = transform.eulerAngles.y;
+        getDirection = false;
     }
 
     private void Start()
     {
-        //InvokeRepeating("InvokeTrafficSignal", 1f, 2f);
-    }
 
-    //private void InvokeTrafficSignal()
-    //{
-    //    if (signal)
-    //    {
-    //        signal = false;
-    //        temp++;
-    //    }
-    //    else
-    //    {
-    //        signal = true;
-    //        if (temp % 3 == 0) // 1에서 3, 3에서 1로 직진 & 1에서 4, 3에서 2로 좌회전
-    //        {
-    //            signal_str.Clear();
-    //            signal_str.Add("straight1-3");
-    //            signal_str.Add("left1-4");
-    //            signal_str.Add("left3-2");
-    //        }
-    //        else if (temp % 3 == 1) // 2에서 4, 4에서 2로 직진 & 2에서 1, 4에서 3으로 좌회전
-    //        {
-    //            signal_str.Clear();
-    //            signal_str.Add("straight2-4");
-    //            signal_str.Add("left2-1");
-    //            signal_str.Add("left4-3");
-    //        }
-    //        else if (temp % 3 == 2) // 우회전
-    //        {
-    //            signal_str.Clear();
-    //            signal_str.Add("right");
-    //        }
-    //    }
-    //}
+    }
 
     //private void InvokeTrafficSignal()
     //{
@@ -186,20 +153,6 @@ public class Car : MonoBehaviour
         // Time.deltaTime은 화면이 한번 깜빡이는 시간 = 한 프레임의 시간
         // 화면을 60번 깜빡이면 (초당 60프레) 1/60이 들어간다
         transform.position += transform.forward * current_speed * Time.deltaTime;
-        //carList = new List<GameObject>(GameObject.FindGameObjectsWithTag("SportCar2"));
-        //foreach (GameObject frontCar in carList)
-        //{
-        //    if (frontCar.name != gameObject.name)
-        //    {
-        //        carDist = Vector3.Distance(gameObject.transform.position, frontCar.transform.position); // 차량 사이의 거리 계산
-        //        if (carDist <= distLimit)
-        //        {
-        //            //frontCar.GetComponent<Car>().speed - 다른 스크립트에 있는 변수에 접근
-        //            Debug.Log(gameObject.name + " 과 " + frontCar.name + "차량 사이의 거리: " + carDist);
-        //            current_speed = 0;
-        //        }
-        //    }
-        //}
 
         //timer += Time.deltaTime * 50;
         //Debug.Log(timer);
@@ -230,158 +183,20 @@ public class Car : MonoBehaviour
     private void OnTriggerEnter(Collider other) 
     {
         // speed 30 제한 도로에 진입하는 경우
-        if (other.CompareTag("Limit30RoadEnterByRoadNum1"))
+        if (other.CompareTag("NarrowRoadEnter"))
         {
-            //isRoad_30 = true;
             BackTriggerSettingBySpeed(30);
-            direction = decideDirectionByRoadNum1(); // 진행방향 랜덤 결정
-            //if (direction.Equals("right"))
-            //{
-            //    setLayerRotateCar();
-            //}
+            setLayerCar();
+            getDirection = false;
             Debug.Log(direction);
         }
-        else if (other.CompareTag("Limit30RoadEnterByRoadNum2"))
+        // spped 60 제한 도로에 진입하는 경우
+        if (other.CompareTag("WideRoadEnter"))
         {
-            BackTriggerSettingBySpeed(30);
-            direction = decideDirectionByRoadNum2(); // 진행방향 랜덤 결정
-            //if (direction.Equals("right"))
-            //{
-            //    setLayerRotateCar();
-            //}
+            BackTriggerSettingBySpeed(60);
+            setLayerCar();
+            getDirection = false;
             Debug.Log(direction);
-        }
-        else if (other.CompareTag("Limit30RoadEnterByRoadNum3"))
-        {
-            BackTriggerSettingBySpeed(30);
-            direction = decideDirectionByRoadNum3(); // 진행방향 랜덤 결정
-            //if (direction.Equals("right"))
-            //{
-            //    setLayerRotateCar();
-            //}
-            Debug.Log(direction);
-        }
-        else if (other.CompareTag("Limit30RoadEnterByRoadNum4"))
-        {
-            BackTriggerSettingBySpeed(30);
-            direction = decideDirectionByRoadNum4(); // 진행방향 랜덤 결정
-            //if (direction.Equals("right"))
-            //{
-            //    setLayerRotateCar();
-            //}
-            Debug.Log(direction);
-        }
-        else if (other.CompareTag("OnlyLeft30RoadEnter4-3"))
-        {
-            BackTriggerSettingBySpeed(30);
-            direction = "left4-3";
-        }
-        else if (other.CompareTag("OnlyLeft30RoadEnter1-4"))
-        {
-            BackTriggerSettingBySpeed(30);
-            direction = "left1-4";
-        }
-        else if (other.CompareTag("OnlyLeft30RoadEnter2-1"))
-        {
-            BackTriggerSettingBySpeed(30);
-            direction = "left2-1";
-        }
-        else if (other.CompareTag("OnlyLeft30RoadEnter3-2"))
-        {
-            BackTriggerSettingBySpeed(30);
-            direction = "left3-2";
-        }
-        else if (other.CompareTag("OnlyRight30RoadEnter"))
-        {
-            BackTriggerSettingBySpeed(30);
-            direction = "right";
-            //if (direction.Equals("right"))
-            //{
-            //    setLayerRotateCar();
-            //}
-        }
-        // speed 60 제한 도로에 진입하는 경우
-        else if (other.CompareTag("Limit60RoadEnterByRoadNum1"))
-        {
-            //isRoad_30 = true;
-            BackTriggerSettingBySpeed(60);
-            direction = decideDirectionByRoadNum1(); // 진행방향 랜덤 결정
-            //if (direction.Equals("right"))
-            //{
-            //    setLayerRotateCar();
-            //}
-            Debug.Log(direction);
-        }
-        else if (other.CompareTag("Limit60RoadEnterByRoadNum2"))
-        {
-            //isRoad_30 = true;
-            BackTriggerSettingBySpeed(60);
-            direction = decideDirectionByRoadNum2(); // 진행방향 랜덤 결정
-            //if (direction.Equals("right"))
-            //{
-            //    setLayerRotateCar();
-            //}
-            Debug.Log(direction);
-        }
-        else if (other.CompareTag("Limit60RoadEnterByRoadNum3"))
-        {
-            //isRoad_30 = true;
-            BackTriggerSettingBySpeed(60);
-            direction = decideDirectionByRoadNum3(); // 진행방향 랜덤 결정
-            //if (direction.Equals("right"))
-            //{
-            //    setLayerRotateCar();
-            //}
-            Debug.Log(direction);
-        }
-        else if (other.CompareTag("Limit60RoadEnterByRoadNum4"))
-        {
-            //isRoad_30 = true;
-            BackTriggerSettingBySpeed(60);
-            direction = decideDirectionByRoadNum4(); // 진행방향 랜덤 결정
-            //if (direction.Equals("right"))
-            //{
-            //    setLayerRotateCar();
-            //}
-            Debug.Log(direction);
-        }
-        else if (other.CompareTag("OnlyLeft60RoadEnter4-3"))
-        {
-            BackTriggerSettingBySpeed(60);
-            direction = "left4-3";
-        }
-        else if (other.CompareTag("OnlyLeft60RoadEnter1-4"))
-        {
-            BackTriggerSettingBySpeed(60);
-            direction = "left1-4";
-        }
-        else if (other.CompareTag("OnlyLeft60RoadEnter2-1"))
-        {
-            BackTriggerSettingBySpeed(60);
-            direction = "left2-1";
-        }
-        else if (other.CompareTag("OnlyLeft60RoadEnter3-2"))
-        {
-            BackTriggerSettingBySpeed(60);
-            direction = "left3-2";
-        }
-        else if (other.CompareTag("OnlyRight60RoadEnter"))
-        {
-            BackTriggerSettingBySpeed(60);
-            direction = "right";
-            if (direction.Equals("right"))
-            {
-                setLayerRotateCar();
-            }
-        }
-        else if (other.CompareTag("ExceptStraight60RoadEnterByRoadNum1"))
-        {
-            BackTriggerSettingBySpeed(60);
-            direction = decideDirection_exceptStraightByRoadNum1();
-            //if (direction.Equals("right"))
-            //{
-            //    setLayerRotateCar();
-            //}
         }
 
         // carBack과 충돌하는 경우
@@ -394,8 +209,9 @@ public class Car : MonoBehaviour
         {
             moveDirection = true;
             isCrossRoad = true;
-            //setLayerRotateCar();
+            setLayerRotateCar();
             BackTriggerSettingBySpeed(init_speed);
+            getDirection = true;
         }
     }
 
@@ -404,7 +220,6 @@ public class Car : MonoBehaviour
         // 좁은 도로에서 탈출하는 경우 - 속도 0km/h
         if (other.CompareTag("NarrowRoadExit") && !isCrossRoad) // 이미 CrossRoad와 만났다면 신호 무시
         {
-            //isRoad_30 = false;
             //if (signal && signal_str.Contains(direction))
             //{
             //    BackTriggerSettingBySpeed(init_speed);
@@ -414,7 +229,7 @@ public class Car : MonoBehaviour
             //    BackTriggerSettingBySpeed(0);
             //}
 
-            if(direction == "right" || (signal && signal_str.Contains(direction)))
+            if(signal && signal_str.Contains(direction))
             {
                 BackTriggerSettingBySpeed(init_speed);
             }
@@ -423,13 +238,6 @@ public class Car : MonoBehaviour
                 BackTriggerSettingBySpeed(0);
             }
         }
-        //if (other.CompareTag("NarrowRoadExit"))
-        //{
-        //    if (forward_signal && current_speed == 0)
-        //    {
-        //        BackTriggerSettingBySpeed(init_speed);
-        //    }
-        //}
 
         if (other.CompareTag("CrossRoad") || other.CompareTag("Corner"))
         {
@@ -446,10 +254,8 @@ public class Car : MonoBehaviour
         if (other.CompareTag("CrossRoad"))
         {
             Debug.Log("교차로 탈출!");
-            signal_str.Clear();
-            moveDirection = false;
+            //moveDirection = false;
             isCrossRoad = false;
-            //setLayerCar();
         }
 
         if (other.CompareTag("carBack"))
@@ -567,64 +373,12 @@ public class Car : MonoBehaviour
         }
     }
 
-    // 시작시 무작위 진행방향 결정
-    private string decideDirection()
-    {
-        string temp;
-        switch (beforeRotation)
-        {
-            case 0:
-                temp = decideDirectionByRoadNum3();
-                break;
-            case 90:
-                temp = decideDirectionByRoadNum2();
-                break;
-            case 180:
-                temp = decideDirectionByRoadNum1();
-                break;
-            case 270:
-                temp = decideDirectionByRoadNum4();
-                break;
-            default:
-                temp = decideDirectionByRoadNum1();
-                break;
-        }
-        return temp;
-    }
+    //private string decideDirection_exceptStraightByRoadNum1()
+    //{
+    //    string[] s = { "right", "left1-4" };
 
-    private string decideDirectionByRoadNum1()
-    {
-        string[] s = { "straight1-3", "right", "left1-4" };
-
-        return s[Random.Range(0, 3)];
-    }
-
-    private string decideDirectionByRoadNum2()
-    {
-        string[] s = { "straight2-4", "right", "left2-1" };
-
-        return s[Random.Range(0, 3)];
-    }
-
-    private string decideDirectionByRoadNum3()
-    {
-        string[] s = { "straight1-3", "right", "left3-2" };
-
-        return s[Random.Range(0, 3)];
-    }
-    private string decideDirectionByRoadNum4()
-    {
-        string[] s = { "straight2-4", "right", "left4-3" };
-
-        return s[Random.Range(0, 3)];
-    }
-
-    private string decideDirection_exceptStraightByRoadNum1()
-    {
-        string[] s = { "right", "left1-4" };
-
-        return s[Random.Range(0, 2)];
-    }
+    //    return s[Random.Range(0, 2)];
+    //}
 
     // 차량 후면 트리거(차량간 거리 조절) 위치 조정
     private void BackTriggerSettingBySpeed(int speed_)

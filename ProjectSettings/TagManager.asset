@@ -11,29 +11,16 @@ TagManager:
   - WideRoadExit
   - carBack
   - CrossRoad
-  - OnlyRight60RoadEnter
-  - Limit30RoadEnterByRoadNum1
-  - Limit30RoadEnterByRoadNum2
-  - Limit30RoadEnterByRoadNum3
-  - Limit30RoadEnterByRoadNum4
-  - Limit60RoadEnterByRoadNum1
-  - Limit60RoadEnterByRoadNum2
-  - Limit60RoadEnterByRoadNum3
-  - Limit60RoadEnterByRoadNum4
-  - OnlyLeft60RoadEnter4-3
-  - OnlyLeft60RoadEnter1-4
-  - OnlyLeft60RoadEnter2-1
-  - OnlyLeft60RoadEnter3-2
-  - ExceptStraight60RoadEnterByRoadNum1
   - Corner
-  - OnlyRight30RoadEnter
-  - OnlyLeft30RoadEnter4-3
-  - OnlyLeft30RoadEnter1-4
-  - OnlyLeft30RoadEnter2-1
-  - OnlyLeft30RoadEnter3-2
-  - RSU_narrow_corner
   - RSU_narrow_crossRoad4
-  - RSU_narrow_crossRoad3
+  - RSU_narrow_crossRoad3_1
+  - RSU_narrow_crossRoad3_2
+  - RSU_narrow_crossRoad3_3
+  - RSU_narrow_crossRoad3_4
+  - RSU_narrow_corner1-2
+  - RSU_narrow_corner2-3
+  - RSU_narrow_corner3-4
+  - RSU_narrow_corner4-1
   layers:
   - Default
   - TransparentFX

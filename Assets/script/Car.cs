@@ -17,7 +17,7 @@ public class Car : MonoBehaviour
     // 차량 정지 및 직진 신호
     public bool signal;
     public bool moveDirection = false;
-    public List<string> signal_str;
+    //public List<string> signal_str;
     //int temp = 0;
 
     public float timer = 0.0f;
@@ -175,11 +175,6 @@ public class Car : MonoBehaviour
         //}
     }
 
-    private void OnCollisionExit(Collision collision)
-    {
-        
-    }
-
     private void OnTriggerEnter(Collider other) 
     {
         // speed 30 제한 도로에 진입하는 경우
@@ -204,13 +199,18 @@ public class Car : MonoBehaviour
         {
             current_speed = 0;
         }
+
+        if (other.CompareTag("CrossRoadReady"))
+        {
+            BackTriggerSettingBySpeed(init_speed);
+        }
         
         if (other.CompareTag("CrossRoad") || other.CompareTag("Corner"))
         {
             moveDirection = true;
             isCrossRoad = true;
-            setLayerRotateCar();
             BackTriggerSettingBySpeed(init_speed);
+            setLayerRotateCar();
             getDirection = true;
         }
     }
@@ -220,16 +220,7 @@ public class Car : MonoBehaviour
         // 좁은 도로에서 탈출하는 경우 - 속도 0km/h
         if (other.CompareTag("NarrowRoadExit") && !isCrossRoad) // 이미 CrossRoad와 만났다면 신호 무시
         {
-            //if (signal && signal_str.Contains(direction))
-            //{
-            //    BackTriggerSettingBySpeed(init_speed);
-            //}
-            //else
-            //{
-            //    BackTriggerSettingBySpeed(0);
-            //}
-
-            if(signal && signal_str.Contains(direction))
+            if (signal)
             {
                 BackTriggerSettingBySpeed(init_speed);
             }
@@ -241,7 +232,7 @@ public class Car : MonoBehaviour
 
         if (other.CompareTag("CrossRoad") || other.CompareTag("Corner"))
         {
-            BackTriggerSettingBySpeed(init_speed);
+            //BackTriggerSettingBySpeed(init_speed);
             if (direction.Contains("left") || direction.Contains("right"))
             {
                 drive(direction);
@@ -254,7 +245,6 @@ public class Car : MonoBehaviour
         if (other.CompareTag("CrossRoad"))
         {
             Debug.Log("교차로 탈출!");
-            //moveDirection = false;
             isCrossRoad = false;
         }
 

@@ -21,6 +21,7 @@ TagManager:
   - RSU_narrow_corner2-3
   - RSU_narrow_corner3-4
   - RSU_narrow_corner4-1
+  - CrossRoadReady
   layers:
   - Default
   - TransparentFX

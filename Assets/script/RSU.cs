@@ -4,450 +4,797 @@ using UnityEngine;
 
 public class RSU : MonoBehaviour
 {
-    private List<GameObject> carList;   // 자동차 GameObject 리스트
-    private float RSU_effectRange = 20;  // RSU 영향 범위
+    private float RSU_effectRange = 20f;  // RSU 영향 범위
+
+    private Collider[] carList;
+    private int carListNum;
 
     // 차량 통제 신호
-    int temp = 0;
-    public bool signal = false;
-    public List<string> signal_str;
+    private int temp = 0;
     private bool isCrossRoad4;
-    private bool isCorner;
 
     // Start is called before the first frame update
     void Start()
     {
-        carList = new List<GameObject>(GameObject.FindGameObjectsWithTag("SportCar2"));
+        // 4거리인 경우
         if (gameObject.CompareTag("RSU_narrow_crossRoad4"))
         {
             isCrossRoad4 = true;
-            InvokeRepeating("InvokeTrafficSignal", 2f, 10f);
+            InvokeRepeating("InvokeTrafficSignal4", 2f, 2f);
         }
-        else if(gameObject.CompareTag("RSU_narrow_crossRoad3_1") || gameObject.CompareTag("RSU_narrow_crossRoad3_2") || gameObject.CompareTag("RSU_narrow_crossRoad3_3") || gameObject.CompareTag("RSU_narrow_crossRoad3_4"))
+        // 3거리인 경우
+        else
         {
             isCrossRoad4 = false;
-            InvokeRepeating("InvokeTrafficSignal", 2f, 10f);
+
+            // 1번 도로가 없는 경우
+            if (gameObject.CompareTag("RSU_narrow_crossRoad3_1"))
+            {
+                InvokeRepeating("InvokeTrafficSignal3_1", 2f, 2f);
+            }
+            // 2번 도로가 없는 경우
+            else if (gameObject.CompareTag("RSU_narrow_crossRoad3_2"))
+            {
+                InvokeRepeating("InvokeTrafficSignal3_2", 2f, 2f);
+            }
+            // 3번 도로가 없는 경우
+            else if (gameObject.CompareTag("RSU_narrow_crossRoad3_3"))
+            {
+                InvokeRepeating("InvokeTrafficSignal3_3", 2f, 2f);
+            }
+            // 4번 도로가 없는 경우
+            else if (gameObject.CompareTag("RSU_narrow_crossRoad3_4"))
+            {
+                InvokeRepeating("InvokeTrafficSignal3_4", 2f, 2f);
+            }
         }
+
+        // RSU에서 영향 범위 내의 차량에게 신호를 줌
+        InvokeRepeating("ifDistInRange", 0f, 1f);
     }
 
     // Update is called once per frame
     void Update()
     {
-        ifDistInRange();
+        carList = Physics.OverlapSphere(transform.position, RSU_effectRange);   // RSU_effectRange 범위 내의 모든 오브젝트(Collider)를 가져옴
+        carListNum = carList.Length;    // 배열의 크기
     }
 
+    // RSU_effectRange 범위 내의 모든 차량들에게 적용
     private void ifDistInRange()
     {
-        float dist;
-
-        foreach(GameObject car in carList)
+        // carList 배열에 속해있는 모든 오브젝트(Collider)에 대하여
+        for(int i = 0; i < carListNum; i++)
         {
-            dist = Vector3.Distance(gameObject.transform.position, car.transform.position);
-
-            if(dist < RSU_effectRange)
+            // 차량 오브젝트에 대해서만 실행하기 위해서
+            if (!carList[i].CompareTag("SportCar2"))
             {
-                //Debug.Log(dist);
-                // Corner
-                if (gameObject.CompareTag("RSU_narrow_corner1-2"))
+                continue;
+            }
+
+            // 1, 2번 도로만 있는 코너, 속도 30 제한 도로
+            if (gameObject.CompareTag("RSU_narrow_corner1-2"))
+            {
+                // 차선(lineNum)에 따라
+                switch (carList[i].GetComponent<Car>().lineNum)
                 {
-                    switch (car.GetComponent<Car>().lineNum)
-                    {
-                        case 1:
-                            car.GetComponent<Car>().lRotateFactor = 2.82f;
-                            car.GetComponent<Car>().rRotateFactor = 1.64f;
-                            break;
-                        case 2:
-                            car.GetComponent<Car>().lRotateFactor = 1.44f;
-                            car.GetComponent<Car>().rRotateFactor = 3.85f;
-                            break;
-                    }
-
-                    float beforeRotation = car.GetComponent<Car>().beforeRotation;
-
-                    if(beforeRotation == 90)
-                    {
-                        car.GetComponent<Car>().direction = "left";
-                    }
-                    else if(beforeRotation == 180)
-                    {
-                        car.GetComponent<Car>().direction = "right";
-                    }
+                    case 1:
+                        carList[i].GetComponent<Car>().lRotateFactor = 2.82f;
+                        carList[i].GetComponent<Car>().rRotateFactor = 1.64f;
+                        break;
+                    case 2:
+                        carList[i].GetComponent<Car>().lRotateFactor = 1.44f;
+                        carList[i].GetComponent<Car>().rRotateFactor = 3.85f;
+                        break;
                 }
-                else if (gameObject.CompareTag("RSU_narrow_corner2-3"))
+
+                float beforeRotation = carList[i].GetComponent<Car>().beforeRotation;
+
+                // 2번 도로에서 차량이 오는 경우
+                if (beforeRotation == 90)
                 {
-                    switch (car.GetComponent<Car>().lineNum)
-                    {
-                        case 1:
-                            car.GetComponent<Car>().lRotateFactor = 2.82f;
-                            car.GetComponent<Car>().rRotateFactor = 1.64f;
-                            break;
-                        case 2:
-                            car.GetComponent<Car>().lRotateFactor = 1.44f;
-                            car.GetComponent<Car>().rRotateFactor = 3.85f;
-                            break;
-                    }
-
-                    float beforeRotation = car.GetComponent<Car>().beforeRotation;
-
-                    if (beforeRotation == 0)
-                    {
-                        car.GetComponent<Car>().direction = "left";
-                    }
-                    else if (beforeRotation == 90)
-                    {
-                        car.GetComponent<Car>().direction = "right";
-                    }
+                    carList[i].GetComponent<Car>().direction = "left";
                 }
-                else if (gameObject.CompareTag("RSU_narrow_corner3-4"))
+                // 1번 도로에서 차량이 오는 경우
+                else if (beforeRotation == 180)
                 {
-                    switch (car.GetComponent<Car>().lineNum)
-                    {
-                        case 1:
-                            car.GetComponent<Car>().lRotateFactor = 2.82f;
-                            car.GetComponent<Car>().rRotateFactor = 1.64f;
-                            break;
-                        case 2:
-                            car.GetComponent<Car>().lRotateFactor = 1.44f;
-                            car.GetComponent<Car>().rRotateFactor = 3.85f;
-                            break;
-                    }
-
-                    float beforeRotation = car.GetComponent<Car>().beforeRotation;
-
-                    if (beforeRotation == 270)
-                    {
-                        car.GetComponent<Car>().direction = "left";
-                    }
-                    else if (beforeRotation == 0)
-                    {
-                        car.GetComponent<Car>().direction = "right";
-                    }
-                }
-                else if (gameObject.CompareTag("RSU_narrow_corner4-1"))
-                {
-                    switch (car.GetComponent<Car>().lineNum)
-                    {
-                        case 1:
-                            car.GetComponent<Car>().lRotateFactor = 2.82f;
-                            car.GetComponent<Car>().rRotateFactor = 1.64f;
-                            break;
-                        case 2:
-                            car.GetComponent<Car>().lRotateFactor = 1.44f;
-                            car.GetComponent<Car>().rRotateFactor = 3.85f;
-                            break;
-                    }
-
-                    float beforeRotation = car.GetComponent<Car>().beforeRotation;
-
-                    if (beforeRotation == 180)
-                    {
-                        car.GetComponent<Car>().direction = "left";
-                    }
-                    else if (beforeRotation == 270)
-                    {
-                        car.GetComponent<Car>().direction = "right";
-                    }
-                }
-                // 4거리 또는 3거리
-                else if (gameObject.CompareTag("RSU_narrow_crossRoad4"))
-                {
-                    switch (car.GetComponent<Car>().lineNum)
-                    {
-                        case 1:
-                            car.GetComponent<Car>().lRotateFactor = 0.97f;
-                            car.GetComponent<Car>().rRotateFactor = 1.60f;
-                            break;
-                        case 2:
-                            car.GetComponent<Car>().lRotateFactor = 0.71f;
-                            car.GetComponent<Car>().rRotateFactor = 3.35f;
-                            break;
-                    }
-
-                    car.GetComponent<Car>().signal = signal;
-                    car.GetComponent<Car>().signal_str = signal_str;
-
-                    if (!car.GetComponent<Car>().getDirection)      // 자동차의 방향 결정
-                    {
-                        DecideCarDirection(car);
-                    }
-                }
-                else if (gameObject.CompareTag("RSU_narrow_crossRoad3_1"))
-                {
-                    switch (car.GetComponent<Car>().lineNum)
-                    {
-                        case 1:
-                            car.GetComponent<Car>().lRotateFactor = 0.97f;
-                            car.GetComponent<Car>().rRotateFactor = 1.60f;
-                            break;
-                        case 2:
-                            car.GetComponent<Car>().lRotateFactor = 0.71f;
-                            car.GetComponent<Car>().rRotateFactor = 3.35f;
-                            break;
-                    }
-
-                    car.GetComponent<Car>().signal = signal;
-                    car.GetComponent<Car>().signal_str = signal_str;
-
-                    if (!car.GetComponent<Car>().getDirection)      // 자동차의 방향 결정
-                    {
-                        DecideCarDirection(car, 1);
-                    }
-                }
-                else if (gameObject.CompareTag("RSU_narrow_crossRoad3_2"))
-                {
-                    switch (car.GetComponent<Car>().lineNum)
-                    {
-                        case 1:
-                            car.GetComponent<Car>().lRotateFactor = 0.97f;
-                            car.GetComponent<Car>().rRotateFactor = 1.60f;
-                            break;
-                        case 2:
-                            car.GetComponent<Car>().lRotateFactor = 0.71f;
-                            car.GetComponent<Car>().rRotateFactor = 3.35f;
-                            break;
-                    }
-
-                    car.GetComponent<Car>().signal = signal;
-                    car.GetComponent<Car>().signal_str = signal_str;
-
-                    if (!car.GetComponent<Car>().getDirection)      // 자동차의 방향 결정
-                    {
-                        DecideCarDirection(car, 2);
-                    }
-                }
-                else if (gameObject.CompareTag("RSU_narrow_crossRoad3_3"))
-                {
-                    switch (car.GetComponent<Car>().lineNum)
-                    {
-                        case 1:
-                            car.GetComponent<Car>().lRotateFactor = 0.97f;
-                            car.GetComponent<Car>().rRotateFactor = 1.60f;
-                            break;
-                        case 2:
-                            car.GetComponent<Car>().lRotateFactor = 0.71f;
-                            car.GetComponent<Car>().rRotateFactor = 3.35f;
-                            break;
-                    }
-
-                    car.GetComponent<Car>().signal = signal;
-                    car.GetComponent<Car>().signal_str = signal_str;
-
-                    if (!car.GetComponent<Car>().getDirection)      // 자동차의 방향 결정
-                    {
-                        DecideCarDirection(car, 3);
-                    }
-                }
-                else if (gameObject.CompareTag("RSU_narrow_crossRoad3_4"))
-                {
-                    switch (car.GetComponent<Car>().lineNum)
-                    {
-                        case 1:
-                            car.GetComponent<Car>().lRotateFactor = 0.97f;
-                            car.GetComponent<Car>().rRotateFactor = 1.60f;
-                            break;
-                        case 2:
-                            car.GetComponent<Car>().lRotateFactor = 0.71f;
-                            car.GetComponent<Car>().rRotateFactor = 3.35f;
-                            break;
-                    }
-
-                    car.GetComponent<Car>().signal = signal;
-                    car.GetComponent<Car>().signal_str = signal_str;
-
-                    if (!car.GetComponent<Car>().getDirection)      // 자동차의 방향 결정
-                    {
-                        DecideCarDirection(car, 4);
-                    }
+                    carList[i].GetComponent<Car>().direction = "right";
                 }
             }
-            else
+            // 2, 3번 도로만 있는 코너
+            else if (gameObject.CompareTag("RSU_narrow_corner2-3"))
             {
+                // 차선(lineNum)에 따라
+                switch (carList[i].GetComponent<Car>().lineNum)
+                {
+                    case 1:
+                        carList[i].GetComponent<Car>().lRotateFactor = 2.82f;
+                        carList[i].GetComponent<Car>().rRotateFactor = 1.64f;
+                        break;
+                    case 2:
+                        carList[i].GetComponent<Car>().lRotateFactor = 1.44f;
+                        carList[i].GetComponent<Car>().rRotateFactor = 3.85f;
+                        break;
+                }
 
+                float beforeRotation = carList[i].GetComponent<Car>().beforeRotation;
+
+                // 3번 도로에서 차량이 오는 경우
+                if (beforeRotation == 0)
+                {
+                    carList[i].GetComponent<Car>().direction = "left";
+                }
+                // 2번 도로에서 차량이 오는 경우
+                else if (beforeRotation == 90)
+                {
+                    carList[i].GetComponent<Car>().direction = "right";
+                }
+            }
+            // 3, 4번 도로만 있는 코너
+            else if (gameObject.CompareTag("RSU_narrow_corner3-4"))
+            {
+                // 차선(lineNum)에 따라
+                switch (carList[i].GetComponent<Car>().lineNum)
+                {
+                    case 1:
+                        carList[i].GetComponent<Car>().lRotateFactor = 2.82f;
+                        carList[i].GetComponent<Car>().rRotateFactor = 1.64f;
+                        break;
+                    case 2:
+                        carList[i].GetComponent<Car>().lRotateFactor = 1.44f;
+                        carList[i].GetComponent<Car>().rRotateFactor = 3.85f;
+                        break;
+                }
+
+                float beforeRotation = carList[i].GetComponent<Car>().beforeRotation;
+
+                // 4번 도로에서 차량이 오는 경우
+                if (beforeRotation == 270)
+                {
+                    carList[i].GetComponent<Car>().direction = "left";
+                }
+                // 3번 도로에서 차량이 오는 경우
+                else if (beforeRotation == 0)
+                {
+                    carList[i].GetComponent<Car>().direction = "right";
+                }
+            }
+            // 4, 1번 도로만 있는 코너
+            else if (gameObject.CompareTag("RSU_narrow_corner4-1"))
+            {
+                // 차선(lineNum)에 따라
+                switch (carList[i].GetComponent<Car>().lineNum)
+                {
+                    case 1:
+                        carList[i].GetComponent<Car>().lRotateFactor = 2.82f;
+                        carList[i].GetComponent<Car>().rRotateFactor = 1.64f;
+                        break;
+                    case 2:
+                        carList[i].GetComponent<Car>().lRotateFactor = 1.44f;
+                        carList[i].GetComponent<Car>().rRotateFactor = 3.85f;
+                        break;
+                }
+
+                float beforeRotation = carList[i].GetComponent<Car>().beforeRotation;
+
+                // 1번 도로에서 차량이 오는 경우
+                if (beforeRotation == 180)
+                {
+                    carList[i].GetComponent<Car>().direction = "left";
+                }
+                // 4번 도로에서 차량이 오는 경우
+                else if (beforeRotation == 270)
+                {
+                    carList[i].GetComponent<Car>().direction = "right";
+                }
+            }
+            // 4거리
+            else if (gameObject.CompareTag("RSU_narrow_crossRoad4"))
+            {
+                // 차선(lineNum)에 따라
+                switch (carList[i].GetComponent<Car>().lineNum)
+                {
+                    case 1:
+                        carList[i].GetComponent<Car>().lRotateFactor = 0.97f;
+                        carList[i].GetComponent<Car>().rRotateFactor = 1.60f;
+                        break;
+                    case 2:
+                        carList[i].GetComponent<Car>().lRotateFactor = 0.71f;
+                        carList[i].GetComponent<Car>().rRotateFactor = 3.35f;
+                        break;
+                }
+
+                if (!carList[i].GetComponent<Car>().getDirection)      // 자동차의 방향 결정, 1번만 결정
+                {
+                    DecideCarDirection(carList[i]);
+                }
+            }
+            // 3거리, 1번 도로가 없는 경우
+            else if (gameObject.CompareTag("RSU_narrow_crossRoad3_1"))
+            {
+                // 차선(lineNum)에 따라
+                switch (carList[i].GetComponent<Car>().lineNum)
+                {
+                    case 1:
+                        carList[i].GetComponent<Car>().lRotateFactor = 0.97f;
+                        carList[i].GetComponent<Car>().rRotateFactor = 1.60f;
+                        break;
+                    case 2:
+                        carList[i].GetComponent<Car>().lRotateFactor = 0.71f;
+                        carList[i].GetComponent<Car>().rRotateFactor = 3.35f;
+                        break;
+                }
+
+                if (!carList[i].GetComponent<Car>().getDirection)      // 자동차의 방향 결정, 1번만 결정
+                {
+                    DecideCarDirection(carList[i], 1);
+                }
+            }
+            // 3거리, 2번 도로가 없는 경우
+            else if (gameObject.CompareTag("RSU_narrow_crossRoad3_2"))
+            {
+                // 차선(lineNum)에 따라
+                switch (carList[i].GetComponent<Car>().lineNum)
+                {
+                    case 1:
+                        carList[i].GetComponent<Car>().lRotateFactor = 0.97f;
+                        carList[i].GetComponent<Car>().rRotateFactor = 1.60f;
+                        break;
+                    case 2:
+                        carList[i].GetComponent<Car>().lRotateFactor = 0.71f;
+                        carList[i].GetComponent<Car>().rRotateFactor = 3.35f;
+                        break;
+                }
+
+                if (!carList[i].GetComponent<Car>().getDirection)      // 자동차의 방향 결정, 1번만 결정
+                {
+                    DecideCarDirection(carList[i], 2);
+                }
+            }
+            // 3거리, 3번 도로가 없는 경우
+            else if (gameObject.CompareTag("RSU_narrow_crossRoad3_3"))
+            {
+                // 차선(lineNum)에 따라
+                switch (carList[i].GetComponent<Car>().lineNum)
+                {
+                    case 1:
+                        carList[i].GetComponent<Car>().lRotateFactor = 0.97f;
+                        carList[i].GetComponent<Car>().rRotateFactor = 1.60f;
+                        break;
+                    case 2:
+                        carList[i].GetComponent<Car>().lRotateFactor = 0.71f;
+                        carList[i].GetComponent<Car>().rRotateFactor = 3.35f;
+                        break;
+                }
+
+                if (!carList[i].GetComponent<Car>().getDirection)      // 자동차의 방향 결정, 1번만 결정
+                {
+                    DecideCarDirection(carList[i], 3);
+                }
+            }
+            // 3거리, 4번 도로가 없는 경우
+            else if (gameObject.CompareTag("RSU_narrow_crossRoad3_4"))
+            {
+                // 차선(lineNum)에 따라
+                switch (carList[i].GetComponent<Car>().lineNum)
+                {
+                    case 1:
+                        carList[i].GetComponent<Car>().lRotateFactor = 0.97f;
+                        carList[i].GetComponent<Car>().rRotateFactor = 1.60f;
+                        break;
+                    case 2:
+                        carList[i].GetComponent<Car>().lRotateFactor = 0.71f;
+                        carList[i].GetComponent<Car>().rRotateFactor = 3.35f;
+                        break;
+                }
+
+                if (!carList[i].GetComponent<Car>().getDirection)      // 자동차의 방향 결정, 1번만 결정
+                {
+                    DecideCarDirection(carList[i], 4);
+                }
             }
         }
     }
 
-    private void InvokeTrafficSignal()
+    // 4거리 신호 발생
+    private void InvokeTrafficSignal4()
     {
-        if (signal)
+        if(temp % 4 == 0)
         {
-            signal = false;
-            signal_str.Clear();
-            signal_str.Add("right");
+            // carList 배열에 속해있는 모든 오브젝트(Collider)에 대하여
+            for (int i = 0; i < carListNum; i++)
+            {
+                // 차량 오브젝트에 대해서만 실행하기 위해서
+                if (!carList[i].CompareTag("SportCar2"))
+                {
+                    continue;
+                }
+
+                // 3번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
+                if (carList[i].GetComponent<Car>().beforeRotation == 0)
+                {
+                    carList[i].GetComponent<Car>().signal = true;
+                }
+                else
+                {
+                    carList[i].GetComponent<Car>().signal = false;
+                }
+            }
             temp++;
         }
-        else
+        else if(temp % 4 == 1)
         {
-            signal = true;
-            if (temp % 4 == 0)      // 1에서 3으로 직진 & 1에서 4로 좌회전, 우회전
+            // carList 배열에 속해있는 모든 오브젝트(Collider)에 대하여
+            for (int i = 0; i < carListNum; i++)
             {
-                signal_str.Clear();
-                signal_str.Add("straight1-3");
-                signal_str.Add("left1-4");
-                signal_str.Add("right");
+                // 차량 오브젝트에 대해서만 실행하기 위해서
+                if (!carList[i].CompareTag("SportCar2"))
+                {
+                    continue;
+                }
+
+                // 2번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
+                if (carList[i].GetComponent<Car>().beforeRotation == 90)
+                {
+                    carList[i].GetComponent<Car>().signal = true;
+                }
+                else
+                {
+                    carList[i].GetComponent<Car>().signal = false;
+                }
             }
-            else if (temp % 4 == 1)     // 2에서 4로 직진 & 2에서 1로 좌회전, 우회전
+            temp++;
+        }
+        else if(temp % 4 == 2)
+        {
+            // carList 배열에 속해있는 모든 오브젝트(Collider)에 대하여
+            for (int i = 0; i < carListNum; i++)
             {
-                signal_str.Clear();
-                signal_str.Add("straight2-4");
-                signal_str.Add("left2-1");
-                signal_str.Add("right");
+                // 차량 오브젝트에 대해서만 실행하기 위해서
+                if (!carList[i].CompareTag("SportCar2"))
+                {
+                    continue;
+                }
+
+                // 1번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
+                if (carList[i].GetComponent<Car>().beforeRotation == 180)
+                {
+                    carList[i].GetComponent<Car>().signal = true;
+                }
+                else
+                {
+                    carList[i].GetComponent<Car>().signal = false;
+                }
             }
-            else if(temp % 4 == 2)      // 3에서 1로 직진 & 3에서 2로 좌회전, 우회전
+            temp++;
+        }
+        else if(temp % 4 == 3)
+        {
+            // carList 배열에 속해있는 모든 오브젝트(Collider)에 대하여
+            for (int i = 0; i < carListNum; i++)
             {
-                signal_str.Clear();
-                signal_str.Add("straight3-1");
-                signal_str.Add("left3-2");
-                signal_str.Add("right");
+                // 차량 오브젝트에 대해서만 실행하기 위해서
+                if (!carList[i].CompareTag("SportCar2"))
+                {
+                    continue;
+                }
+
+                // 4번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
+                if (carList[i].GetComponent<Car>().beforeRotation == 270)
+                {
+                    carList[i].GetComponent<Car>().signal = true;
+                }
+                else
+                {
+                    carList[i].GetComponent<Car>().signal = false;
+                }
             }
-            else if(temp % 4 == 3)      // 4에서 2로 직진 & 4에서 3으로 좌회, 우회전
-            {
-                signal_str.Clear();
-                signal_str.Add("straight4-2");
-                signal_str.Add("left4-3");
-                signal_str.Add("right");
-            }
+            temp = 0;
         }
     }
 
-    private void DecideCarDirection(GameObject car, int vacantRoadNum = 0)
+    // 3거리 신호 발생(1번 도로X)
+    private void InvokeTrafficSignal3_1()
     {
-        float beforeRoatation = car.GetComponent<Car>().beforeRotation;
+        if(temp % 3 == 0)
+        {
+            // carList 배열에 속해있는 모든 오브젝트(Collider)에 대하여
+            for (int i = 0; i < carListNum; i++)
+            {
+                // 차량 오브젝트에 대해서만 실행하기 위해서
+                if (!carList[i].CompareTag("SportCar2"))
+                {
+                    continue;
+                }
 
-        if(beforeRoatation == 0)
-        {
-            car.GetComponent<Car>().direction = DecideDirectionByRoadNum3(vacantRoadNum);
+                // 3번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
+                if (carList[i].GetComponent<Car>().beforeRotation == 0)
+                {
+                    carList[i].GetComponent<Car>().signal = true;
+                }
+                else
+                {
+                    carList[i].GetComponent<Car>().signal = false;
+                }
+            }
+            temp++;
         }
-        else if(beforeRoatation == 90)
+        else if(temp % 3 == 1)
         {
-            car.GetComponent<Car>().direction = DecideDirectionByRoadNum2(vacantRoadNum);
+            // carList 배열에 속해있는 모든 오브젝트(Collider)에 대하여
+            for (int i = 0; i < carListNum; i++)
+            {
+                // 차량 오브젝트에 대해서만 실행하기 위해서
+                if (!carList[i].CompareTag("SportCar2"))
+                {
+                    continue;
+                }
+
+                // 2번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
+                if (carList[i].GetComponent<Car>().beforeRotation == 90)
+                {
+                    carList[i].GetComponent<Car>().signal = true;
+                }
+                else
+                {
+                    carList[i].GetComponent<Car>().signal = false;
+                }
+            }
+            temp++;
         }
-        else if(beforeRoatation == 180)
+        else if(temp % 3 == 2)
         {
-            car.GetComponent<Car>().direction = DecideDirectionByRoadNum1(vacantRoadNum);
-        }
-        else if(beforeRoatation == 270)
-        {
-            car.GetComponent<Car>().direction = DecideDirectionByRoadNum4(vacantRoadNum);
+            // carList 배열에 속해있는 모든 오브젝트(Collider)에 대하여
+            for (int i = 0; i < carListNum; i++)
+            {
+                // 차량 오브젝트에 대해서만 실행하기 위해서
+                if (!carList[i].CompareTag("SportCar2"))
+                {
+                    continue;
+                }
+
+                // 4번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
+                if (carList[i].GetComponent<Car>().beforeRotation == 270)
+                {
+                    carList[i].GetComponent<Car>().signal = true;
+                }
+                else
+                {
+                    carList[i].GetComponent<Car>().signal = false;
+                }
+            }
+            temp = 0;
         }
     }
 
-    // 자동차가 위치한 도로 방향에 따라 방향 결정
-    private string DecideDirectionByRoadNum1(int vacantRoadNum)
+    // 3거리 신호 발생(2번 도로X)
+    private void InvokeTrafficSignal3_2()
     {
-        List<string> s;
+        if (temp % 3 == 0)
+        {
+            // carList 배열에 속해있는 모든 오브젝트(Collider)에 대하여
+            for (int i = 0; i < carListNum; i++)
+            {
+                // 차량 오브젝트에 대해서만 실행하기 위해서
+                if (!carList[i].CompareTag("SportCar2"))
+                {
+                    continue;
+                }
 
+                // 3번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
+                if (carList[i].GetComponent<Car>().beforeRotation == 0)
+                {
+                    carList[i].GetComponent<Car>().signal = true;
+                }
+                else
+                {
+                    carList[i].GetComponent<Car>().signal = false;
+                }
+            }
+            temp++;
+        }
+        else if (temp % 3 == 1)
+        {
+            // carList 배열에 속해있는 모든 오브젝트(Collider)에 대하여
+            for (int i = 0; i < carListNum; i++)
+            {
+                // 차량 오브젝트에 대해서만 실행하기 위해서
+                if (!carList[i].CompareTag("SportCar2"))
+                {
+                    continue;
+                }
+
+                // 1번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
+                if (carList[i].GetComponent<Car>().beforeRotation == 180)
+                {
+                    carList[i].GetComponent<Car>().signal = true;
+                }
+                else
+                {
+                    carList[i].GetComponent<Car>().signal = false;
+                }
+            }
+            temp++;
+        }
+        else if (temp % 3 == 2)
+        {
+            // carList 배열에 속해있는 모든 오브젝트(Collider)에 대하여
+            for (int i = 0; i < carListNum; i++)
+            {
+                // 차량 오브젝트에 대해서만 실행하기 위해서
+                if (!carList[i].CompareTag("SportCar2"))
+                {
+                    continue;
+                }
+
+                // 4번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
+                if (carList[i].GetComponent<Car>().beforeRotation == 270)
+                {
+                    carList[i].GetComponent<Car>().signal = true;
+                }
+                else
+                {
+                    carList[i].GetComponent<Car>().signal = false;
+                }
+            }
+            temp = 0;
+        }
+    }
+
+    // 3거리 신호 발생(3번 도로X)
+    private void InvokeTrafficSignal3_3()
+    {
+        if (temp % 3 == 0)
+        {
+            // carList 배열에 속해있는 모든 오브젝트(Collider)에 대하여
+            for (int i = 0; i < carListNum; i++)
+            {
+                // 차량 오브젝트에 대해서만 실행하기 위해서
+                if (!carList[i].CompareTag("SportCar2"))
+                {
+                    continue;
+                }
+
+                // 2번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
+                if (carList[i].GetComponent<Car>().beforeRotation == 90)
+                {
+                    carList[i].GetComponent<Car>().signal = true;
+                }
+                else
+                {
+                    carList[i].GetComponent<Car>().signal = false;
+                }
+            }
+            temp++;
+        }
+        else if (temp % 3 == 1)
+        {
+            // carList 배열에 속해있는 모든 오브젝트(Collider)에 대하여
+            for (int i = 0; i < carListNum; i++)
+            {
+                // 차량 오브젝트에 대해서만 실행하기 위해서
+                if (!carList[i].CompareTag("SportCar2"))
+                {
+                    continue;
+                }
+
+                // 1번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
+                if (carList[i].GetComponent<Car>().beforeRotation == 180)
+                {
+                    carList[i].GetComponent<Car>().signal = true;
+                }
+                else
+                {
+                    carList[i].GetComponent<Car>().signal = false;
+                }
+            }
+            temp++;
+        }
+        else if (temp % 3 == 2)
+        {
+            // carList 배열에 속해있는 모든 오브젝트(Collider)에 대하여
+            for (int i = 0; i < carListNum; i++)
+            {
+                // 차량 오브젝트에 대해서만 실행하기 위해서
+                if (!carList[i].CompareTag("SportCar2"))
+                {
+                    continue;
+                }
+
+                // 4번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
+                if (carList[i].GetComponent<Car>().beforeRotation == 270)
+                {
+                    carList[i].GetComponent<Car>().signal = true;
+                }
+                else
+                {
+                    carList[i].GetComponent<Car>().signal = false;
+                }
+            }
+            temp = 0;
+        }
+    }
+
+    // 3거리 신호 발생(4번 도로X)
+    private void InvokeTrafficSignal3_4()
+    {
+        if (temp % 3 == 0)
+        {
+            // carList 배열에 속해있는 모든 오브젝트(Collider)에 대하여
+            for (int i = 0; i < carListNum; i++)
+            {
+                // 차량 오브젝트에 대해서만 실행하기 위해서
+                if (!carList[i].CompareTag("SportCar2"))
+                {
+                    continue;
+                }
+
+                // 3번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
+                if (carList[i].GetComponent<Car>().beforeRotation == 0)
+                {
+                    carList[i].GetComponent<Car>().signal = true;
+                }
+                else
+                {
+                    carList[i].GetComponent<Car>().signal = false;
+                }
+            }
+            temp++;
+        }
+        else if (temp % 3 == 1)
+        {
+            // carList 배열에 속해있는 모든 오브젝트(Collider)에 대하여
+            for (int i = 0; i < carListNum; i++)
+            {
+                // 차량 오브젝트에 대해서만 실행하기 위해서
+                if (!carList[i].CompareTag("SportCar2"))
+                {
+                    continue;
+                }
+
+                // 2번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
+                if (carList[i].GetComponent<Car>().beforeRotation == 90)
+                {
+                    carList[i].GetComponent<Car>().signal = true;
+                }
+                else
+                {
+                    carList[i].GetComponent<Car>().signal = false;
+                }
+            }
+            temp++;
+        }
+        else if (temp % 3 == 2)
+        {
+            // carList 배열에 속해있는 모든 오브젝트(Collider)에 대하여
+            for (int i = 0; i < carListNum; i++)
+            {
+                // 차량 오브젝트에 대해서만 실행하기 위해서
+                if (!carList[i].CompareTag("SportCar2"))
+                {
+                    continue;
+                }
+
+                // 1번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
+                if (carList[i].GetComponent<Car>().beforeRotation == 180)
+                {
+                    carList[i].GetComponent<Car>().signal = true;
+                }
+                else
+                {
+                    carList[i].GetComponent<Car>().signal = false;
+                }
+            }
+            temp = 0;
+        }
+    }
+
+    // 차량 방향 결정 함수
+    private void DecideCarDirection(Collider car ,int vacantRoadNum = 0)
+    {
+        List<string> move;
+
+        // 차량이 4거리에 있는 경우
         if (isCrossRoad4)
         {
-            s = new List<string> { "straight1-3", "right", "left1-4" };
+            move = new List<string> { "straight", "left", "right" };
         }
+        // 차량이 3거리에 있는 경우
         else
         {
+            // 3거리에서 없는 도로 번호(vacantRoadNum)
             switch (vacantRoadNum)
             {
-                case 2:
-                    s = new List<string> { "straight1-3", "left1-4" };
+                case 1: // 1번 도로가 없는 경우
+                    // 3번 도로에서 오는 경우
+                    if (car.GetComponent<Car>().beforeRotation == 0)
+                    {
+                        move = new List<string> { "left", "right" };
+                    }
+                    // 2번 도로에서 오는 경우
+                    else if(car.GetComponent<Car>().beforeRotation == 90)
+                    {
+                        move = new List<string> { "straight", "right" };
+                    }
+                    // 4번 도로에서 오는 경우
+                    else if (car.GetComponent<Car>().beforeRotation == 270)
+                    {
+                        move = new List<string> { "straight", "left" };
+                    }
+                    else
+                    {
+                        move = new List<string> { "straight", "left", "right" };
+                    }
                     break;
-                case 3:
-                    s = new List<string> { "right", "left1-4" };
+                case 2: // 2번 도로가 없는 경우
+                    // 4번 도로에서 오는 경우
+                    if (car.GetComponent<Car>().beforeRotation == 270)
+                    {
+                        move = new List<string> { "left", "right" };
+                    }
+                    // 3번 도로에서 오는 경우
+                    else if (car.GetComponent<Car>().beforeRotation == 0)
+                    {
+                        move = new List<string> { "straight", "right" };
+                    }
+                    // 1번 도로에서 오는 경우
+                    else if (car.GetComponent<Car>().beforeRotation == 180)
+                    {
+                        move = new List<string> { "straight", "left" };
+                    }
+                    else
+                    {
+                        move = new List<string> { "straight", "left", "right" };
+                    }
                     break;
-                case 4:
-                    s = new List<string> { "straight1-3", "right", };
+                case 3: // 3번 도로가 없는 경우
+                    // 1번 도로에서 오는 경우
+                    if (car.GetComponent<Car>().beforeRotation == 180)
+                    {
+                        move = new List<string> { "left", "right" };
+                    }
+                    // 4번 도로에서 오는 경우
+                    else if (car.GetComponent<Car>().beforeRotation == 270)
+                    {
+                        move = new List<string> { "straight", "right" };
+                    }
+                    // 2번 도로에서 오는 경우
+                    else if (car.GetComponent<Car>().beforeRotation == 90)
+                    {
+                        move = new List<string> { "straight", "left" };
+                    }
+                    else
+                    {
+                        move = new List<string> { "straight", "left", "right" };
+                    }
+                    break;
+                case 4: // 4번 도로가 없는 경우
+                    // 2번 도로에서 오는 경우
+                    if (car.GetComponent<Car>().beforeRotation == 90)
+                    {
+                        move = new List<string> { "left", "right" };
+                    }
+                    // 1번 도로에서 오는 경우
+                    else if (car.GetComponent<Car>().beforeRotation == 180)
+                    {
+                        move = new List<string> { "straight", "right" };
+                    }
+                    // 3번 도로에서 오는 경우
+                    else if (car.GetComponent<Car>().beforeRotation == 0)
+                    {
+                        move = new List<string> { "straight", "left" };
+                    }
+                    else
+                    {
+                        move = new List<string> { "straight", "left", "right" };
+                    }
                     break;
                 default:
-                    s = new List<string> { "straight1-3", "right", "left1-4" };
+                    move = new List<string> { "straight", "left", "right" };
                     break;
             }
         }
 
-        return s[Random.Range(0, s.Count)];
-    }
-
-    private string DecideDirectionByRoadNum2(int vacantRoadNum = 0)
-    {
-        List<string> s;
-
-        if (isCrossRoad4)
-        {
-            s = new List<string> { "straight2-4", "right", "left2-1" };
-        }
-        else
-        {
-            switch (vacantRoadNum)
-            {
-                case 1:
-                    s = new List<string> { "straight2-4", "right" };
-                    break;
-                case 3:
-                    s = new List<string> { "straight2-4", "left2-1" };
-                    break;
-                case 4:
-                    s = new List<string> { "right", "left2-1" };
-                    break;
-                default:
-                    s = new List<string> { "straight2-4", "right", "left2-1" };
-                    break;
-            }
-        }
-
-        return s[Random.Range(0, s.Count)];
-    }
-
-    private string DecideDirectionByRoadNum3(int vacantRoadNum = 0)
-    {
-        List<string> s;
-        if (isCrossRoad4)
-        {
-            s = new List<string> { "straight3-1", "right", "left3-2" };
-        }
-        else
-        {
-            switch (vacantRoadNum)
-            {
-                case 1:
-                    s = new List<string> { "right", "left3-2" };
-                    break;
-                case 2:
-                    s = new List<string> { "straight3-1", "right" };
-                    break;
-                case 4:
-                    s = new List<string> { "straight3-1", "left3-2" };
-                    break;
-                default:
-                    s = new List<string> { "straight3-1", "right", "left3-2" };
-                    break;
-            }
-        }
-
-        return s[Random.Range(0, s.Count)];
-    }
-    private string DecideDirectionByRoadNum4(int vacantRoadNum = 0)
-    {
-        List<string> s;
-        if (isCrossRoad4)
-        {
-            s = new List<string> { "straight4-2", "right", "left4-3" };
-
-        }
-        else
-        {
-            switch (vacantRoadNum)
-            {
-                case 1:
-                    s = new List<string> { "straight4-2", "left4-3" };
-                    break;
-                case 2:
-                    s = new List<string> { "right", "left4-3" };
-                    break;
-                case 3:
-                    s = new List<string> { "straight4-2", "right" };
-                    break;
-                default:
-                    s = new List<string> { "straight4-2", "right", "left4-3" };
-                    break;
-            }
-        }
-
-        return s[Random.Range(0, s.Count)];
+        car.GetComponent<Car>().direction = move[Random.Range(0, move.Count)];  // 차량에게 방향 전달
     }
 }

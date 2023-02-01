@@ -90,15 +90,18 @@ public class RSU : MonoBehaviour
 
                 float beforeRotation = carList[i].GetComponent<Car>().beforeRotation;
 
-                // 2번 도로에서 차량이 오는 경우
-                if (beforeRotation == 90)
+                if (carList[i].GetComponent<Car>().direction.Equals("null")) // 자동차의 방향 결정, 1번만 결정
                 {
-                    carList[i].GetComponent<Car>().direction = "left";
-                }
-                // 1번 도로에서 차량이 오는 경우
-                else if (beforeRotation == 180)
-                {
-                    carList[i].GetComponent<Car>().direction = "right";
+                    // 2번 도로에서 차량이 오는 경우
+                    if (beforeRotation == 90)
+                    {
+                        carList[i].GetComponent<Car>().direction = "left";
+                    }
+                    // 1번 도로에서 차량이 오는 경우
+                    else if (beforeRotation == 180)
+                    {
+                        carList[i].GetComponent<Car>().direction = "right";
+                    }
                 }
             }
             // 2, 3번 도로만 있는 코너
@@ -119,15 +122,18 @@ public class RSU : MonoBehaviour
 
                 float beforeRotation = carList[i].GetComponent<Car>().beforeRotation;
 
-                // 3번 도로에서 차량이 오는 경우
-                if (beforeRotation == 0)
+                if (carList[i].GetComponent<Car>().direction.Equals("null")) // 자동차의 방향 결정, 1번만 결정
                 {
-                    carList[i].GetComponent<Car>().direction = "left";
-                }
-                // 2번 도로에서 차량이 오는 경우
-                else if (beforeRotation == 90)
-                {
-                    carList[i].GetComponent<Car>().direction = "right";
+                    // 3번 도로에서 차량이 오는 경우
+                    if (beforeRotation == 0)
+                    {
+                        carList[i].GetComponent<Car>().direction = "left";
+                    }
+                    // 2번 도로에서 차량이 오는 경우
+                    else if (beforeRotation == 90)
+                    {
+                        carList[i].GetComponent<Car>().direction = "right";
+                    }
                 }
             }
             // 3, 4번 도로만 있는 코너
@@ -148,15 +154,18 @@ public class RSU : MonoBehaviour
 
                 float beforeRotation = carList[i].GetComponent<Car>().beforeRotation;
 
-                // 4번 도로에서 차량이 오는 경우
-                if (beforeRotation == 270)
+                if (carList[i].GetComponent<Car>().direction.Equals("null")) // 자동차의 방향 결정, 1번만 결정
                 {
-                    carList[i].GetComponent<Car>().direction = "left";
-                }
-                // 3번 도로에서 차량이 오는 경우
-                else if (beforeRotation == 0)
-                {
-                    carList[i].GetComponent<Car>().direction = "right";
+                    // 4번 도로에서 차량이 오는 경우
+                    if (beforeRotation == 270)
+                    {
+                        carList[i].GetComponent<Car>().direction = "left";
+                    }
+                    // 3번 도로에서 차량이 오는 경우
+                    else if (beforeRotation == 0)
+                    {
+                        carList[i].GetComponent<Car>().direction = "right";
+                    }
                 }
             }
             // 4, 1번 도로만 있는 코너
@@ -177,15 +186,18 @@ public class RSU : MonoBehaviour
 
                 float beforeRotation = carList[i].GetComponent<Car>().beforeRotation;
 
-                // 1번 도로에서 차량이 오는 경우
-                if (beforeRotation == 180)
+                if (carList[i].GetComponent<Car>().direction.Equals("null")) // 자동차의 방향 결정, 1번만 결정
                 {
-                    carList[i].GetComponent<Car>().direction = "left";
-                }
-                // 4번 도로에서 차량이 오는 경우
-                else if (beforeRotation == 270)
-                {
-                    carList[i].GetComponent<Car>().direction = "right";
+                    // 1번 도로에서 차량이 오는 경우
+                    if (beforeRotation == 180)
+                    {
+                        carList[i].GetComponent<Car>().direction = "left";
+                    }
+                    // 4번 도로에서 차량이 오는 경우
+                    else if (beforeRotation == 270)
+                    {
+                        carList[i].GetComponent<Car>().direction = "right";
+                    }
                 }
             }
             // 4거리
@@ -204,7 +216,7 @@ public class RSU : MonoBehaviour
                         break;
                 }
 
-                if (!carList[i].GetComponent<Car>().getDirection)      // 자동차의 방향 결정, 1번만 결정
+                if (carList[i].GetComponent<Car>().direction.Equals("null")) // 자동차의 방향 결정, 1번만 결정
                 {
                     DecideCarDirection(carList[i]);
                 }
@@ -225,7 +237,7 @@ public class RSU : MonoBehaviour
                         break;
                 }
 
-                if (!carList[i].GetComponent<Car>().getDirection)      // 자동차의 방향 결정, 1번만 결정
+                if (carList[i].GetComponent<Car>().direction.Equals("null")) // 자동차의 방향 결정, 1번만 결정
                 {
                     DecideCarDirection(carList[i], 1);
                 }
@@ -246,7 +258,7 @@ public class RSU : MonoBehaviour
                         break;
                 }
 
-                if (!carList[i].GetComponent<Car>().getDirection)      // 자동차의 방향 결정, 1번만 결정
+                if (carList[i].GetComponent<Car>().direction.Equals("null")) // 자동차의 방향 결정, 1번만 결정
                 {
                     DecideCarDirection(carList[i], 2);
                 }
@@ -267,7 +279,7 @@ public class RSU : MonoBehaviour
                         break;
                 }
 
-                if (!carList[i].GetComponent<Car>().getDirection)      // 자동차의 방향 결정, 1번만 결정
+                if (carList[i].GetComponent<Car>().direction.Equals("null")) // 자동차의 방향 결정, 1번만 결정
                 {
                     DecideCarDirection(carList[i], 3);
                 }
@@ -288,10 +300,31 @@ public class RSU : MonoBehaviour
                         break;
                 }
 
-                if (!carList[i].GetComponent<Car>().getDirection)      // 자동차의 방향 결정, 1번만 결정
+                if (carList[i].GetComponent<Car>().direction.Equals("null")) // 자동차의 방향 결정, 1번만 결정
                 {
                     DecideCarDirection(carList[i], 4);
                 }
+            }
+        }
+    }
+    private void signalFunc(int beforeRotate)
+    {
+        // carList 배열에 속해있는 모든 오브젝트(Collider)에 대하여
+        for (int i = 0; i < carListNum; i++)
+        {
+            // 차량 오브젝트에 대해서만 실행하기 위해서
+            if (!carList[i].CompareTag("SportCar2"))
+            {
+                continue;
+            }
+
+            if (carList[i].GetComponent<Car>().beforeRotation == beforeRotate)
+            {
+                carList[i].GetComponent<Car>().signal = true;
+            }
+            else
+            {
+                carList[i].GetComponent<Car>().signal = false;
             }
         }
     }
@@ -301,94 +334,26 @@ public class RSU : MonoBehaviour
     {
         if(temp % 4 == 0)
         {
-            // carList 배열에 속해있는 모든 오브젝트(Collider)에 대하여
-            for (int i = 0; i < carListNum; i++)
-            {
-                // 차량 오브젝트에 대해서만 실행하기 위해서
-                if (!carList[i].CompareTag("SportCar2"))
-                {
-                    continue;
-                }
-
-                // 3번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
-                if (carList[i].GetComponent<Car>().beforeRotation == 0)
-                {
-                    carList[i].GetComponent<Car>().signal = true;
-                }
-                else
-                {
-                    carList[i].GetComponent<Car>().signal = false;
-                }
-            }
+            // 3번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
+            signalFunc(0);
             temp++;
         }
         else if(temp % 4 == 1)
         {
-            // carList 배열에 속해있는 모든 오브젝트(Collider)에 대하여
-            for (int i = 0; i < carListNum; i++)
-            {
-                // 차량 오브젝트에 대해서만 실행하기 위해서
-                if (!carList[i].CompareTag("SportCar2"))
-                {
-                    continue;
-                }
-
-                // 2번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
-                if (carList[i].GetComponent<Car>().beforeRotation == 90)
-                {
-                    carList[i].GetComponent<Car>().signal = true;
-                }
-                else
-                {
-                    carList[i].GetComponent<Car>().signal = false;
-                }
-            }
+            // 2번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
+            signalFunc(90);
             temp++;
         }
         else if(temp % 4 == 2)
         {
-            // carList 배열에 속해있는 모든 오브젝트(Collider)에 대하여
-            for (int i = 0; i < carListNum; i++)
-            {
-                // 차량 오브젝트에 대해서만 실행하기 위해서
-                if (!carList[i].CompareTag("SportCar2"))
-                {
-                    continue;
-                }
-
-                // 1번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
-                if (carList[i].GetComponent<Car>().beforeRotation == 180)
-                {
-                    carList[i].GetComponent<Car>().signal = true;
-                }
-                else
-                {
-                    carList[i].GetComponent<Car>().signal = false;
-                }
-            }
+            // 1번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
+            signalFunc(180);
             temp++;
         }
         else if(temp % 4 == 3)
         {
-            // carList 배열에 속해있는 모든 오브젝트(Collider)에 대하여
-            for (int i = 0; i < carListNum; i++)
-            {
-                // 차량 오브젝트에 대해서만 실행하기 위해서
-                if (!carList[i].CompareTag("SportCar2"))
-                {
-                    continue;
-                }
-
-                // 4번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
-                if (carList[i].GetComponent<Car>().beforeRotation == 270)
-                {
-                    carList[i].GetComponent<Car>().signal = true;
-                }
-                else
-                {
-                    carList[i].GetComponent<Car>().signal = false;
-                }
-            }
+            // 4번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
+            signalFunc(270);
             temp = 0;
         }
     }
@@ -396,73 +361,22 @@ public class RSU : MonoBehaviour
     // 3거리 신호 발생(1번 도로X)
     private void InvokeTrafficSignal3_1()
     {
-        if(temp % 3 == 0)
+        if (temp % 3 == 0)
         {
-            // carList 배열에 속해있는 모든 오브젝트(Collider)에 대하여
-            for (int i = 0; i < carListNum; i++)
-            {
-                // 차량 오브젝트에 대해서만 실행하기 위해서
-                if (!carList[i].CompareTag("SportCar2"))
-                {
-                    continue;
-                }
-
-                // 3번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
-                if (carList[i].GetComponent<Car>().beforeRotation == 0)
-                {
-                    carList[i].GetComponent<Car>().signal = true;
-                }
-                else
-                {
-                    carList[i].GetComponent<Car>().signal = false;
-                }
-            }
+            // 3번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
+            signalFunc(0);
             temp++;
         }
-        else if(temp % 3 == 1)
+        else if (temp % 3 == 1)
         {
-            // carList 배열에 속해있는 모든 오브젝트(Collider)에 대하여
-            for (int i = 0; i < carListNum; i++)
-            {
-                // 차량 오브젝트에 대해서만 실행하기 위해서
-                if (!carList[i].CompareTag("SportCar2"))
-                {
-                    continue;
-                }
-
-                // 2번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
-                if (carList[i].GetComponent<Car>().beforeRotation == 90)
-                {
-                    carList[i].GetComponent<Car>().signal = true;
-                }
-                else
-                {
-                    carList[i].GetComponent<Car>().signal = false;
-                }
-            }
+            // 2번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
+            signalFunc(90);
             temp++;
         }
         else if(temp % 3 == 2)
         {
-            // carList 배열에 속해있는 모든 오브젝트(Collider)에 대하여
-            for (int i = 0; i < carListNum; i++)
-            {
-                // 차량 오브젝트에 대해서만 실행하기 위해서
-                if (!carList[i].CompareTag("SportCar2"))
-                {
-                    continue;
-                }
-
-                // 4번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
-                if (carList[i].GetComponent<Car>().beforeRotation == 270)
-                {
-                    carList[i].GetComponent<Car>().signal = true;
-                }
-                else
-                {
-                    carList[i].GetComponent<Car>().signal = false;
-                }
-            }
+            // 4번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
+            signalFunc(270);
             temp = 0;
         }
     }
@@ -472,71 +386,20 @@ public class RSU : MonoBehaviour
     {
         if (temp % 3 == 0)
         {
-            // carList 배열에 속해있는 모든 오브젝트(Collider)에 대하여
-            for (int i = 0; i < carListNum; i++)
-            {
-                // 차량 오브젝트에 대해서만 실행하기 위해서
-                if (!carList[i].CompareTag("SportCar2"))
-                {
-                    continue;
-                }
-
-                // 3번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
-                if (carList[i].GetComponent<Car>().beforeRotation == 0)
-                {
-                    carList[i].GetComponent<Car>().signal = true;
-                }
-                else
-                {
-                    carList[i].GetComponent<Car>().signal = false;
-                }
-            }
+            // 3번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
+            signalFunc(0);
             temp++;
         }
         else if (temp % 3 == 1)
         {
-            // carList 배열에 속해있는 모든 오브젝트(Collider)에 대하여
-            for (int i = 0; i < carListNum; i++)
-            {
-                // 차량 오브젝트에 대해서만 실행하기 위해서
-                if (!carList[i].CompareTag("SportCar2"))
-                {
-                    continue;
-                }
-
-                // 1번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
-                if (carList[i].GetComponent<Car>().beforeRotation == 180)
-                {
-                    carList[i].GetComponent<Car>().signal = true;
-                }
-                else
-                {
-                    carList[i].GetComponent<Car>().signal = false;
-                }
-            }
+            // 1번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
+            signalFunc(180);
             temp++;
         }
         else if (temp % 3 == 2)
         {
-            // carList 배열에 속해있는 모든 오브젝트(Collider)에 대하여
-            for (int i = 0; i < carListNum; i++)
-            {
-                // 차량 오브젝트에 대해서만 실행하기 위해서
-                if (!carList[i].CompareTag("SportCar2"))
-                {
-                    continue;
-                }
-
-                // 4번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
-                if (carList[i].GetComponent<Car>().beforeRotation == 270)
-                {
-                    carList[i].GetComponent<Car>().signal = true;
-                }
-                else
-                {
-                    carList[i].GetComponent<Car>().signal = false;
-                }
-            }
+            // 4번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
+            signalFunc(270);
             temp = 0;
         }
     }
@@ -546,71 +409,20 @@ public class RSU : MonoBehaviour
     {
         if (temp % 3 == 0)
         {
-            // carList 배열에 속해있는 모든 오브젝트(Collider)에 대하여
-            for (int i = 0; i < carListNum; i++)
-            {
-                // 차량 오브젝트에 대해서만 실행하기 위해서
-                if (!carList[i].CompareTag("SportCar2"))
-                {
-                    continue;
-                }
-
-                // 2번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
-                if (carList[i].GetComponent<Car>().beforeRotation == 90)
-                {
-                    carList[i].GetComponent<Car>().signal = true;
-                }
-                else
-                {
-                    carList[i].GetComponent<Car>().signal = false;
-                }
-            }
+            // 2번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
+            signalFunc(90);
             temp++;
         }
         else if (temp % 3 == 1)
         {
-            // carList 배열에 속해있는 모든 오브젝트(Collider)에 대하여
-            for (int i = 0; i < carListNum; i++)
-            {
-                // 차량 오브젝트에 대해서만 실행하기 위해서
-                if (!carList[i].CompareTag("SportCar2"))
-                {
-                    continue;
-                }
-
-                // 1번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
-                if (carList[i].GetComponent<Car>().beforeRotation == 180)
-                {
-                    carList[i].GetComponent<Car>().signal = true;
-                }
-                else
-                {
-                    carList[i].GetComponent<Car>().signal = false;
-                }
-            }
+            // 1번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
+            signalFunc(180);
             temp++;
         }
         else if (temp % 3 == 2)
         {
-            // carList 배열에 속해있는 모든 오브젝트(Collider)에 대하여
-            for (int i = 0; i < carListNum; i++)
-            {
-                // 차량 오브젝트에 대해서만 실행하기 위해서
-                if (!carList[i].CompareTag("SportCar2"))
-                {
-                    continue;
-                }
-
-                // 4번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
-                if (carList[i].GetComponent<Car>().beforeRotation == 270)
-                {
-                    carList[i].GetComponent<Car>().signal = true;
-                }
-                else
-                {
-                    carList[i].GetComponent<Car>().signal = false;
-                }
-            }
+            // 4번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
+            signalFunc(270);
             temp = 0;
         }
     }
@@ -620,71 +432,20 @@ public class RSU : MonoBehaviour
     {
         if (temp % 3 == 0)
         {
-            // carList 배열에 속해있는 모든 오브젝트(Collider)에 대하여
-            for (int i = 0; i < carListNum; i++)
-            {
-                // 차량 오브젝트에 대해서만 실행하기 위해서
-                if (!carList[i].CompareTag("SportCar2"))
-                {
-                    continue;
-                }
-
-                // 3번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
-                if (carList[i].GetComponent<Car>().beforeRotation == 0)
-                {
-                    carList[i].GetComponent<Car>().signal = true;
-                }
-                else
-                {
-                    carList[i].GetComponent<Car>().signal = false;
-                }
-            }
+            // 2번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
+            signalFunc(90);
             temp++;
         }
         else if (temp % 3 == 1)
         {
-            // carList 배열에 속해있는 모든 오브젝트(Collider)에 대하여
-            for (int i = 0; i < carListNum; i++)
-            {
-                // 차량 오브젝트에 대해서만 실행하기 위해서
-                if (!carList[i].CompareTag("SportCar2"))
-                {
-                    continue;
-                }
-
-                // 2번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
-                if (carList[i].GetComponent<Car>().beforeRotation == 90)
-                {
-                    carList[i].GetComponent<Car>().signal = true;
-                }
-                else
-                {
-                    carList[i].GetComponent<Car>().signal = false;
-                }
-            }
+            // 1번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
+            signalFunc(180);
             temp++;
         }
         else if (temp % 3 == 2)
         {
-            // carList 배열에 속해있는 모든 오브젝트(Collider)에 대하여
-            for (int i = 0; i < carListNum; i++)
-            {
-                // 차량 오브젝트에 대해서만 실행하기 위해서
-                if (!carList[i].CompareTag("SportCar2"))
-                {
-                    continue;
-                }
-
-                // 1번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
-                if (carList[i].GetComponent<Car>().beforeRotation == 180)
-                {
-                    carList[i].GetComponent<Car>().signal = true;
-                }
-                else
-                {
-                    carList[i].GetComponent<Car>().signal = false;
-                }
-            }
+            // 3번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
+            signalFunc(0);
             temp = 0;
         }
     }
@@ -707,7 +468,7 @@ public class RSU : MonoBehaviour
             {
                 case 1: // 1번 도로가 없는 경우
                     // 3번 도로에서 오는 경우
-                    if (car.GetComponent<Car>().beforeRotation == 0)
+                    if (car.GetComponent<Car>().beforeRotation == 0 || car.GetComponent<Car>().beforeRotation == 360)
                     {
                         move = new List<string> { "left", "right" };
                     }
@@ -733,7 +494,7 @@ public class RSU : MonoBehaviour
                         move = new List<string> { "left", "right" };
                     }
                     // 3번 도로에서 오는 경우
-                    else if (car.GetComponent<Car>().beforeRotation == 0)
+                    else if (car.GetComponent<Car>().beforeRotation == 0 || car.GetComponent<Car>().beforeRotation == 360)
                     {
                         move = new List<string> { "straight", "right" };
                     }
@@ -780,7 +541,7 @@ public class RSU : MonoBehaviour
                         move = new List<string> { "straight", "right" };
                     }
                     // 3번 도로에서 오는 경우
-                    else if (car.GetComponent<Car>().beforeRotation == 0)
+                    else if (car.GetComponent<Car>().beforeRotation == 0 || car.GetComponent<Car>().beforeRotation == 360)
                     {
                         move = new List<string> { "straight", "left" };
                     }

@@ -37,7 +37,7 @@ public class Car : MonoBehaviour
     private int speedLimit = 30; // 속도 제한
     private bool isCrossRoad = false;
     
-    public string direction;
+    public string direction = "null";
     public float lRotateFactor; // 사거리에서 좌회전시 회전량 결정 요소
     public float rRotateFactor; // 사거리에서 우회전시 회전량 결정 요소
     private GameObject carBack; // 차량 뒷면 트리거
@@ -49,13 +49,13 @@ public class Car : MonoBehaviour
     private GameObject FR;
     private GameObject SportCar2;
     private GameObject steering_wheel;
-    public bool getDirection; // 자동차가 RSU로부터 방향을 결정 받았는지 여부
+    //public bool getDirection; // 자동차가 RSU로부터 방향을 결정 받았는지 여부
     public int lineNum; // 자동차가 위치한 차선
 
     int CarLayerName;
     int RotateLayerName;
 
-    // 교차로에서 차량에 적용되는 레이어 - 현재 사용X
+    // 교차로에서 차량에 적용되는 레이어 - 디폴트
     void setLayerCar()
     {
         this.gameObject.layer = CarLayerName;
@@ -111,7 +111,7 @@ public class Car : MonoBehaviour
         //    setLayerRotateCar();
         //}
         beforeRotation = transform.eulerAngles.y;
-        getDirection = false;
+        //getDirection = false;
     }
 
     private void Start()
@@ -177,30 +177,32 @@ public class Car : MonoBehaviour
 
     private void OnTriggerEnter(Collider other) 
     {
-        // speed 30 제한 도로에 진입하는 경우
+        // speed 15 제한 도로에 진입하는 경우
         if (other.CompareTag("NarrowRoadEnter"))
+        {
+            BackTriggerSettingBySpeed(15);
+            setLayerCar();
+            //getDirection = false;
+        }
+        // spped 30 제한 도로에 진입하는 경우
+        if (other.CompareTag("WideRoadEnter"))
         {
             BackTriggerSettingBySpeed(30);
             setLayerCar();
-            getDirection = false;
-            Debug.Log(direction);
+            //getDirection = false;
         }
-        // spped 60 제한 도로에 진입하는 경우
-        if (other.CompareTag("WideRoadEnter"))
+        if (other.CompareTag("null"))
         {
-            BackTriggerSettingBySpeed(60);
-            setLayerCar();
-            getDirection = false;
-            Debug.Log(direction);
+            direction = "null";
         }
 
         // carBack과 충돌하는 경우
         if (other.CompareTag("carBack"))
         {
-            current_speed = 0;
+            BackTriggerSettingBySpeed(0);
         }
 
-        if (other.CompareTag("CrossRoadReady"))
+        if (other.CompareTag("CrossRoadReady")) // 이건 왜 필요함?
         {
             BackTriggerSettingBySpeed(init_speed);
         }
@@ -211,7 +213,7 @@ public class Car : MonoBehaviour
             isCrossRoad = true;
             BackTriggerSettingBySpeed(init_speed);
             setLayerRotateCar();
-            getDirection = true;
+            //getDirection = true;
         }
     }
 
@@ -242,15 +244,15 @@ public class Car : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("CrossRoad"))
+        if (other.CompareTag("CrossRoad") || other.CompareTag("Corner"))
         {
-            Debug.Log("교차로 탈출!");
+            //Debug.Log("교차로 탈출!");
             isCrossRoad = false;
         }
 
         if (other.CompareTag("carBack"))
         {
-            current_speed = speedLimit;
+            BackTriggerSettingBySpeed(speedLimit);
         }
     }
 
@@ -260,7 +262,7 @@ public class Car : MonoBehaviour
         if(moveDirection) // 길 건너는 중이면 실행
         {
             //Debug.Log(rotation.y);
-            if (beforeRotation == 0)
+            if (beforeRotation == 0 || beforeRotation == 360)
             {
                 // 좌회전
                 if (direction.Contains("left"))
@@ -380,34 +382,40 @@ public class Car : MonoBehaviour
             current_speed = init_speed;
             speedLimit = init_speed;
         }
-        // 속도가 30인 경우
-        else if (speed_ == 30) 
+        // 속도가 15인 경우
+        else if (speed_ == 15) 
         {
             carBack.transform.localPosition = new Vector3(0, 0, -5f);
             current_speed = speed[0];
             speedLimit = speed[0];
         }
-        // 속도가 60인 경우
-        else if (speed_ == 60)
+        // 속도가 30인 경우
+        else if (speed_ == 30)
         {
             carBack.transform.localPosition = new Vector3(0, 0, -10f);
             current_speed = speed[1];
             speedLimit = speed[1];
 
         }
-        // 그 이외의 경우
-        else
+        else // 속도가 0인 경우
         {
-            if(speedLimit == 30)
-            {
-                carBack.transform.localPosition = new Vector3(0, 0, -5.0f);
-            }
-            else if(speedLimit == 60)
-            {
-                carBack.transform.localPosition = new Vector3(0, 0, -10.0f);
-            }
+            carBack.transform.localPosition = new Vector3(0, 0, -3f);
             current_speed = 0;
-            speedLimit = 0;
+            speedLimit = init_speed;
         }
+        // 그 이외의 경우
+        //else
+        //{
+        //    if(speedLimit == 30)
+        //    {
+        //        carBack.transform.localPosition = new Vector3(0, 0, -5.0f);
+        //    }
+        //    else if(speedLimit == 60)
+        //    {
+        //        carBack.transform.localPosition = new Vector3(0, 0, -10.0f);
+        //    }
+        //    current_speed = 0;
+        //    speedLimit = 0;
+        //}
     }
 }

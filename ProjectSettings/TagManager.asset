@@ -23,6 +23,7 @@ TagManager:
   - RSU_narrow_corner4-1
   - CrossRoadReady
   - null
+  - Q_car
   layers:
   - Default
   - TransparentFX

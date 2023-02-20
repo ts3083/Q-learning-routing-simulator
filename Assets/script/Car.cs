@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class Car : MonoBehaviour
 {
+    public int dest_RSU;        // destination RSU
+    public int demandLevel;     // Demand Level
+    public int safetyLevel;        // Safety Level
+    public int prev_RSU;        // 이전 RSU
+
     // Start is called before the first frame update
     Rigidbody rigid; // 물리기능 추가 - 코드 상에서 rigid를 사용한다고 생각하지만 진짜 존재하는 Rigidbody를 사용하는 것
     [Range(0, 360)]

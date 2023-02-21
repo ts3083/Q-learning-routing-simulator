@@ -5,16 +5,30 @@ using UnityEngine;
 public class Car : MonoBehaviour
 {
     public int dest_RSU;        // destination RSU
+    public int stateIndex;      // Q-table에서 해당 state(destination RSU)의 index
+    public int actionIndex;        // Q-table에서 해당 action(neighbor RSU)의 index
     public int demandLevel;     // Demand Level
     public int safetyLevel;        // Safety Level
+    public int cur_RSU;        // 현재 RSU
     public int prev_RSU;        // 이전 RSU
+
+    public float timer = 0.0f;      // 교차로 사이에 이동 시간 측정
+    private bool timer_on = false;      // 시간 측정 시작 여부
+
+    public float energy = 0.0f;        // 교차로 사이를 이동하는데 필요한 에너지
+
+    private float alpha = 0.1f;     // Q-learning의 learning rate
+    private float gamma = 0.9f;     // Q-learning의 discount factor
+    public float maxQ;        // 선택된 action(neighbor RSU)의 Q 값
+
+    private float[] RSU_Q_table;       // 이전 RSU의 특정 state(destination RSU)에서의 Q-table
 
     // Start is called before the first frame update
     Rigidbody rigid; // 물리기능 추가 - 코드 상에서 rigid를 사용한다고 생각하지만 진짜 존재하는 Rigidbody를 사용하는 것
     [Range(0, 360)]
     
     // 차량 속도 선언 - 10, 15, 20
-    private int[] speed = new int[] { 30, 60 };
+    private int[] speed = new int[] { 15, 30 };
     // 현재 차량의 위치에 따른 속도가 다름 => current speed 변수 선언
     private static int init_speed = 10;
     public int current_speed = init_speed; // 초기 속도 10
@@ -25,7 +39,7 @@ public class Car : MonoBehaviour
     //public List<string> signal_str;
     //int temp = 0;
 
-    public float timer = 0.0f;
+    //public float timer = 0.0f;
     float Passtime;
     int waitingTime = 200;
     public float beforeRotation; // 회전 이전의 rotation
@@ -168,6 +182,12 @@ public class Car : MonoBehaviour
         rotation = this.transform.eulerAngles;
         //Debug.Log(this.rotation.y);
         //Time.timeScale = 0.02f;
+
+        // 시간 측정
+        if (timer_on)
+        {
+            timer += Time.deltaTime;
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -182,13 +202,12 @@ public class Car : MonoBehaviour
 
     private void OnTriggerEnter(Collider other) 
     {
-        // speed 15 제한 도로에 진입하는 경우
+        // speed 15 제한 도로에 진입하는 경우, 시간 측정 시작
         if (other.CompareTag("NarrowRoadEnter"))
         {
-            BackTriggerSettingBySpeed(15);
-            setLayerCar();
-            //getDirection = false;
+            timer_on = true;        // 시간 측정 시작
         }
+
         // spped 30 제한 도로에 진입하는 경우
         if (other.CompareTag("WideRoadEnter"))
         {
@@ -219,6 +238,16 @@ public class Car : MonoBehaviour
             BackTriggerSettingBySpeed(init_speed);
             setLayerRotateCar();
             //getDirection = true;
+        }
+
+        if (other.CompareTag("NarrowRoadExit") && timer_on)
+        {
+            timer_on = false;       // 시간 측정 끝
+
+            // 이전 RSU의 Q-table update
+            UpdateRSU();
+
+            timer = 0.0f;       // 다시 0으로 초기화
         }
     }
 
@@ -258,6 +287,16 @@ public class Car : MonoBehaviour
         if (other.CompareTag("carBack"))
         {
             BackTriggerSettingBySpeed(speedLimit);
+        }
+
+        // speed 15 제한 도로에 진입하는 경우
+        if (other.CompareTag("NarrowRoadEnter"))
+        {
+            BackTriggerSettingBySpeed(15);
+            setLayerCar();
+            prev_RSU = cur_RSU;
+            cur_RSU = 0;
+            //getDirection = false;
         }
     }
 
@@ -422,5 +461,187 @@ public class Car : MonoBehaviour
         //    current_speed = 0;
         //    speedLimit = 0;
         //}
+    }
+
+    // 차량에서 이전 RSU의 Q-table update
+    private void UpdateRSU()
+    {
+        float reward;       // Q-learning의 reward
+        float Wt, We;       // Demand Level에 따른 가중치
+
+        // 에너지 계산
+        CalEnergy();
+
+        GetQ_table();
+
+        for (int i = 0; i < 5; i++)
+        {
+            // Demand Level에 따른 가중치 계산
+            Wt = 1.0f - 0.25f * i;
+            We = 0.25f * i;
+            
+            reward = -(Wt * timer + We * energy);       // Q-learning의 reward 계산
+            RSU_Q_table[i] = (1 - alpha) * RSU_Q_table[i] + alpha * (reward + gamma * maxQ);
+        }
+
+        UpdateQ_table();
+    }
+
+    // 에너지 계산
+    private void CalEnergy()
+    {
+        // Slope Resistance Power
+        float SRP = 0.0f;
+
+        // Air Resistance Power
+        float ARP = 0.0f;
+
+        // Rolling Resistance Power
+        float RRP = 0.0f;
+
+        // Total Energy
+        energy = SRP + ARP + RRP;
+    }
+
+    // update 대상 RSU의 Q-table 가져오기
+    private void GetQ_table()
+    {
+        GameObject RSU = GameObject.Find("RSU" + prev_RSU); 
+
+        switch (prev_RSU)
+        {
+            case 1:
+                break;
+            case 2:
+                RSU_Q_table = new float[5];
+                for(int i = 0; i < 5; i++)
+                {
+                    RSU_Q_table[i] = RSU.GetComponent<RSU2>().Q_table[i, stateIndex, actionIndex];
+                }
+                break;
+            case 3:
+                RSU_Q_table = new float[5];
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU_Q_table[i] = RSU.GetComponent<RSU3>().Q_table[i, stateIndex, actionIndex];
+                }
+                break;
+            case 4:
+                break;
+            case 5:
+                break;
+            case 6:
+                break;
+            case 7:
+                break;
+            case 8:
+                break;
+            case 9:
+                break;
+            case 10:
+                break;
+            case 11:
+                break;
+            case 12:
+                break;
+            case 13:
+                break;
+            case 14:
+                break;
+            case 15:
+                break;
+            case 16:
+                break;
+            case 17:
+                break;
+            case 18:
+                break;
+            case 19:
+                break;
+            case 20:
+                break;
+            case 21:
+                break;
+            case 22:
+                break;
+            case 23:
+                break;
+            case 24:
+                break;
+            case 25:
+                break;
+            default:
+                break;
+        }
+    }
+
+    // update 대상 RSU의 Q-table 가져오기
+    private void UpdateQ_table()
+    {
+        GameObject RSU = GameObject.Find("RSU" + prev_RSU);
+
+        switch (prev_RSU)
+        {
+            case 1:
+                break;
+            case 2:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU.GetComponent<RSU2>().Q_table[i, stateIndex, actionIndex] = RSU_Q_table[i];
+                }
+                break;
+            case 3:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU.GetComponent<RSU3>().Q_table[i, stateIndex, actionIndex] = RSU_Q_table[i];
+                }
+                break;
+            case 4:
+                break;
+            case 5:
+                break;
+            case 6:
+                break;
+            case 7:
+                break;
+            case 8:
+                break;
+            case 9:
+                break;
+            case 10:
+                break;
+            case 11:
+                break;
+            case 12:
+                break;
+            case 13:
+                break;
+            case 14:
+                break;
+            case 15:
+                break;
+            case 16:
+                break;
+            case 17:
+                break;
+            case 18:
+                break;
+            case 19:
+                break;
+            case 20:
+                break;
+            case 21:
+                break;
+            case 22:
+                break;
+            case 23:
+                break;
+            case 24:
+                break;
+            case 25:
+                break;
+            default:
+                break;
+        }
     }
 }

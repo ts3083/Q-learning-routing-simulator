@@ -20,10 +20,10 @@ public class RSU1 : MonoBehaviour
     private float epsilon = 0.3f;       // ϵ-greedy의 epsilon 값
 
     // [state(destination RSU) 수, action(neighbor RUS) 수], Demand Level [time, energy]
-    private float[,,] Q_table = new float[5, stateNum, actionNum];       // Demand Level 1, [100, 0] / Demand Level 2, [75, 25] / Demand Level 3, [50, 50] / Demand Level 4, [25, 75] / Demand Level 5, [0, 100]
+    public float[,,] Q_table = new float[5, stateNum, actionNum];       // Demand Level 1, [100, 0] / Demand Level 2, [75, 25] / Demand Level 3, [50, 50] / Demand Level 4, [25, 75] / Demand Level 5, [0, 100]
 
     // [action(neighbor RSU) 수], 각각의 action의 safety level을 저장
-    public int[] actions_SL = new int[actionNum] {1, 1};
+    private int[] actions_SL = new int[actionNum] {1, 1};
 
     // [action(neightbor RSU) 수], {각각의 action에 대응되는 RSU 번호를 저장}
     private int[] actions_RSU = new int[actionNum] { 2, 6 };

@@ -5,10 +5,12 @@ using UnityEngine;
 public class Car : MonoBehaviour
 {
     public int dest_RSU;        // destination RSU
-    public int stateIndex;      // Q-table에서 해당 state(destination RSU)의 index
-    public int actionIndex;        // Q-table에서 해당 action(neighbor RSU)의 index
     public int demandLevel;     // Demand Level
     public int safetyLevel;        // Safety Level
+
+    public int curActionIndex;        // Q-table에서 해당 action(neighbor RSU)의 index
+    public int prevActionIndex;        // Q-table에서 해당 action(neighbor RSU)의 index
+
     public int cur_RSU;        // 현재 RSU
     public int prev_RSU;        // 이전 RSU
 
@@ -16,12 +18,20 @@ public class Car : MonoBehaviour
     private bool timer_on = false;      // 시간 측정 시작 여부
 
     public float energy = 0.0f;        // 교차로 사이를 이동하는데 필요한 에너지
+    private int m = 1500;       // mass of vehicle(kg)
+    private float g = 9.81f;        // acceleration of gravity(m/s^2)
+    public int theta = 0;      // 현재 선택한 경로의 경사각도
+    private float p = 1.28f;        // mass of air(kg/m^3)
+    private float Cw = 0.35f;       // drag coefficient
+    private float A = 1.8f;     // frontal area of the car(m^2)
+    private float u = 0.005f;       // rolling resistance coefficient
+    private float Nt = 0.1f;       // normalization for time
+    private float Ne = 0.0001f;       // normalization for energy
 
     private float alpha = 0.1f;     // Q-learning의 learning rate
     private float gamma = 0.9f;     // Q-learning의 discount factor
-    public float maxQ;        // 선택된 action(neighbor RSU)의 Q 값
 
-    private float[] RSU_Q_table;       // 이전 RSU의 특정 state(destination RSU)에서의 Q-table
+    private float[] RSU_Q_table = new float[5];       // 이전 RSU의 특정 state(destination RSU)에서의 Q-table
 
     // Start is called before the first frame update
     Rigidbody rigid; // 물리기능 추가 - 코드 상에서 rigid를 사용한다고 생각하지만 진짜 존재하는 Rigidbody를 사용하는 것
@@ -30,8 +40,8 @@ public class Car : MonoBehaviour
     // 차량 속도 선언 - 10, 15, 20
     private int[] speed = new int[] { 15, 30 };
     // 현재 차량의 위치에 따른 속도가 다름 => current speed 변수 선언
-    private static int init_speed = 10;
-    public int current_speed = init_speed; // 초기 속도 10
+    private static int init_speed = 10;     // 초기 속도(m/s)
+    public int current_speed = init_speed;      // 초기 속도 10(m/s)
 
     // 차량 정지 및 직진 신호
     public bool signal;
@@ -203,7 +213,7 @@ public class Car : MonoBehaviour
     private void OnTriggerEnter(Collider other) 
     {
         // speed 15 제한 도로에 진입하는 경우, 시간 측정 시작
-        if (other.CompareTag("NarrowRoadEnter"))
+        if (other.CompareTag("NarrowRoadEnterAngleO") || other.CompareTag("NarrowRoadEnterAngleX"))
         {
             timer_on = true;        // 시간 측정 시작
         }
@@ -289,13 +299,29 @@ public class Car : MonoBehaviour
             BackTriggerSettingBySpeed(speedLimit);
         }
 
-        // speed 15 제한 도로에 진입하는 경우
-        if (other.CompareTag("NarrowRoadEnter"))
+        // speed 15 제한 도로에 진입하는 경우, 경사각 X
+        if (other.CompareTag("NarrowRoadEnterAngleX"))
         {
             BackTriggerSettingBySpeed(15);
             setLayerCar();
+            prevActionIndex = curActionIndex;
+            curActionIndex = -1;
             prev_RSU = cur_RSU;
             cur_RSU = 0;
+            theta = 0;      // 경사각 0
+            //getDirection = false;
+        }
+
+        // speed 15 제한 도로에 진입하는 경우, 경사각 O
+        if (other.CompareTag("NarrowRoadEnterAngleO"))
+        {
+            BackTriggerSettingBySpeed(15);
+            setLayerCar();
+            prevActionIndex = curActionIndex;
+            curActionIndex = -1;
+            prev_RSU = cur_RSU;
+            cur_RSU = 0;
+            theta = 10;     // 경사각 10
             //getDirection = false;
         }
     }
@@ -474,14 +500,16 @@ public class Car : MonoBehaviour
 
         GetQ_table();
 
+        Debug.Log("time: " + timer);
         for (int i = 0; i < 5; i++)
         {
             // Demand Level에 따른 가중치 계산
             Wt = 1.0f - 0.25f * i;
             We = 0.25f * i;
             
-            reward = -(Wt * timer + We * energy);       // Q-learning의 reward 계산
-            RSU_Q_table[i] = (1 - alpha) * RSU_Q_table[i] + alpha * (reward + gamma * maxQ);
+            reward = -(Wt * timer * Nt + We * energy * Ne);       // Q-learning의 reward 계산
+            RSU_Q_table[i] = (1 - alpha) * RSU_Q_table[i] + alpha * (reward + gamma * RSU_Q_table[demandLevel - 1]);
+            Debug.Log(i + ": " + RSU_Q_table[i]);
         }
 
         UpdateQ_table();
@@ -491,16 +519,19 @@ public class Car : MonoBehaviour
     private void CalEnergy()
     {
         // Slope Resistance Power
-        float SRP = 0.0f;
+        float SRP = m * g * current_speed * Mathf.Sin(theta * Mathf.Deg2Rad);
+        Debug.Log("SRP: " + SRP);
 
         // Air Resistance Power
-        float ARP = 0.0f;
+        float ARP = 0.5f * p * Cw * A * Mathf.Pow(current_speed, 3);
+        Debug.Log("ARP: " + ARP);
 
         // Rolling Resistance Power
-        float RRP = 0.0f;
+        float RRP = u * m * g * current_speed;
+        Debug.Log("RRP: " + RRP);
 
         // Total Energy
-        energy = SRP + ARP + RRP;
+        energy = (SRP + ARP + RRP) * timer;
     }
 
     // update 대상 RSU의 Q-table 가져오기
@@ -513,17 +544,15 @@ public class Car : MonoBehaviour
             case 1:
                 break;
             case 2:
-                RSU_Q_table = new float[5];
-                for(int i = 0; i < 5; i++)
+                for (int i = 0; i < 5; i++)
                 {
-                    RSU_Q_table[i] = RSU.GetComponent<RSU2>().Q_table[i, stateIndex, actionIndex];
+                    RSU_Q_table[i] = RSU.GetComponent<RSU2>().Q_table[i, dest_RSU - 1, prevActionIndex];
                 }
                 break;
             case 3:
-                RSU_Q_table = new float[5];
                 for (int i = 0; i < 5; i++)
                 {
-                    RSU_Q_table[i] = RSU.GetComponent<RSU3>().Q_table[i, stateIndex, actionIndex];
+                    RSU_Q_table[i] = RSU.GetComponent<RSU3>().Q_table[i, dest_RSU - 1, prevActionIndex];
                 }
                 break;
             case 4:
@@ -587,13 +616,13 @@ public class Car : MonoBehaviour
             case 2:
                 for (int i = 0; i < 5; i++)
                 {
-                    RSU.GetComponent<RSU2>().Q_table[i, stateIndex, actionIndex] = RSU_Q_table[i];
+                    RSU.GetComponent<RSU2>().Q_table[i, dest_RSU - 1, prevActionIndex] = RSU_Q_table[i];
                 }
                 break;
             case 3:
                 for (int i = 0; i < 5; i++)
                 {
-                    RSU.GetComponent<RSU3>().Q_table[i, stateIndex, actionIndex] = RSU_Q_table[i];
+                    RSU.GetComponent<RSU3>().Q_table[i, dest_RSU - 1, prevActionIndex] = RSU_Q_table[i];
                 }
                 break;
             case 4:

@@ -9,11 +9,10 @@ public class RSU2 : MonoBehaviour
     private Collider[] carList;     // RSU 영향 범위 내의 차량 리스트, 배열 내의 모든 오브젝트가 차량이 아님!
     private int carListNum;     // 차량 리스트 내의 차량 수, 배열 내의 모든 오브젝트가 차량이 아님!
 
-    private const int stateNum = 24;     // state(destination RSU) 수 - 1 [자기 자신 제외]
+    private const int stateNum = 25;     // state(destination RSU) 수
     private const int actionNum = 3;        // action(neighbor RSU) 수
 
     private int dest_RSU;       // destination RSU, 차량이 넘겨주는 정보
-    private int stateIndex;     // Q-table에서 해당 state(destination RSU)의 index
     private int actionIndex;        // Q-table에서 해당 action(neighbor RSU)의 index
     private int demandLevel;     // Demand Level, 차량이 넘겨주는 정보
     private int safetyLevel;        // Safety Level, 차량이 넘겨주는 정보
@@ -31,26 +30,26 @@ public class RSU2 : MonoBehaviour
     // [action(neightbor RSU) 수], {각각의 action에 대응되는 RSU 번호를 저장}
     private int[] actions_RSU = new int[actionNum] { 1, 3, 7 };
 
-    // [state(destination RSU) 수], {각각의 state에 대응되는 RSU 번호를 저장}
-    private int[] state_RSU = new int[stateNum] { 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25 };
-
     // Start is called before the first frame update
     void Start()
     {
-        // Q-table 초기화(float 최솟값)
+        // Q-table 초기화(float 최솟값), 0으로 초기화 시 필요 X
         for (int i = 0; i < 5; i++)
         {
             for (int j = 0; j < stateNum; j++)
             {
+                // state(destination RSU)가 자기 자신인 경우 스킵
+                if(j == 2)
+                {
+                    continue;
+                }
+
                 for (int k = 0; k < actionNum; k++)
                 {
-                    Q_table[i, j, k] = -3;
+                    Q_table[i, j, k] = 0.0f;
                 }
             }
         }
-
-        // Q-table이 업데이트 되는지 테스트
-        InvokeRepeating("printQ_table", 0f, 5f);
     }
 
     // Update is called once per frame
@@ -59,20 +58,6 @@ public class RSU2 : MonoBehaviour
         carList = Physics.OverlapSphere(transform.position, RSU_effectRange);       // RSU_effectRange 범위 내의 모든 오브젝트(Collider)를 가져옴
         carListNum = carList.Length;        // carList 배열의 크기
         ifDistInRange();
-    }
-
-    private void printQ_table()
-    {
-        for (int i = 0; i < 5; i++)
-        {
-            for (int j = 0; j < stateNum; j++)
-            {
-                for (int k = 0; k < actionNum; k++)
-                {
-                    Debug.Log(Q_table[i, j, k]);
-                }
-            }
-        }
     }
 
     // RSU_effectRange 범위 내로 들어온 차량들에게 적용
@@ -101,8 +86,7 @@ public class RSU2 : MonoBehaviour
                     safetyLevel = carList[i].GetComponent<Car>().safetyLevel;
                     prev_RSU = carList[i].GetComponent<Car>().prev_RSU;
                     carList[i].GetComponent<Car>().direction = getNextDirection(getNextAction());
-                    carList[i].GetComponent<Car>().stateIndex = stateIndex;     // 현재 RSU의 Q-table에서 해당 state(destination RSU)의 index를 Car script로 넘겨줌
-                    carList[i].GetComponent<Car>().actionIndex = actionIndex;       // Q-table에서 해당 action(neighbor RSU)의 index를 Car script로 넘겨줌
+                    carList[i].GetComponent<Car>().curActionIndex = actionIndex;       // Q-table에서 해당 action(neighbor RSU)의 index를 Car script로 넘겨줌
                     carList[i].GetComponent<Car>().cur_RSU = 2;        // 현재 RSU 번호로 초기화
                 }
             }
@@ -112,16 +96,6 @@ public class RSU2 : MonoBehaviour
     // ϵ-greedy 방법에 따라 Q-table에서 다음 action(neighbor RSU)을 선택
     private int getNextAction()
     {
-        // 해당 state의 2차원 배열(Q_table)에서의 index를 구함
-        for (int i = 0; i < stateNum; i++)
-        {
-            if (state_RSU[i] == dest_RSU)
-            {
-                stateIndex = i;
-                break;
-            }
-        }
-
         // 해당 action의 index 값 저장
         actionIndex = 0;
 
@@ -149,9 +123,9 @@ public class RSU2 : MonoBehaviour
                     continue;
                 }
 
-                if (maxQ < Q_table[demandLevel - 1, stateIndex, i])
+                if (maxQ < Q_table[demandLevel - 1, dest_RSU - 1, i])
                 {
-                    maxQ = Q_table[demandLevel - 1, stateIndex, i];
+                    maxQ = Q_table[demandLevel - 1, dest_RSU - 1, i];
                     actionIndex = i;
                 }
             }

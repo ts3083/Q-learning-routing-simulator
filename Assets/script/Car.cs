@@ -329,109 +329,90 @@ public class Car : MonoBehaviour
     // 좌회전 & 우회전
     private void drive(string direction)
     {
-        if(moveDirection) // 길 건너는 중이면 실행
+        if (moveDirection) // 길 건너는 중이면 실행
         {
             //Debug.Log(rotation.y);
-            if (beforeRotation == 0 || beforeRotation == 360)
+            if (beforeRotation == 90)
             {
                 // 좌회전
                 if (direction.Contains("left"))
                 {
-                    transform.eulerAngles -= Vector3.up * lRotateFactor;
-                    if (rotation.y >= 180 && rotation.y <= 270)
-                    {
-                        moveDirection = false;
-                        transform.eulerAngles = new Vector3(0, 270, 0);
-                        beforeRotation = 270;
-                    }
+                    leftMove(0);
                 }
                 // 우회전
                 else if (direction.Contains("right"))
                 {
-                    transform.eulerAngles += Vector3.up * rRotateFactor;
-                    if (rotation.y >= 90 && rotation.y <= 180)
-                    {
-                        moveDirection = false;
-                        transform.eulerAngles = new Vector3(0, 90, 0);
-                        beforeRotation = 90;
-                    }
+                    rightMove(180);
                 }
-            }
-            else if (beforeRotation == 270)
+            } else if (beforeRotation == 0 || beforeRotation == 360)
             {
                 // 좌회전
                 if (direction.Contains("left"))
                 {
-                    transform.eulerAngles -= Vector3.up * lRotateFactor;
-                    if (rotation.y >= 90 && rotation.y <= 180)
-                    {
-                        moveDirection = false;
-                        transform.eulerAngles = new Vector3(0, 180, 0);
-                        beforeRotation = 180;
-                    }
+                    leftMove(270);
                 }
                 // 우회전
                 else if (direction.Contains("right"))
                 {
-                    transform.eulerAngles += Vector3.up * rRotateFactor;
-                    if (rotation.y >= 0 && rotation.y <= 90)
-                    {
-                        moveDirection = false;
-                        transform.eulerAngles = new Vector3(0, 0, 0);
-                        beforeRotation = 0;
-                    }
+                    rightMove(90);
                 }
-            }
-            else if (beforeRotation == 180)
+            } else if (beforeRotation == 270)
             {
                 // 좌회전
                 if (direction.Contains("left"))
                 {
-                    transform.eulerAngles -= Vector3.up * lRotateFactor;
-                    if (rotation.y >= 0 && rotation.y <= 90)
-                    {
-                        moveDirection = false;
-                        transform.eulerAngles = new Vector3(0, 90, 0);
-                        beforeRotation = 90;
-                    }
+                    leftMove(180);
                 }
                 // 우회전
                 else if (direction.Contains("right"))
                 {
-                    transform.eulerAngles += Vector3.up * rRotateFactor;
-                    if (rotation.y >= 270 && rotation.y <= 360)
-                    {
-                        moveDirection = false;
-                        transform.eulerAngles = new Vector3(0, 270, 0);
-                        beforeRotation = 270;
-                    }
+                    rightMove(0);
                 }
-            }
-            else if (beforeRotation == 90)
+            } else if (beforeRotation == 180)
             {
                 // 좌회전
                 if (direction.Contains("left"))
                 {
-                    transform.eulerAngles -= Vector3.up * lRotateFactor;
-                    if (rotation.y >= 270 && rotation.y <= 360)
-                    {
-                        moveDirection = false;
-                        transform.eulerAngles = new Vector3(0, 0, 0);
-                        beforeRotation = 0;
-                    }
+                    leftMove(90);
                 }
                 // 우회전
                 else if (direction.Contains("right"))
                 {
-                    transform.eulerAngles += Vector3.up * rRotateFactor;
-                    if (rotation.y >= 180 && rotation.y <= 270)
-                    {
-                        moveDirection = false;
-                        transform.eulerAngles = new Vector3(0, 180, 0);
-                        beforeRotation = 180;
-                    }
+                    rightMove(270);
                 }
             }
+        }
+    }
+
+    private void leftMove(int angle)
+    {
+        step_36();
+        moveDirection = false;
+        transform.eulerAngles = new Vector3(0, angle, 0);
+        beforeRotation = angle;
+    }
+
+    private void rightMove(int angle)
+    {
+        step_12();
+        moveDirection = false;
+        transform.eulerAngles = new Vector3(0, angle, 0);
+        beforeRotation = angle;
+    }
+
+    private void step_36()
+    {
+        for (int i = 0; i < 36 * (current_speed / 10); i++)
+        {
+            transform.position += transform.forward * current_speed * Time.deltaTime;
+        }
+    }
+
+    private void step_12()
+    {
+        for (int i = 0; i < 12 * (current_speed / 10); i++)
+        {
+            this.transform.position += transform.forward * current_speed * Time.deltaTime;
         }
     }
 

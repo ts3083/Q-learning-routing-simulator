@@ -46,7 +46,7 @@ public class RSU3 : MonoBehaviour
 
                 for (int k = 0; k < actionNum; k++)
                 {
-                    Q_table[i, j, k] = 0.0f;
+                    Q_table[i, j, k] = -10.0f;
                 }
             }
         }

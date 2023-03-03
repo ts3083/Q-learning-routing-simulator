@@ -25,8 +25,8 @@ public class Car : MonoBehaviour
     private float Cw = 0.35f;       // drag coefficient
     private float A = 1.8f;     // frontal area of the car(m^2)
     private float u = 0.005f;       // rolling resistance coefficient
-    private float Nt = 0.1f;       // normalization for time
-    private float Ne = 0.0001f;       // normalization for energy
+    private int Nt = 10;       // normalization for time
+    private int Ne = 10000;       // normalization for energy
 
     private float alpha = 0.1f;     // Q-learning의 learning rate
     private float gamma = 0.9f;     // Q-learning의 discount factor
@@ -420,6 +420,16 @@ public class Car : MonoBehaviour
                         beforeRotation = 0;
                     }
                 }
+                // 왼쪽(반시계) 방향으로 45º 회전
+                else if (direction.Contains("left45"))
+                {
+                    
+                }
+                // 왼쪽(반시계) 방향으로 135º 회전
+                else if (direction.Contains("left135"))
+                {
+                    
+                }
                 // 우회전
                 else if (direction.Contains("right"))
                 {
@@ -430,6 +440,16 @@ public class Car : MonoBehaviour
                         transform.eulerAngles = new Vector3(0, 180, 0);
                         beforeRotation = 180;
                     }
+                }
+                // 오른쪽(시계) 방향으로 45º 회전
+                else if (direction.Contains("right45"))
+                {
+                    
+                }
+                // 오른쪽(시계) 방향으로 135º 회전
+                else if (direction.Contains("right135"))
+                {
+                    
                 }
             }
         }
@@ -507,7 +527,7 @@ public class Car : MonoBehaviour
             Wt = 1.0f - 0.25f * i;
             We = 0.25f * i;
             
-            reward = -(Wt * timer * Nt + We * energy * Ne);       // Q-learning의 reward 계산
+            reward = -(Wt * timer / Nt + We * energy / Ne);       // Q-learning의 reward 계산
             RSU_Q_table[i] = (1 - alpha) * RSU_Q_table[i] + alpha * (reward + gamma * RSU_Q_table[demandLevel - 1]);
             Debug.Log(i + ": " + RSU_Q_table[i]);
         }

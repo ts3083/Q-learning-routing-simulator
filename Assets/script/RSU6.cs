@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RSU2 : MonoBehaviour
+public class RSU6 : MonoBehaviour
 {
     private float RSU_effectRange = 20f;        // RSU 영향 범위
 
@@ -10,7 +10,7 @@ public class RSU2 : MonoBehaviour
     private int carListNum;     // 차량 리스트 내의 차량 수, 배열 내의 모든 오브젝트가 차량이 아님!
 
     private const int stateNum = 25;     // state(destination RSU) 수
-    private const int actionNum = 3;        // action(neighbor RSU) 수
+    private const int actionNum = 4;        // action(neighbor RSU) 수
 
     private int dest_RSU;       // destination RSU, 차량이 넘겨주는 정보
     private int actionIndex;        // Q-table에서 해당 action(neighbor RSU)의 index
@@ -25,21 +25,21 @@ public class RSU2 : MonoBehaviour
     public float[,,] Q_table = new float[5, stateNum, actionNum];       // Demand Level 1, [100, 0] / Demand Level 2, [75, 25] / Demand Level 3, [50, 50] / Demand Level 4, [25, 75] / Demand Level 5, [0, 100]
 
     // [action(neighbor RSU) 수], 각각의 action의 safety level을 저장
-    private int[] actions_SL = new int[actionNum] { 1, 1, 1 };
+    private int[] actions_SL = new int[actionNum] { 1, 1, 1, 1 };
 
     // [action(neightbor RSU) 수], {각각의 action에 대응되는 RSU 번호를 저장}
-    private int[] actions_RSU = new int[actionNum] { 1, 3, 7 };
+    private int[] actions_RSU = new int[actionNum] { 1, 6, 11, 12 };
 
     // Start is called before the first frame update
     void Start()
     {
-        // Q-table 초기화(float 최솟값), 0으로 초기화 시 필요 X
+        // Q-table 초기화(float 최솟값)
         for (int i = 0; i < 5; i++)
         {
             for (int j = 0; j < stateNum; j++)
             {
                 // state(destination RSU)가 자기 자신인 경우 스킵, 0으로 초기화 시 필요 X, RSU마다 수정 필요!
-                if(j == 2)
+                if (j == 6)
                 {
                     continue;
                 }
@@ -72,8 +72,8 @@ public class RSU2 : MonoBehaviour
                 continue;
             }
 
-            // 차량 오브젝트의 state(destination) RSU가 현재 RSU인 경우
-            if (carList[i].GetComponent<Car>().dest_RSU == 2)
+            // 차량 오브젝트의 state(destination) RSU가 현재 RSU인 경우, 각각의 RSU에서 수정
+            if (carList[i].GetComponent<Car>().dest_RSU == 6)
             {
 
             }
@@ -86,8 +86,8 @@ public class RSU2 : MonoBehaviour
                     safetyLevel = carList[i].GetComponent<Car>().safetyLevel;
                     prev_RSU = carList[i].GetComponent<Car>().prev_RSU;
                     carList[i].GetComponent<Car>().direction = getNextDirection(getNextAction());
-                    carList[i].GetComponent<Car>().curActionIndex = actionIndex;       // Q-table에서 해당 action(neighbor RSU)의 index를 Car script로 넘겨줌
-                    carList[i].GetComponent<Car>().cur_RSU = 2;        // 현재 RSU 번호로 초기화
+                    carList[i].GetComponent<Car>().curActionIndex = actionIndex;
+                    carList[i].GetComponent<Car>().cur_RSU = 6;        // 현재 RSU 번호로 초기화
                 }
             }
         }
@@ -97,7 +97,7 @@ public class RSU2 : MonoBehaviour
     private int getNextAction()
     {
         // 해당 action의 index 값 저장
-        actionIndex = 0;
+        int actionIndex = 0;
 
         // 다음 action(neighbor RSU)이 목적지인 경우
         for (int i = 0; i < actionNum; i++)
@@ -118,6 +118,7 @@ public class RSU2 : MonoBehaviour
                 actionIndex = Random.Range(0, actionNum);
             }
             while (actions_RSU[actionIndex] == prev_RSU);
+
         }
         // 그 이외의 경우(1 - ϵ 확률로 가장 큰 Q 값을 가지고 있는 action을 선택)
         else
@@ -147,28 +148,47 @@ public class RSU2 : MonoBehaviour
     // 이전 RSU에 따라 getNextAction() 함수에서 반환되는 다음 RSU로 가기 위한 direction을 반환, 각각의 RSU에서 수정 필요
     private string getNextDirection(int RSU_num)
     {
-        // 차량이 RSU 1에서 온 경우
-        if(prev_RSU == 1)
+        // 차량이 RSU 11에서 온 경우
+        if (prev_RSU == 11)
         {
             switch (RSU_num)
             {
-                case 3:
+                case 1:
                     return "straight";
+                case 12:
+                    return "left135";       // 왼쪽(반시계) 방향으로 135º 회전
                 case 7:
                     return "left";
                 default:
                     return "null";
             }
         }
-        // 차량이 RSU 3에서 온 경우
-        else if(prev_RSU == 3)
+        // 차량이 RSU 1에서 온 경우
+        else if (prev_RSU == 1)
         {
             switch (RSU_num)
             {
-                case 1:
+                case 11:
                     return "straight";
+                case 12:
+                    return "right45";       // 오른쪽(시계) 방향으로 45º 회전
                 case 7:
                     return "right";
+                default:
+                    return "null";
+            }
+        }
+        // 차량이 RSU 12에서 온 경우
+        else if (prev_RSU == 12)
+        {
+            switch (RSU_num)
+            {
+                case 11:
+                    return "right135";      // 오른쪽(시계) 방향으로 135º 회전
+                case 1:
+                    return "left45";        // 왼쪽(반시계) 방향으로 45º 회전
+                case 7:
+                    return "left135";       // 왼쪽(반시계) 방향으로 135º 회전
                 default:
                     return "null";
             }
@@ -178,10 +198,12 @@ public class RSU2 : MonoBehaviour
         {
             switch (RSU_num)
             {
-                case 1:
+                case 11:
                     return "right";
-                case 3:
+                case 1:
                     return "left";
+                case 12:
+                    return "right135";      // 오른쪽(시계) 방향으로 135º 회전
                 default:
                     return "null";
             }

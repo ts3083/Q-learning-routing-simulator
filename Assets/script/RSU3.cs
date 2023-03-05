@@ -38,7 +38,7 @@ public class RSU3 : MonoBehaviour
         {
             for (int j = 0; j < stateNum; j++)
             {
-                // state(destination RSU)가 자기 자신인 경우 스킵, 0으로 초기화 시 필요 X
+                // state(destination RSU)가 자기 자신인 경우 스킵, 0으로 초기화 시 필요 X, RSU마다 수정 필요!
                 if (j == 3)
                 {
                     continue;
@@ -46,7 +46,7 @@ public class RSU3 : MonoBehaviour
 
                 for (int k = 0; k < actionNum; k++)
                 {
-                    Q_table[i, j, k] = 0.0f;
+                    Q_table[i, j, k] = -10.0f;
                 }
             }
         }
@@ -98,6 +98,16 @@ public class RSU3 : MonoBehaviour
     {
         // 해당 action의 index 값 저장
         int actionIndex = 0;
+
+        // 다음 action(neighbor RSU)이 목적지인 경우
+        for (int i = 0; i < actionNum; i++)
+        {
+            if (dest_RSU == actions_RSU[i])
+            {
+                actionIndex = i;
+                return actions_RSU[actionIndex];
+            }
+        }
 
         // ϵ 확률로 무작위 action(negibor RSU)을 선택
         if (Random.Range(0, Mathf.Pow(10, epsilonDecimalPointNum)) < epsilon * Mathf.Pow(10, epsilonDecimalPointNum))

@@ -199,7 +199,7 @@ public class RSU8 : MonoBehaviour
                     return "null";
             }
         }
-        else if (prev_RSU == 12)
+        else if (prev_RSU == 13)
         {
             switch (RSU_num)
             {

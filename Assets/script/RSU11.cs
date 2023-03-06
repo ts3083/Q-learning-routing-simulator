@@ -1,10 +1,10 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RSU10 : MonoBehaviour
+public class RSU11 : MonoBehaviour
 {
-    private int current_RSU = 10;
+    private int current_RSU = 11;
     private float RSU_effectRange = 20f;        // RSU 영향 범위
 
     private Collider[] carList;     // RSU 영향 범위 내의 차량 리스트, 배열 내의 모든 오브젝트가 차량이 아님!
@@ -29,8 +29,7 @@ public class RSU10 : MonoBehaviour
     private int[] actions_SL = new int[actionNum] { 1, 1, 1 };
 
     // [action(neightbor RSU) 수], {각각의 action에 대응되는 RSU 번호를 저장}
-    private int[] actions_RSU = new int[actionNum] { 5, 9, 15 };
-
+    private int[] actions_RSU = new int[actionNum] { 6, 12, 16 };
     // Start is called before the first frame update
     void Start()
     {
@@ -148,40 +147,37 @@ public class RSU10 : MonoBehaviour
     // 이전 RSU에 따라 getNextAction() 함수에서 반환되는 다음 RSU로 가기 위한 direction을 반환, 각각의 RSU에서 수정 필요
     private string getNextDirection(int RSU_num)
     {
-        // 차량이 RSU 5에서 온 경우
-        if (prev_RSU == 5)
+        if (prev_RSU == 6)
         {
             switch (RSU_num)
             {
-                case 15:
+                case 16:
                     return "straight";
-                case 9:
-                    return "left";
-                default:
-                    return "null";
-            }
-        }
-        // 차량이 RSU 15에서 온 경우
-        else if (prev_RSU == 15)
-        {
-            switch (RSU_num)
-            {
-                case 5:
-                    return "straight";
-                case 9:
+                case 12:
                     return "right";
                 default:
                     return "null";
             }
         }
-        // 그 이외의 경우(차량이 RSU 9에서 온 경우)
+        else if (prev_RSU == 12)
+        {
+            switch (RSU_num)
+            {
+                case 6:
+                    return "left";
+                case 16:
+                    return "right";
+                default:
+                    return "null";
+            }
+        }
         else
         {
             switch (RSU_num)
             {
-                case 5:
-                    return "right";
-                case 15:
+                case 6:
+                    return "straight";
+                case 12:
                     return "left";
                 default:
                     return "null";

@@ -28,7 +28,7 @@ public class RSU6 : MonoBehaviour
     private int[] actions_SL = new int[actionNum] { 1, 1, 1, 1 };
 
     // [action(neightbor RSU) 수], {각각의 action에 대응되는 RSU 번호를 저장}
-    private int[] actions_RSU = new int[actionNum] { 1, 6, 11, 12 };
+    private int[] actions_RSU = new int[actionNum] { 1, 7, 11, 12 };
 
     // Start is called before the first frame update
     void Start()

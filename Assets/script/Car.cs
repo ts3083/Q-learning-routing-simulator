@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Car : MonoBehaviour
 {
-    public bool isStart = true;        // 출발지 여부 저장
+    public bool isStart = false;        // 출발지 여부 저장
     public bool isEnd = false;     // 도착지 여부 저장
 
     public int dest_RSU;        // destination RSU

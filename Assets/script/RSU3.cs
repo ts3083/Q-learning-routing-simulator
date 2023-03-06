@@ -9,7 +9,7 @@ public class RSU3 : MonoBehaviour
     private Collider[] carList;     // RSU 영향 범위 내의 차량 리스트, 배열 내의 모든 오브젝트가 차량이 아님!
     private int carListNum;     // 차량 리스트 내의 차량 수, 배열 내의 모든 오브젝트가 차량이 아님!
 
-    private const int stateNum = 25;     // state(destination RSU) 수 - 1 [자기 자신 제외]
+    private const int stateNum = 25;     // state(destination RSU) 수
     private const int actionNum = 3;        // action(neighbor RSU) 수
 
     private int dest_RSU;       // destination RSU, 차량이 넘겨주는 정보
@@ -38,7 +38,7 @@ public class RSU3 : MonoBehaviour
         {
             for (int j = 0; j < stateNum; j++)
             {
-                // state(destination RSU)가 자기 자신인 경우 스킵, 0으로 초기화 시 필요 X
+                // state(destination RSU)가 자기 자신인 경우 스킵, 0으로 초기화 시 필요 X, RSU마다 수정 필요!
                 if (j == 3)
                 {
                     continue;
@@ -98,6 +98,16 @@ public class RSU3 : MonoBehaviour
     {
         // 해당 action의 index 값 저장
         int actionIndex = 0;
+
+        // 다음 action(neighbor RSU)이 목적지인 경우
+        for (int i = 0; i < actionNum; i++)
+        {
+            if (dest_RSU == actions_RSU[i])
+            {
+                actionIndex = i;
+                return actions_RSU[actionIndex];
+            }
+        }
 
         // ϵ 확률로 무작위 action(negibor RSU)을 선택
         if (Random.Range(0, Mathf.Pow(10, epsilonDecimalPointNum)) < epsilon * Mathf.Pow(10, epsilonDecimalPointNum))

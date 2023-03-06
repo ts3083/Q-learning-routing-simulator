@@ -25,8 +25,8 @@ public class Car : MonoBehaviour
     private float Cw = 0.35f;       // drag coefficient
     private float A = 1.8f;     // frontal area of the car(m^2)
     private float u = 0.005f;       // rolling resistance coefficient
-    private float Nt = 0.1f;       // normalization for time
-    private float Ne = 0.0001f;       // normalization for energy
+    private int Nt = 10;       // normalization for time
+    private int Ne = 10000;       // normalization for energy
 
     private float alpha = 0.1f;     // Q-learning의 learning rate
     private float gamma = 0.9f;     // Q-learning의 discount factor
@@ -36,7 +36,7 @@ public class Car : MonoBehaviour
     // Start is called before the first frame update
     Rigidbody rigid; // 물리기능 추가 - 코드 상에서 rigid를 사용한다고 생각하지만 진짜 존재하는 Rigidbody를 사용하는 것
     [Range(0, 360)]
-    
+
     // 차량 속도 선언 - 10, 15, 20
     private int[] speed = new int[] { 15, 30 };
     // 현재 차량의 위치에 따른 속도가 다름 => current speed 변수 선언
@@ -65,7 +65,7 @@ public class Car : MonoBehaviour
     private List<GameObject> carList; // scene에 존재하는 차량(SportsCar2) 저장, test
     private int speedLimit = 30; // 속도 제한
     private bool isCrossRoad = false;
-    
+
     public string direction = "null";
     public float lRotateFactor; // 사거리에서 좌회전시 회전량 결정 요소
     public float rRotateFactor; // 사거리에서 우회전시 회전량 결정 요소
@@ -210,7 +210,7 @@ public class Car : MonoBehaviour
         //}
     }
 
-    private void OnTriggerEnter(Collider other) 
+    private void OnTriggerEnter(Collider other)
     {
         // speed 15 제한 도로에 진입하는 경우, 시간 측정 시작
         if (other.CompareTag("NarrowRoadEnterAngleO") || other.CompareTag("NarrowRoadEnterAngleX"))
@@ -240,7 +240,7 @@ public class Car : MonoBehaviour
         {
             BackTriggerSettingBySpeed(init_speed);
         }
-        
+
         if (other.CompareTag("CrossRoad") || other.CompareTag("Corner"))
         {
             moveDirection = true;
@@ -344,7 +344,8 @@ public class Car : MonoBehaviour
                 {
                     rightMove(180);
                 }
-            } else if (beforeRotation == 0 || beforeRotation == 360)
+            }
+            else if (beforeRotation == 0 || beforeRotation == 360)
             {
                 // 좌회전
                 if (direction.Contains("left"))
@@ -356,7 +357,8 @@ public class Car : MonoBehaviour
                 {
                     rightMove(90);
                 }
-            } else if (beforeRotation == 270)
+            }
+            else if (beforeRotation == 270)
             {
                 // 좌회전
                 if (direction.Contains("left"))
@@ -368,17 +370,38 @@ public class Car : MonoBehaviour
                 {
                     rightMove(0);
                 }
-            } else if (beforeRotation == 180)
+            }
+            else if (beforeRotation == 180)
             {
                 // 좌회전
                 if (direction.Contains("left"))
                 {
                     leftMove(90);
                 }
+                // 왼쪽(반시계) 방향으로 45º 회전
+                else if (direction.Contains("left45"))
+                {
+
+                }
+                // 왼쪽(반시계) 방향으로 135º 회전
+                else if (direction.Contains("left135"))
+                {
+
+                }
                 // 우회전
                 else if (direction.Contains("right"))
                 {
                     rightMove(270);
+                }
+                // 오른쪽(시계) 방향으로 45º 회전
+                else if (direction.Contains("right45"))
+                {
+
+                }
+                // 오른쪽(시계) 방향으로 135º 회전
+                else if (direction.Contains("right135"))
+                {
+
                 }
             }
         }
@@ -434,7 +457,7 @@ public class Car : MonoBehaviour
             speedLimit = init_speed;
         }
         // 속도가 15인 경우
-        else if (speed_ == 15) 
+        else if (speed_ == 15)
         {
             carBack.transform.localPosition = new Vector3(0, 0, -5f);
             current_speed = speed[0];
@@ -487,8 +510,8 @@ public class Car : MonoBehaviour
             // Demand Level에 따른 가중치 계산
             Wt = 1.0f - 0.25f * i;
             We = 0.25f * i;
-            
-            reward = -(Wt * timer * Nt + We * energy * Ne);       // Q-learning의 reward 계산
+
+            reward = -(Wt * timer / Nt + We * energy / Ne);       // Q-learning의 reward 계산
             RSU_Q_table[i] = (1 - alpha) * RSU_Q_table[i] + alpha * (reward + gamma * RSU_Q_table[demandLevel - 1]);
             Debug.Log(i + ": " + RSU_Q_table[i]);
         }
@@ -518,7 +541,7 @@ public class Car : MonoBehaviour
     // update 대상 RSU의 Q-table 가져오기
     private void GetQ_table()
     {
-        GameObject RSU = GameObject.Find("RSU" + prev_RSU); 
+        GameObject RSU = GameObject.Find("RSU" + prev_RSU);
 
         switch (prev_RSU)
         {
@@ -607,48 +630,136 @@ public class Car : MonoBehaviour
                 }
                 break;
             case 4:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU.GetComponent<RSU4>().Q_table[i, dest_RSU - 1, prevActionIndex] = RSU_Q_table[i];
+                }
                 break;
             case 5:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU.GetComponent<RSU5>().Q_table[i, dest_RSU - 1, prevActionIndex] = RSU_Q_table[i];
+                }
                 break;
             case 6:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU.GetComponent<RSU6>().Q_table[i, dest_RSU - 1, prevActionIndex] = RSU_Q_table[i];
+                }
                 break;
             case 7:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU.GetComponent<RSU7>().Q_table[i, dest_RSU - 1, prevActionIndex] = RSU_Q_table[i];
+                }
                 break;
             case 8:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU.GetComponent<RSU8>().Q_table[i, dest_RSU - 1, prevActionIndex] = RSU_Q_table[i];
+                }
                 break;
             case 9:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU.GetComponent<RSU9>().Q_table[i, dest_RSU - 1, prevActionIndex] = RSU_Q_table[i];
+                }
                 break;
             case 10:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU.GetComponent<RSU10>().Q_table[i, dest_RSU - 1, prevActionIndex] = RSU_Q_table[i];
+                }
                 break;
             case 11:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU.GetComponent<RSU11>().Q_table[i, dest_RSU - 1, prevActionIndex] = RSU_Q_table[i];
+                }
                 break;
             case 12:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU.GetComponent<RSU12>().Q_table[i, dest_RSU - 1, prevActionIndex] = RSU_Q_table[i];
+                }
                 break;
             case 13:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU.GetComponent<RSU13>().Q_table[i, dest_RSU - 1, prevActionIndex] = RSU_Q_table[i];
+                }
                 break;
             case 14:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU.GetComponent<RSU14>().Q_table[i, dest_RSU - 1, prevActionIndex] = RSU_Q_table[i];
+                }
                 break;
             case 15:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU.GetComponent<RSU15>().Q_table[i, dest_RSU - 1, prevActionIndex] = RSU_Q_table[i];
+                }
                 break;
             case 16:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU.GetComponent<RSU16>().Q_table[i, dest_RSU - 1, prevActionIndex] = RSU_Q_table[i];
+                }
                 break;
             case 17:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU.GetComponent<RSU17>().Q_table[i, dest_RSU - 1, prevActionIndex] = RSU_Q_table[i];
+                }
                 break;
             case 18:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU.GetComponent<RSU18>().Q_table[i, dest_RSU - 1, prevActionIndex] = RSU_Q_table[i];
+                }
                 break;
             case 19:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU.GetComponent<RSU19>().Q_table[i, dest_RSU - 1, prevActionIndex] = RSU_Q_table[i];
+                }
                 break;
             case 20:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU.GetComponent<RSU20>().Q_table[i, dest_RSU - 1, prevActionIndex] = RSU_Q_table[i];
+                }
                 break;
             case 21:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU.GetComponent<RSU21>().Q_table[i, dest_RSU - 1, prevActionIndex] = RSU_Q_table[i];
+                }
                 break;
             case 22:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU.GetComponent<RSU22>().Q_table[i, dest_RSU - 1, prevActionIndex] = RSU_Q_table[i];
+                }
                 break;
             case 23:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU.GetComponent<RSU23>().Q_table[i, dest_RSU - 1, prevActionIndex] = RSU_Q_table[i];
+                }
                 break;
             case 24:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU.GetComponent<RSU24>().Q_table[i, dest_RSU - 1, prevActionIndex] = RSU_Q_table[i];
+                }
                 break;
             case 25:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU.GetComponent<RSU25>().Q_table[i, dest_RSU - 1, prevActionIndex] = RSU_Q_table[i];
+                }
                 break;
             default:
                 break;

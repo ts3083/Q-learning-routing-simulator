@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class RSU6 : MonoBehaviour
 {
+    private int current_RSU = 6;        // 현재 RSU
     private float RSU_effectRange = 20f;        // RSU 영향 범위
 
     private Collider[] carList;     // RSU 영향 범위 내의 차량 리스트, 배열 내의 모든 오브젝트가 차량이 아님!
@@ -39,7 +40,7 @@ public class RSU6 : MonoBehaviour
             for (int j = 0; j < stateNum; j++)
             {
                 // state(destination RSU)가 자기 자신인 경우 스킵, 0으로 초기화 시 필요 X, RSU마다 수정 필요!
-                if (j == 6)
+                if (j == current_RSU)
                 {
                     continue;
                 }
@@ -73,7 +74,7 @@ public class RSU6 : MonoBehaviour
             }
 
             // 차량 오브젝트의 state(destination) RSU가 현재 RSU인 경우, 각각의 RSU에서 수정
-            if (carList[i].GetComponent<Car>().dest_RSU == 6)
+            if (carList[i].GetComponent<Car>().dest_RSU == current_RSU)
             {
 
             }
@@ -87,7 +88,7 @@ public class RSU6 : MonoBehaviour
                     prev_RSU = carList[i].GetComponent<Car>().prev_RSU;
                     carList[i].GetComponent<Car>().direction = getNextDirection(getNextAction());
                     carList[i].GetComponent<Car>().curActionIndex = actionIndex;
-                    carList[i].GetComponent<Car>().cur_RSU = 6;        // 현재 RSU 번호로 초기화
+                    carList[i].GetComponent<Car>().cur_RSU = current_RSU;        // 현재 RSU 번호로 초기화
                 }
             }
         }
@@ -98,16 +99,6 @@ public class RSU6 : MonoBehaviour
     {
         // 해당 action의 index 값 저장
         int actionIndex = 0;
-
-        // 다음 action(neighbor RSU)이 목적지인 경우
-        for (int i = 0; i < actionNum; i++)
-        {
-            if (dest_RSU == actions_RSU[i])
-            {
-                actionIndex = i;
-                return actions_RSU[actionIndex];
-            }
-        }
 
         // ϵ 확률로 무작위 action(negibor RSU)을 선택
         if (Random.Range(0, Mathf.Pow(10, epsilonDecimalPointNum)) < epsilon * Mathf.Pow(10, epsilonDecimalPointNum))

@@ -67,6 +67,7 @@ public class Car : MonoBehaviour
     private bool isCrossRoad = false;
 
     public string direction = "null";
+    public Vector3 position;
     public float lRotateFactor; // 사거리에서 좌회전시 회전량 결정 요소
     public float rRotateFactor; // 사거리에서 우회전시 회전량 결정 요소
     private GameObject carBack; // 차량 뒷면 트리거
@@ -222,7 +223,7 @@ public class Car : MonoBehaviour
         if (other.CompareTag("WideRoadEnter"))
         {
             BackTriggerSettingBySpeed(30);
-            setLayerCar();
+            //setLayerCar();
             //getDirection = false;
         }
         if (other.CompareTag("null"))
@@ -243,11 +244,17 @@ public class Car : MonoBehaviour
 
         if (other.CompareTag("CrossRoad") || other.CompareTag("Corner"))
         {
-            moveDirection = true;
-            isCrossRoad = true;
-            BackTriggerSettingBySpeed(init_speed);
-            setLayerRotateCar();
+            //moveDirection = true;
+            //isCrossRoad = true;
+            //BackTriggerSettingBySpeed(init_speed);
+            //setLayerRotateCar();
             //getDirection = true;
+            // 이동방향에 따른 좌표를 받아옴
+            transform.position = position;
+            if (direction.Contains("left") || direction.Contains("right"))
+            {
+                new_drive(direction);
+            }
         }
 
         if (other.CompareTag("NarrowRoadExit") && timer_on)
@@ -276,23 +283,23 @@ public class Car : MonoBehaviour
             }
         }
 
-        if (other.CompareTag("CrossRoad") || other.CompareTag("Corner"))
-        {
-            //BackTriggerSettingBySpeed(init_speed);
-            if (direction.Contains("left") || direction.Contains("right"))
-            {
-                drive(direction);
-            }
-        }
+        //if (other.CompareTag("CrossRoad") || other.CompareTag("Corner"))
+        //{
+        //    //BackTriggerSettingBySpeed(init_speed);
+        //    if (direction.Contains("left") || direction.Contains("right"))
+        //    {
+        //        drive(direction);
+        //    }
+        //}
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("CrossRoad") || other.CompareTag("Corner"))
-        {
-            //Debug.Log("교차로 탈출!");
-            isCrossRoad = false;
-        }
+        //if (other.CompareTag("CrossRoad") || other.CompareTag("Corner"))
+        //{
+        //    //Debug.Log("교차로 탈출!");
+        //    isCrossRoad = false;
+        //}
 
         if (other.CompareTag("carBack"))
         {
@@ -303,7 +310,7 @@ public class Car : MonoBehaviour
         if (other.CompareTag("NarrowRoadEnterAngleX"))
         {
             BackTriggerSettingBySpeed(15);
-            setLayerCar();
+            //setLayerCar();
             prevActionIndex = curActionIndex;
             curActionIndex = -1;
             prev_RSU = cur_RSU;
@@ -316,7 +323,7 @@ public class Car : MonoBehaviour
         if (other.CompareTag("NarrowRoadEnterAngleO"))
         {
             BackTriggerSettingBySpeed(15);
-            setLayerCar();
+            //setLayerCar();
             prevActionIndex = curActionIndex;
             curActionIndex = -1;
             prev_RSU = cur_RSU;
@@ -326,13 +333,9 @@ public class Car : MonoBehaviour
         }
     }
 
-    // 좌회전 & 우회전
-    private void drive(string direction)
+    private void new_drive(string direction)
     {
-        if (moveDirection) // 길 건너는 중이면 실행
-        {
-            //Debug.Log(rotation.y);
-            if (beforeRotation == 90)
+        if (beforeRotation == 90)
             {
                 // 좌회전
                 if (direction.Contains("left"))
@@ -404,21 +407,103 @@ public class Car : MonoBehaviour
 
                 }
             }
+    }
+
+    // 좌회전 & 우회전
+    private void drive(string direction)
+    {
+        if (moveDirection) // 길 건너는 중이면 실행
+        {
+            //Debug.Log(rotation.y);
+            if (beforeRotation == 90)
+            {
+                // 좌회전
+                if (direction.Contains("left"))
+                {
+                    Debug.Log("90 -> 0");
+                    leftMove(0);
+                }
+                // 우회전
+                else if (direction.Contains("right"))
+                {
+                    rightMove(180);
+                }
+            }
+            else if (beforeRotation == 0 || beforeRotation == 360)
+            {
+                // 좌회전
+                if (direction.Contains("left"))
+                {
+                    Debug.Log("0 -> 270");
+                    leftMove(270);
+                }
+                // 우회전
+                else if (direction.Contains("right"))
+                {
+                    rightMove(90);
+                }
+            }
+            else if (beforeRotation == 270)
+            {
+                // 좌회전
+                if (direction.Contains("left"))
+                {
+                    leftMove(180);
+                }
+                // 우회전
+                else if (direction.Contains("right"))
+                {
+                    rightMove(0);
+                }
+            }
+            else if (beforeRotation == 180)
+            {
+                // 좌회전
+                if (direction.Contains("left"))
+                {
+                    leftMove(90);
+                }
+                // 왼쪽(반시계) 방향으로 45º 회전
+                else if (direction.Contains("left45"))
+                {
+
+                }
+                // 왼쪽(반시계) 방향으로 135º 회전
+                else if (direction.Contains("left135"))
+                {
+
+                }
+                // 우회전
+                else if (direction.Contains("right"))
+                {
+                    rightMove(270);
+                }
+                // 오른쪽(시계) 방향으로 45º 회전
+                else if (direction.Contains("right45"))
+                {
+
+                }
+                // 오른쪽(시계) 방향으로 135º 회전
+                else if (direction.Contains("right135"))
+                {
+
+                }
+            }
         }
     }
 
     private void leftMove(int angle)
     {
-        step_36();
-        moveDirection = false;
+        //step_36();
+        //moveDirection = false;
         transform.eulerAngles = new Vector3(0, angle, 0);
         beforeRotation = angle;
     }
 
     private void rightMove(int angle)
     {
-        step_12();
-        moveDirection = false;
+        //step_12();
+        //moveDirection = false;
         transform.eulerAngles = new Vector3(0, angle, 0);
         beforeRotation = angle;
     }

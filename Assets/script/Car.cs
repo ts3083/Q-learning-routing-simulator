@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Car : MonoBehaviour
 {
+    public bool isStart = true;        // 출발지 여부 저장
+    public bool isEnd = false;     // 도착지 여부 저장
+
     public int dest_RSU;        // destination RSU
     public int demandLevel;     // Demand Level
     public int safetyLevel;        // Safety Level
@@ -14,9 +17,11 @@ public class Car : MonoBehaviour
     public int cur_RSU;        // 현재 RSU
     public int prev_RSU;        // 이전 RSU
 
+    public float totalTime = 0.0f;      // 차량이 출발지에서 목적지까지 총 소요된 시간
     public float timer = 0.0f;      // 교차로 사이에 이동 시간 측정
     private bool timer_on = false;      // 시간 측정 시작 여부
 
+    public float totalEnergy = 0.0f;        // 차량이 출발지에서 목적지까지 총 소모된 에너지
     public float energy = 0.0f;        // 교차로 사이를 이동하는데 필요한 에너지
     private int m = 1500;       // mass of vehicle(kg)
     private float g = 9.81f;        // acceleration of gravity(m/s^2)
@@ -228,6 +233,11 @@ public class Car : MonoBehaviour
         }
         if (other.CompareTag("null"))
         {
+            // 출발지에서 출발하여 null trigger를 지나는 경우
+            if(isStart)
+            {
+                isStart = false;
+            }
             direction = "null";
         }
 
@@ -264,7 +274,21 @@ public class Car : MonoBehaviour
             // 이전 RSU의 Q-table update
             UpdateRSU();
 
+            // 차량이 교차로를 이동할 때 걸린 시간과 필요한 에너지를 합계에 포함
+            totalTime += timer;
+            totalEnergy += energy;
+
             timer = 0.0f;       // 다시 0으로 초기화
+            energy = 0.0f;      // 다시 0으로 초기화
+
+            // 목적지에 도착한 경우
+            if (isEnd)
+            {
+                Debug.Log(this.gameObject.name + "의 총 시간: " + totalTime);
+                Debug.Log(this.gameObject.name + "의 총 에너지: " + totalEnergy);
+                totalTime = 0.0f;
+                totalEnergy = 0.0f;
+            }
         }
     }
 
@@ -598,7 +622,6 @@ public class Car : MonoBehaviour
 
             reward = -(Wt * timer / Nt + We * energy / Ne);       // Q-learning의 reward 계산
             RSU_Q_table[i] = (1 - alpha) * RSU_Q_table[i] + alpha * (reward + gamma * RSU_Q_table[demandLevel - 1]);
-            Debug.Log(i + ": " + RSU_Q_table[i]);
         }
 
         UpdateQ_table();
@@ -645,48 +668,136 @@ public class Car : MonoBehaviour
                 }
                 break;
             case 4:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU_Q_table[i] = RSU.GetComponent<RSU4>().Q_table[i, dest_RSU - 1, prevActionIndex];
+                }
                 break;
             case 5:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU_Q_table[i] = RSU.GetComponent<RSU5>().Q_table[i, dest_RSU - 1, prevActionIndex];
+                }
                 break;
             case 6:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU_Q_table[i] = RSU.GetComponent<RSU6>().Q_table[i, dest_RSU - 1, prevActionIndex];
+                }
                 break;
             case 7:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU_Q_table[i] = RSU.GetComponent<RSU7>().Q_table[i, dest_RSU - 1, prevActionIndex];
+                }
                 break;
             case 8:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU_Q_table[i] = RSU.GetComponent<RSU8>().Q_table[i, dest_RSU - 1, prevActionIndex];
+                }
                 break;
             case 9:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU_Q_table[i] = RSU.GetComponent<RSU9>().Q_table[i, dest_RSU - 1, prevActionIndex];
+                }
                 break;
             case 10:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU_Q_table[i] = RSU.GetComponent<RSU10>().Q_table[i, dest_RSU - 1, prevActionIndex];
+                }
                 break;
             case 11:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU_Q_table[i] = RSU.GetComponent<RSU11>().Q_table[i, dest_RSU - 1, prevActionIndex];
+                }
                 break;
             case 12:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU_Q_table[i] = RSU.GetComponent<RSU12>().Q_table[i, dest_RSU - 1, prevActionIndex];
+                }
                 break;
             case 13:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU_Q_table[i] = RSU.GetComponent<RSU13>().Q_table[i, dest_RSU - 1, prevActionIndex];
+                }
                 break;
             case 14:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU_Q_table[i] = RSU.GetComponent<RSU14>().Q_table[i, dest_RSU - 1, prevActionIndex];
+                }
                 break;
             case 15:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU_Q_table[i] = RSU.GetComponent<RSU15>().Q_table[i, dest_RSU - 1, prevActionIndex];
+                }
                 break;
             case 16:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU_Q_table[i] = RSU.GetComponent<RSU16>().Q_table[i, dest_RSU - 1, prevActionIndex];
+                }
                 break;
             case 17:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU_Q_table[i] = RSU.GetComponent<RSU17>().Q_table[i, dest_RSU - 1, prevActionIndex];
+                }
                 break;
             case 18:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU_Q_table[i] = RSU.GetComponent<RSU18>().Q_table[i, dest_RSU - 1, prevActionIndex];
+                }
                 break;
             case 19:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU_Q_table[i] = RSU.GetComponent<RSU19>().Q_table[i, dest_RSU - 1, prevActionIndex];
+                }
                 break;
             case 20:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU_Q_table[i] = RSU.GetComponent<RSU20>().Q_table[i, dest_RSU - 1, prevActionIndex];
+                }
                 break;
             case 21:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU_Q_table[i] = RSU.GetComponent<RSU21>().Q_table[i, dest_RSU - 1, prevActionIndex];
+                }
                 break;
             case 22:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU_Q_table[i] = RSU.GetComponent<RSU22>().Q_table[i, dest_RSU - 1, prevActionIndex];
+                }
                 break;
             case 23:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU_Q_table[i] = RSU.GetComponent<RSU23>().Q_table[i, dest_RSU - 1, prevActionIndex];
+                }
                 break;
             case 24:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU_Q_table[i] = RSU.GetComponent<RSU24>().Q_table[i, dest_RSU - 1, prevActionIndex];
+                }
                 break;
             case 25:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU_Q_table[i] = RSU.GetComponent<RSU25>().Q_table[i, dest_RSU - 1, prevActionIndex];
+                }
                 break;
             default:
                 break;

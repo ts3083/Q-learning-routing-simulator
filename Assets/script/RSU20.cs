@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class RSU20 : MonoBehaviour
 {
-    private int current_RSU = 20;
+    private int current_RSU = 20;       // 현재 RSU
     private float RSU_effectRange = 20f;        // RSU 영향 범위
 
     private Collider[] carList;     // RSU 영향 범위 내의 차량 리스트, 배열 내의 모든 오브젝트가 차량이 아님!
@@ -98,16 +98,6 @@ public class RSU20 : MonoBehaviour
     {
         // 해당 action의 index 값 저장
         actionIndex = 0;
-
-        // 다음 action(neighbor RSU)이 목적지인 경우
-        for (int i = 0; i < actionNum; i++)
-        {
-            if (dest_RSU == actions_RSU[i])
-            {
-                actionIndex = i;
-                return actions_RSU[actionIndex];
-            }
-        }
 
         // ϵ 확률로 무작위 action(negibor RSU)을 선택
         if (Random.Range(0, Mathf.Pow(10, epsilonDecimalPointNum)) < epsilon * Mathf.Pow(10, epsilonDecimalPointNum))

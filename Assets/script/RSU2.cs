@@ -18,6 +18,7 @@ public class RSU2 : MonoBehaviour
     private int demandLevel;     // Demand Level, 차량이 넘겨주는 정보
     private int safetyLevel;        // Safety Level, 차량이 넘겨주는 정보
     private int prev_RSU;       // 이전 RSU
+    private int next_action;
 
     private float epsilon = 0.3f;       // ϵ-greedy의 epsilon 값
     private int epsilonDecimalPointNum = 1;     // ϵ(epsilon) 소수점 자리수
@@ -86,7 +87,9 @@ public class RSU2 : MonoBehaviour
                     demandLevel = carList[i].GetComponent<Car>().demandLevel;
                     safetyLevel = carList[i].GetComponent<Car>().safetyLevel;
                     prev_RSU = carList[i].GetComponent<Car>().prev_RSU;
-                    carList[i].GetComponent<Car>().direction = getNextDirection(getNextAction());
+                    next_action = getNextAction();
+                    carList[i].GetComponent<Car>().direction = getNextDirection(next_action);
+                    carList[i].GetComponent<Car>().position = getPosition(next_action);
                     carList[i].GetComponent<Car>().curActionIndex = actionIndex;       // Q-table에서 해당 action(neighbor RSU)의 index를 Car script로 넘겨줌
                     carList[i].GetComponent<Car>().cur_RSU = current_RSU;        // 현재 RSU 번호로 초기화
                 }
@@ -151,8 +154,8 @@ public class RSU2 : MonoBehaviour
                     return "null";
             }
         }
-        // 차량이 RSU 3에서 온 경우
-        else if(prev_RSU == 3)
+        //차량이 RSU 3에서 온 경우
+        else if (prev_RSU == 3)
         {
             switch (RSU_num)
             {
@@ -175,6 +178,49 @@ public class RSU2 : MonoBehaviour
                     return "left";
                 default:
                     return "null";
+            }
+        }
+    }
+
+    private Vector3 getPosition(int RSU_num)
+    {
+        // 차량이 RSU 1에서 온 경우
+        if (prev_RSU == 1)
+        {
+            switch (RSU_num)
+            {
+                case 3:
+                    return new Vector3(7.87f, 0.427f, -316.25f);
+                case 7:
+                    return new Vector3(1.25f, 0.427f, -308.5f);
+                default:
+                    return new Vector3(7.87f, 0.427f, -316.25f);
+            }
+        }
+        ////차량이 RSU 3에서 온 경우
+        //else if (prev_RSU == 3)
+        //{
+        //    switch (RSU_num)
+        //    {
+        //        case 1:
+        //            return "straight";
+        //        case 7:
+        //            return "right";
+        //        default:
+        //            return "null";
+        //    }
+        //}
+        // 그 이외의 경우(차량이 RSU 7에서 온 경우)
+        else
+        {
+            switch (RSU_num)
+            {
+                case 1:
+                    return new Vector3(0, 0, 0);
+                case 3:
+                    return new Vector3(0, 0, 0);
+                default:
+                    return new Vector3(0, 0, 0);
             }
         }
     }

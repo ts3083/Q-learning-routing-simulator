@@ -1,17 +1,17 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RSU10 : MonoBehaviour
+public class RSU12 : MonoBehaviour
 {
-    private int current_RSU = 10;
+    private int current_RSU = 12;
     private float RSU_effectRange = 20f;        // RSU 영향 범위
 
     private Collider[] carList;     // RSU 영향 범위 내의 차량 리스트, 배열 내의 모든 오브젝트가 차량이 아님!
     private int carListNum;     // 차량 리스트 내의 차량 수, 배열 내의 모든 오브젝트가 차량이 아님!
 
     private const int stateNum = 25;     // state(destination RSU) 수
-    private const int actionNum = 3;        // action(neighbor RSU) 수
+    private const int actionNum = 5;        // action(neighbor RSU) 수
 
     private int dest_RSU;       // destination RSU, 차량이 넘겨주는 정보
     private int actionIndex;        // Q-table에서 해당 action(neighbor RSU)의 index
@@ -26,11 +26,10 @@ public class RSU10 : MonoBehaviour
     public float[,,] Q_table = new float[5, stateNum, actionNum];       // Demand Level 1, [100, 0] / Demand Level 2, [75, 25] / Demand Level 3, [50, 50] / Demand Level 4, [25, 75] / Demand Level 5, [0, 100]
 
     // [action(neighbor RSU) 수], 각각의 action의 safety level을 저장
-    private int[] actions_SL = new int[actionNum] { 1, 1, 1 };
+    private int[] actions_SL = new int[actionNum] { 1, 1, 1, 1, 1 };
 
     // [action(neightbor RSU) 수], {각각의 action에 대응되는 RSU 번호를 저장}
-    private int[] actions_RSU = new int[actionNum] { 5, 9, 15 };
-
+    private int[] actions_RSU = new int[actionNum] { 7, 13, 17, 11, 6 };
     // Start is called before the first frame update
     void Start()
     {
@@ -148,41 +147,82 @@ public class RSU10 : MonoBehaviour
     // 이전 RSU에 따라 getNextAction() 함수에서 반환되는 다음 RSU로 가기 위한 direction을 반환, 각각의 RSU에서 수정 필요
     private string getNextDirection(int RSU_num)
     {
-        // 차량이 RSU 5에서 온 경우
-        if (prev_RSU == 5)
+        if (prev_RSU == 7)
         {
             switch (RSU_num)
             {
-                case 15:
+                case 17:
                     return "straight";
-                case 9:
+                case 6:
+                    return "left135";       // 왼쪽(반시계) 방향으로 135º 회전
+                case 11:
                     return "left";
-                default:
-                    return "null";
-            }
-        }
-        // 차량이 RSU 15에서 온 경우
-        else if (prev_RSU == 15)
-        {
-            switch (RSU_num)
-            {
-                case 5:
-                    return "straight";
-                case 9:
+                case 13:
                     return "right";
                 default:
                     return "null";
             }
         }
-        // 그 이외의 경우(차량이 RSU 9에서 온 경우)
+        else if (prev_RSU == 17)
+        {
+            switch (RSU_num)
+            {
+                case 7:
+                    return "straight";
+                case 13:
+                    return "left";
+                case 6:
+                    return "right45";       // 오른쪽(시계) 방향으로 45º 회전
+                case 11:
+                    return "right";
+                default:
+                    return "null";
+            }
+        }
+        else if (prev_RSU == 6)
+        {
+            switch (RSU_num)
+            {
+                case 7:
+                    return "right135";      // 오른쪽(시계) 방향으로 135º 회전
+                case 17:
+                    return "left45";        // 왼쪽(반시계) 방향으로 45º 회전
+                case 11:
+                    return "left135";       // 왼쪽(반시계) 방향으로 135º 회전
+                case 13:
+                    return "right45";       // 오른쪽(시계) 방향으로 45º 회전
+                default:
+                    return "null";
+            }
+        }
+        else if (prev_RSU == 13)
+        {
+            switch (RSU_num)
+            {
+                case 11:
+                    return "straight";
+                case 7:
+                    return "left";
+                case 6:
+                    return "left45";        // 왼쪽(반시계) 방향으로 45º 회전
+                case 17:
+                    return "right";
+                default:
+                    return "null";
+            }
+        }
         else
         {
             switch (RSU_num)
             {
-                case 5:
-                    return "right";
-                case 15:
+                case 13:
+                    return "straight";
+                case 17:
                     return "left";
+                case 7:
+                    return "right";
+                case 6:
+                    return "right135";      // 오른쪽(시계) 방향으로 135º 회전
                 default:
                     return "null";
             }

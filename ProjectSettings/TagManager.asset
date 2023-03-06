@@ -22,6 +22,12 @@ TagManager:
   - RSU_narrow_corner3-4
   - RSU_narrow_corner4-1
   - CrossRoadReady
+  - null
+  - Q_car
+  - NarrowRoadEnterAngleO
+  - NarrowRoadEnterAngleX
+  - WideRoadEnterAngleO
+  - WideRoadEnterAngleX
   layers:
   - Default
   - TransparentFX

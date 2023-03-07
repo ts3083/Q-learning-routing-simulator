@@ -261,9 +261,11 @@ public class Car : MonoBehaviour
             //getDirection = true;
             // 이동방향에 따른 좌표를 받아옴
             transform.position = position;
+            Debug.Log(this.gameObject.name + "position 변경");
             if (direction.Contains("left") || direction.Contains("right"))
             {
-                new_drive(direction);
+                Debug.Log(beforeRotation);
+                new_drive(direction); 
             }
         }
 
@@ -386,6 +388,7 @@ public class Car : MonoBehaviour
             else if (direction.Equals("right135"))
             {
                 rightMove(225);
+                Debug.Log(90);
             }
         }
         else if (beforeRotation == 0 || beforeRotation == 360)
@@ -402,6 +405,7 @@ public class Car : MonoBehaviour
             else if (direction.Equals("left135"))
             {
                 leftMove(225);
+                Debug.Log(0);
             }
             // 우회전
             else if (direction.Equals("right"))
@@ -427,6 +431,7 @@ public class Car : MonoBehaviour
             else if (direction.Equals("left45"))
             {
                 leftMove(225);
+                Debug.Log(270);
             }
             else if (direction.Equals("left135"))
             {
@@ -469,10 +474,131 @@ public class Car : MonoBehaviour
             else if (direction.Equals("right45"))
             {
                 rightMove(225);
+                Debug.Log(180);
             }
             else if (direction.Equals("right135"))
             {
                 rightMove(315);
+            }
+        }
+        else if (beforeRotation == 45)
+        {
+            // 좌회전
+            if (direction.Equals("left"))
+            {
+                leftMove(315);
+            }
+            else if (direction.Equals("left45"))
+            {
+                leftMove(0);
+            }
+            else if (direction.Equals("left135"))
+            {
+                leftMove(270);
+            }
+            // 우회전
+            else if (direction.Equals("right"))
+            {
+                rightMove(135);
+            }
+            else if (direction.Equals("right45"))
+            {
+                rightMove(90);
+            }
+            else if (direction.Equals("right135"))
+            {
+                rightMove(180);
+            }
+        }
+        else if (beforeRotation == 315)
+        {
+            // 좌회전
+            if (direction.Equals("left"))
+            {
+                leftMove(225);
+                Debug.Log(315);
+            }
+            else if (direction.Equals("left45"))
+            {
+                leftMove(270);
+            }
+            else if (direction.Equals("left135"))
+            {
+                leftMove(180);
+            }
+            // 우회전
+            else if (direction.Equals("right"))
+            {
+                rightMove(45);
+            }
+            else if (direction.Equals("right45"))
+            {
+                rightMove(0);
+            }
+            else if (direction.Equals("right135"))
+            {
+                rightMove(90);
+            }
+        }
+        else if (beforeRotation == 225)
+        {
+            Debug.Log(transform.eulerAngles);
+            // 좌회전
+            if (direction.Equals("left"))
+            {
+                leftMove(135);
+            }
+            else if (direction.Equals("left45"))
+            {
+                leftMove(180);
+                Debug.Log(transform.eulerAngles);
+            }
+            else if (direction.Equals("left135"))
+            {
+                leftMove(90);
+            }
+            // 우회전
+            else if (direction.Equals("right"))
+            {
+                rightMove(315);
+            }
+            else if (direction.Equals("right45"))
+            {
+                rightMove(270);
+            }
+            else if (direction.Equals("right135"))
+            {
+                rightMove(0);
+            }
+        }
+        else if (beforeRotation == 135)
+        {
+            // 좌회전
+            if (direction.Equals("left"))
+            {
+                leftMove(45);
+            }
+            else if (direction.Equals("left45"))
+            {
+                leftMove(90);
+            }
+            else if (direction.Equals("left135"))
+            {
+                leftMove(0);
+            }
+            // 우회전
+            else if (direction.Equals("right"))
+            {
+                rightMove(225);
+                Debug.Log(135);
+            }
+            else if (direction.Equals("right45"))
+            {
+                rightMove(180);
+            }
+            else if (direction.Equals("right135"))
+            {
+                rightMove(270);
             }
         }
     }

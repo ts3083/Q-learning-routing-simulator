@@ -18,7 +18,7 @@ public class RSU2 : MonoBehaviour
     private int demandLevel;     // Demand Level, 차량이 넘겨주는 정보
     private int safetyLevel;        // Safety Level, 차량이 넘겨주는 정보
     private int prev_RSU;       // 이전 RSU
-    private int next_action;
+    private int next_action;        // 선택한 다음 action(neighbor RSU)
 
     private float epsilon = 0.3f;       // ϵ-greedy의 epsilon 값
     private int epsilonDecimalPointNum = 1;     // ϵ(epsilon) 소수점 자리수

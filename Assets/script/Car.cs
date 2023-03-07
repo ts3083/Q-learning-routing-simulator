@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Car : MonoBehaviour
 {
-    public bool isStart = true;        // 출발지 여부 저장
+    public bool isStart = false;        // 출발지 여부 저장
     public bool isEnd = false;     // 도착지 여부 저장
 
     public int dest_RSU;        // destination RSU
@@ -608,12 +608,14 @@ public class Car : MonoBehaviour
         float reward;       // Q-learning의 reward
         float Wt, We;       // Demand Level에 따른 가중치
 
+        Debug.Log("(" + this.gameObject.name + ") time: " + timer);
+
         // 에너지 계산
         CalEnergy();
+        Debug.Log("(" + this.gameObject.name + ") energy: " + energy);
 
         GetQ_table();
 
-        Debug.Log("time: " + timer);
         for (int i = 0; i < 5; i++)
         {
             // Demand Level에 따른 가중치 계산
@@ -632,15 +634,15 @@ public class Car : MonoBehaviour
     {
         // Slope Resistance Power
         float SRP = m * g * current_speed * Mathf.Sin(theta * Mathf.Deg2Rad);
-        Debug.Log("SRP: " + SRP);
+        //Debug.Log("(" + this.gameObject.name + ") SRP: " + SRP);
 
         // Air Resistance Power
         float ARP = 0.5f * p * Cw * A * Mathf.Pow(current_speed, 3);
-        Debug.Log("ARP: " + ARP);
+        //Debug.Log("(" + this.gameObject.name + ") ARP: " + ARP);
 
         // Rolling Resistance Power
         float RRP = u * m * g * current_speed;
-        Debug.Log("RRP: " + RRP);
+        //Debug.Log("(" + this.gameObject.name + ") RRP: " + RRP);
 
         // Total Energy
         energy = (SRP + ARP + RRP) * timer;

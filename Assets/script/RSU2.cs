@@ -18,7 +18,7 @@ public class RSU2 : MonoBehaviour
     private int demandLevel;     // Demand Level, 차량이 넘겨주는 정보
     private int safetyLevel;        // Safety Level, 차량이 넘겨주는 정보
     private int prev_RSU;       // 이전 RSU
-    private int next_action;
+    private int next_RSU; // 다음 RSU
 
     private float epsilon = 0.3f;       // ϵ-greedy의 epsilon 값
     private int epsilonDecimalPointNum = 1;     // ϵ(epsilon) 소수점 자리수
@@ -87,9 +87,9 @@ public class RSU2 : MonoBehaviour
                     demandLevel = carList[i].GetComponent<Car>().demandLevel;
                     safetyLevel = carList[i].GetComponent<Car>().safetyLevel;
                     prev_RSU = carList[i].GetComponent<Car>().prev_RSU;
-                    next_action = getNextAction();
-                    carList[i].GetComponent<Car>().direction = getNextDirection(next_action);
-                    carList[i].GetComponent<Car>().position = getPosition(next_action);
+                    next_RSU = getNextAction();
+                    carList[i].GetComponent<Car>().direction = getNextDirection(next_RSU);
+                    carList[i].GetComponent<Car>().position = getPosition(next_RSU);
                     carList[i].GetComponent<Car>().curActionIndex = actionIndex;       // Q-table에서 해당 action(neighbor RSU)의 index를 Car script로 넘겨줌
                     carList[i].GetComponent<Car>().cur_RSU = current_RSU;        // 현재 RSU 번호로 초기화
                 }

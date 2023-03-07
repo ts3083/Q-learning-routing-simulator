@@ -57,12 +57,8 @@ public class Car : MonoBehaviour
     //public float timer = 0.0f;
     float Passtime;
     int waitingTime = 200;
-    public float beforeRotation; // 회전 이전의 rotation
+    public int beforeRotation; // 회전 이전의 rotation
     private Vector3 rotation;
-    public int way = 4;
-    public int turn = 3;
-    public int rsu_row = 5;
-    public int rsu_col = 5;
     Vector3 startPosition, startRotation;
     public string[][] driveSelect;
     public string[][] rsuSelect;
@@ -145,7 +141,7 @@ public class Car : MonoBehaviour
         //{
         //    setLayerRotateCar();
         //}
-        beforeRotation = transform.eulerAngles.y;
+        beforeRotation = (int)transform.eulerAngles.y;
         //getDirection = false;
     }
 
@@ -261,10 +257,8 @@ public class Car : MonoBehaviour
             //getDirection = true;
             // 이동방향에 따른 좌표를 받아옴
             transform.position = position;
-            Debug.Log(this.gameObject.name + "position 변경");
             if (direction.Contains("left") || direction.Contains("right"))
             {
-                Debug.Log(beforeRotation);
                 new_drive(direction); 
             }
         }
@@ -361,7 +355,65 @@ public class Car : MonoBehaviour
 
     private void new_drive(string direction)
     {
-        if (beforeRotation == 90)
+        if (beforeRotation >= 355 || beforeRotation <= 5)
+        {
+            // 좌회전
+            if (direction.Equals("left"))
+            {
+                leftMove(270);
+            }
+            else if (direction.Equals("left45"))
+            {
+                leftMove(315);
+            }
+            else if (direction.Equals("left135"))
+            {
+                leftMove(225);
+            }
+            // 우회전
+            else if (direction.Equals("right"))
+            {
+                rightMove(90);
+            }
+            else if (direction.Equals("right45"))
+            {
+                rightMove(45);
+            }
+            else if (direction.Equals("right135"))
+            {
+                rightMove(135);
+            }
+        }
+        else if (beforeRotation >= 40 && beforeRotation <= 50)
+        {
+            // 좌회전
+            if (direction.Equals("left"))
+            {
+                leftMove(315);
+            }
+            else if (direction.Equals("left45"))
+            {
+                leftMove(0);
+            }
+            else if (direction.Equals("left135"))
+            {
+                leftMove(270);
+            }
+            // 우회전
+            else if (direction.Equals("right"))
+            {
+                rightMove(135);
+            }
+            else if (direction.Equals("right45"))
+            {
+                rightMove(90);
+            }
+            else if (direction.Equals("right135"))
+            {
+                rightMove(180);
+            }
+        }
+        else if (beforeRotation >= 85 && beforeRotation <= 95)
         {
             // 좌회전
             if (direction.Equals("left"))
@@ -391,67 +443,36 @@ public class Car : MonoBehaviour
                 Debug.Log(90);
             }
         }
-        else if (beforeRotation == 0 || beforeRotation == 360)
+        else if (beforeRotation >= 130 && beforeRotation <= 140)
         {
             // 좌회전
             if (direction.Equals("left"))
             {
-                leftMove(270);
+                leftMove(45);
             }
             else if (direction.Equals("left45"))
             {
-                leftMove(315);
+                leftMove(90);
             }
             else if (direction.Equals("left135"))
             {
-                leftMove(225);
-                Debug.Log(0);
+                leftMove(0);
             }
             // 우회전
             else if (direction.Equals("right"))
             {
-                rightMove(90);
+                rightMove(225);
             }
             else if (direction.Equals("right45"))
             {
-                rightMove(45);
+                rightMove(180);
             }
             else if (direction.Equals("right135"))
             {
-                rightMove(135);
+                rightMove(270);
             }
         }
-        else if (beforeRotation == 270)
-        {
-            // 좌회전
-            if (direction.Equals("left"))
-            {
-                leftMove(180);
-            }
-            else if (direction.Equals("left45"))
-            {
-                leftMove(225);
-                Debug.Log(270);
-            }
-            else if (direction.Equals("left135"))
-            {
-                leftMove(135);
-            }
-            // 우회전
-            else if (direction.Equals("right"))
-            {
-                rightMove(0);
-            }
-            else if (direction.Equals("right45"))
-            {
-                rightMove(315);
-            }
-            else if (direction.Equals("right135"))
-            {
-                rightMove(45);
-            }
-        }
-        else if (beforeRotation == 180)
+        else if (beforeRotation >= 175 && beforeRotation <= 185)
         {
             // 좌회전
             if (direction.Equals("left"))
@@ -474,49 +495,76 @@ public class Car : MonoBehaviour
             else if (direction.Equals("right45"))
             {
                 rightMove(225);
-                Debug.Log(180);
             }
             else if (direction.Equals("right135"))
             {
                 rightMove(315);
             }
         }
-        else if (beforeRotation == 45)
+        else if (beforeRotation >= 220 && beforeRotation <= 230)
         {
             // 좌회전
             if (direction.Equals("left"))
             {
-                leftMove(315);
+                leftMove(135);
             }
             else if (direction.Equals("left45"))
             {
-                leftMove(0);
+                leftMove(180);
             }
             else if (direction.Equals("left135"))
             {
-                leftMove(270);
+                leftMove(90);
             }
             // 우회전
             else if (direction.Equals("right"))
             {
-                rightMove(135);
+                rightMove(315);
             }
             else if (direction.Equals("right45"))
             {
-                rightMove(90);
+                rightMove(270);
             }
             else if (direction.Equals("right135"))
             {
-                rightMove(180);
+                rightMove(0);
             }
         }
-        else if (beforeRotation == 315)
+        else if (beforeRotation >= 265 && beforeRotation <= 275)
+        {
+            // 좌회전
+            if (direction.Equals("left"))
+            {
+                leftMove(180);
+            }
+            else if (direction.Equals("left45"))
+            {
+                leftMove(225);
+            }
+            else if (direction.Equals("left135"))
+            {
+                leftMove(135);
+            }
+            // 우회전
+            else if (direction.Equals("right"))
+            {
+                rightMove(0);
+            }
+            else if (direction.Equals("right45"))
+            {
+                rightMove(315);
+            }
+            else if (direction.Equals("right135"))
+            {
+                rightMove(45);
+            }
+        }
+        else if (beforeRotation >= 310 && beforeRotation <= 320)
         {
             // 좌회전
             if (direction.Equals("left"))
             {
                 leftMove(225);
-                Debug.Log(315);
             }
             else if (direction.Equals("left45"))
             {
@@ -540,66 +588,9 @@ public class Car : MonoBehaviour
                 rightMove(90);
             }
         }
-        else if (beforeRotation == 225)
+        else
         {
-            Debug.Log(transform.eulerAngles);
-            // 좌회전
-            if (direction.Equals("left"))
-            {
-                leftMove(135);
-            }
-            else if (direction.Equals("left45"))
-            {
-                leftMove(180);
-                Debug.Log(transform.eulerAngles);
-            }
-            else if (direction.Equals("left135"))
-            {
-                leftMove(90);
-            }
-            // 우회전
-            else if (direction.Equals("right"))
-            {
-                rightMove(315);
-            }
-            else if (direction.Equals("right45"))
-            {
-                rightMove(270);
-            }
-            else if (direction.Equals("right135"))
-            {
-                rightMove(0);
-            }
-        }
-        else if (beforeRotation == 135)
-        {
-            // 좌회전
-            if (direction.Equals("left"))
-            {
-                leftMove(45);
-            }
-            else if (direction.Equals("left45"))
-            {
-                leftMove(90);
-            }
-            else if (direction.Equals("left135"))
-            {
-                leftMove(0);
-            }
-            // 우회전
-            else if (direction.Equals("right"))
-            {
-                rightMove(225);
-                Debug.Log(135);
-            }
-            else if (direction.Equals("right45"))
-            {
-                rightMove(180);
-            }
-            else if (direction.Equals("right135"))
-            {
-                rightMove(270);
-            }
+            Debug.Log("아무것도 실행 안됨!");
         }
     }
 

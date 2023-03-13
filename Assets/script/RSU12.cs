@@ -19,7 +19,7 @@ public class RSU12 : MonoBehaviour
     private int safetyLevel;        // Safety Level, 차량이 넘겨주는 정보
     private int prev_RSU;       // 이전 RSU
 
-    private float epsilon = 0.3f;       // ϵ-greedy의 epsilon 값
+    private float epsilon = 0.0f;       // ϵ-greedy의 epsilon 값
     private int epsilonDecimalPointNum = 1;     // ϵ(epsilon) 소수점 자리수
 
     // [state(destination RSU) 수, action(neighbor RUS) 수], Demand Level [time, energy]
@@ -50,6 +50,8 @@ public class RSU12 : MonoBehaviour
                 }
             }
         }
+
+        Q_table[0, 12, 1] = -8.0f;      // 경로 지정을 위한 초기화(Test)
     }
 
     // Update is called once per frame

@@ -40,7 +40,7 @@ public class RSU6 : MonoBehaviour
     private Vector3[] forward_RSU7 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(-303.39f, 0.427f, -6.25f), new Vector3(-303.39f, 0.427f, -8.44f) };
 
     // RSU12방향 좌표 저장
-    private Vector3[] forward_RSU12 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(-305.71f, 0.427f, 6.78f), new Vector3(-303.62f, 0.427f, 4.69f) };
+    private Vector3[] forward_RSU12 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(-301.63f, 0.427f, 10.86f), new Vector3(-299.42f, 0.427f, 8.65f) };
 
     // RSU11방향 좌표 저장
     private Vector3[] forward_RSU11 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(-318.82f, 0.427f, 12.03f), new Vector3(-316.6f, 0.427f, 12.03f) };

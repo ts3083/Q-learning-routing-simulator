@@ -51,6 +51,8 @@ public class RSU1 : MonoBehaviour
                 }
             }
         }
+
+        Q_table[0, 12, 1] = -8.0f;      // 경로 지정을 위한 초기화(Test)
     }
 
     // Update is called once per frame
@@ -68,7 +70,7 @@ public class RSU1 : MonoBehaviour
         for (int i = 0; i < carListNum; i++)
         {
             // 차량 오브젝트에 대해서만 실행
-            if (!carList[i].CompareTag("Q_car") || carList[i].GetComponent<Car>().isStart)
+            if (!carList[i].CompareTag("Q_car"))
             {
                 continue;
             }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Car : MonoBehaviour
 {
-    public bool isStart = false;        // 출발지 여부 저장
+    //public bool isStart = true;        // 출발지 여부 저장
     public bool isEnd = false;     // 도착지 여부 저장
 
     public int dest_RSU;        // destination RSU
@@ -43,7 +43,7 @@ public class Car : MonoBehaviour
     [Range(0, 360)]
 
     // 차량 속도 선언 - 10, 15, 20
-    private int[] speed = new int[] { 15, 30 };
+    private int[] speed = new int[] { 15, 20 };
     // 현재 차량의 위치에 따른 속도가 다름 => current speed 변수 선언
     private static int init_speed = 10;     // 초기 속도(m/s)
     public int current_speed = init_speed;      // 초기 속도 10(m/s)
@@ -215,25 +215,18 @@ public class Car : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         // speed 15 제한 도로에 진입하는 경우, 시간 측정 시작
-        if (other.CompareTag("NarrowRoadEnterAngleO") || other.CompareTag("NarrowRoadEnterAngleX"))
+        if (other.CompareTag("NarrowRoadEnterAngleO") || other.CompareTag("NarrowRoadEnterAngleX") || other.CompareTag("WideRoadEnter"))
         {
             timer_on = true;        // 시간 측정 시작
         }
 
-        // spped 30 제한 도로에 진입하는 경우
-        if (other.CompareTag("WideRoadEnter"))
-        {
-            BackTriggerSettingBySpeed(30);
-            //setLayerCar();
-            //getDirection = false;
-        }
         if (other.CompareTag("null"))
         {
             // 출발지에서 출발하여 null trigger를 지나는 경우
-            if(isStart)
-            {
-                isStart = false;
-            }
+            //if (isStart)
+            //{
+            //    isStart = false;
+            //}
             direction = "null";
         }
 
@@ -263,7 +256,7 @@ public class Car : MonoBehaviour
             }
         }
 
-        if (other.CompareTag("NarrowRoadExit") && timer_on)
+        if ((other.CompareTag("NarrowRoadExit") || other.CompareTag("WideRoadExit")) && timer_on)
         {
             timer_on = false;       // 시간 측정 끝
 
@@ -291,7 +284,7 @@ public class Car : MonoBehaviour
     private void OnTriggerStay(Collider other)
     {
         // 좁은 도로에서 탈출하는 경우 - 속도 0km/h
-        if (other.CompareTag("NarrowRoadExit") && !isCrossRoad) // 이미 CrossRoad와 만났다면 신호 무시
+        if ((other.CompareTag("NarrowRoadExit") || other.CompareTag("WideRoadExit")) && !isCrossRoad) // 이미 CrossRoad와 만났다면 신호 무시
         {
             if (signal)
             {
@@ -349,6 +342,19 @@ public class Car : MonoBehaviour
             prev_RSU = cur_RSU;
             cur_RSU = 0;
             theta = 10;     // 경사각 10
+            //getDirection = false;
+        }
+
+        // speed 20 제한 도로에 진입하는 경우, 경사각 X
+        if (other.CompareTag("WideRoadEnter"))
+        {
+            BackTriggerSettingBySpeed(20);
+            //setLayerCar();
+            prevActionIndex = curActionIndex;
+            curActionIndex = -1;
+            prev_RSU = cur_RSU;
+            cur_RSU = 0;
+            theta = 0;      // 경사각 0
             //getDirection = false;
         }
     }

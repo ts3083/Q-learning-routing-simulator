@@ -57,7 +57,7 @@ public class RSU12 : MonoBehaviour
             for (int j = 0; j < stateNum; j++)
             {
                 // state(destination RSU)가 자기 자신인 경우 스킵, 0으로 초기화 시 필요 X, RSU마다 수정 필요!
-                if (j == current_RSU)
+                if (j == current_RSU - 1)
                 {
                     continue;
                 }
@@ -122,6 +122,8 @@ public class RSU12 : MonoBehaviour
     {
         // 해당 action의 index 값 저장
         actionIndex = 0;
+        Debug.Log(Q_table[0, 12, 1]);
+        Debug.Log(Q_table[0, 12, 2]);
 
         // ϵ 확률로 무작위 action(negibor RSU)을 선택
         if (Random.Range(0, Mathf.Pow(10, epsilonDecimalPointNum)) < epsilon * Mathf.Pow(10, epsilonDecimalPointNum))
@@ -153,8 +155,10 @@ public class RSU12 : MonoBehaviour
                     actionIndex = i;
                 }
             }
+            Debug.Log("DL: " + demandLevel + ", dest_RSU: " + dest_RSU);
         }
 
+        //Debug.Log(actions_RSU[actionIndex]);
         return actions_RSU[actionIndex];
     }
 

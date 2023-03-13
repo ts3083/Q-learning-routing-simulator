@@ -118,7 +118,7 @@ public class RSU6 : MonoBehaviour
     private int getNextAction()
     {
         // 해당 action의 index 값 저장
-        int actionIndex = 0;
+        actionIndex = 0;
 
         // ϵ 확률로 무작위 action(negibor RSU)을 선택
         if (Random.Range(0, Mathf.Pow(10, epsilonDecimalPointNum)) < epsilon * Mathf.Pow(10, epsilonDecimalPointNum))

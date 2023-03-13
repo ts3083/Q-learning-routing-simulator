@@ -21,7 +21,7 @@ public class RSU6 : MonoBehaviour
     private int next_RSU; // 다음 RSU
     private int line_num; // 차량 차선 번호
 
-    private float epsilon = 0.3f;       // ϵ-greedy의 epsilon 값
+    private float epsilon = 0.0f;       // ϵ-greedy의 epsilon 값
     private int epsilonDecimalPointNum = 1;     // ϵ(epsilon) 소수점 자리수
 
     // [state(destination RSU) 수, action(neighbor RUS) 수], Demand Level [time, energy]
@@ -65,6 +65,8 @@ public class RSU6 : MonoBehaviour
                 }
             }
         }
+
+        Q_table[0, 12, 3] = -8.0f;      // 경로 지정을 위한 초기화(Test)
     }
 
     // Update is called once per frame

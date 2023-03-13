@@ -69,7 +69,7 @@ public class RSU2 : MonoBehaviour
         for (int i = 0; i < carListNum; i++)
         {
             // 차량 오브젝트에 대해서만 실행
-            if (!carList[i].CompareTag("Q_car") || carList[i].GetComponent<Car>().isStart)
+            if (!carList[i].CompareTag("Q_car"))
             {
                 continue;
             }

@@ -624,7 +624,7 @@ public class Car : MonoBehaviour
             speedLimit = speed[0];
         }
         // 속도가 30인 경우
-        else if (speed_ == 30)
+        else if (speed_ == 20)
         {
             carBack.transform.localPosition = new Vector3(0, 0, -10f);
             current_speed = speed[1];

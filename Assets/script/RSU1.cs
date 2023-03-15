@@ -13,10 +13,10 @@ public class RSU1 : MonoBehaviour
     private const int stateNum = 25;     // state(destination RSU) 수
     private const int actionNum = 2;        // action(neighbor RSU) 수
 
-    private int dest_RSU;       // destination RSU, 차량이 넘겨주는 정보
+    public int dest_RSU;       // destination RSU, 차량이 넘겨주는 정보
     private int actionIndex;        // Q-table에서 해당 action(neighbor RSU)의 index
-    private int demandLevel;     // Demand Level, 차량이 넘겨주는 정보
-    private int safetyLevel;        // Safety Level, 차량이 넘겨주는 정보
+    public int demandLevel;     // Demand Level, 차량이 넘겨주는 정보
+    public int safetyLevel;        // Safety Level, 차량이 넘겨주는 정보
     private int prev_RSU;       // 이전 RSU
 
     private float epsilon = 0.3f;       // ϵ-greedy의 epsilon 값
@@ -40,7 +40,7 @@ public class RSU1 : MonoBehaviour
             for (int j = 0; j < stateNum; j++)
             {
                 // state(destination RSU)가 자기 자신인 경우 스킵, 0으로 초기화 시 필요 X, RSU마다 수정 필요!
-                if (j == current_RSU)
+                if (j == current_RSU - 1)
                 {
                     continue;
                 }
@@ -79,6 +79,7 @@ public class RSU1 : MonoBehaviour
             if (carList[i].GetComponent<Car>().dest_RSU == current_RSU)
             {
                 carList[i].GetComponent<Car>().isEnd = true;
+                carList[i].GetComponent<Car>().cur_RSU = carList[i].GetComponent<Car>().dest_RSU;        // 현재(목적지) RSU 번호로 초기화
             }
             else
             {
@@ -97,7 +98,7 @@ public class RSU1 : MonoBehaviour
     }
 
     // ϵ-greedy 방법에 따라 Q-table에서 다음 action(neighbor RSU)을 선택
-    private int getNextAction()
+    public int getNextAction()
     {
         // 해당 action의 index 값 저장
         actionIndex = 0;

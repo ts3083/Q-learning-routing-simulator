@@ -7,6 +7,7 @@ public class Car : MonoBehaviour
     //public bool isStart = true;        // 출발지 여부 저장
     public bool isEnd = false;     // 도착지 여부 저장
 
+    public int start_RSU;       // start RSU
     public int dest_RSU;        // destination RSU
     public int demandLevel;     // Demand Level
     public int safetyLevel;        // Safety Level
@@ -37,6 +38,7 @@ public class Car : MonoBehaviour
     private float gamma = 0.9f;     // Q-learning의 discount factor
 
     private float[] RSU_Q_table = new float[5];       // 이전 RSU의 특정 state(destination RSU)에서의 Q-table
+    private GameObject spawnObject;     // SpawnCar script를 컨포넌트로 가지고 있는 오브젝트
 
     // Start is called before the first frame update
     Rigidbody rigid; // 물리기능 추가 - 코드 상에서 rigid를 사용한다고 생각하지만 진짜 존재하는 Rigidbody를 사용하는 것
@@ -147,7 +149,7 @@ public class Car : MonoBehaviour
 
     private void Start()
     {
-
+        spawnObject = GameObject.Find("SpawnCar");
     }
 
     //private void InvokeTrafficSignal()
@@ -273,10 +275,11 @@ public class Car : MonoBehaviour
             // 목적지에 도착한 경우
             if (isEnd)
             {
-                Debug.Log(this.gameObject.name + "의 총 시간: " + totalTime);
-                Debug.Log(this.gameObject.name + "의 총 에너지: " + totalEnergy);
-                totalTime = 0.0f;
-                totalEnergy = 0.0f;
+                Debug.Log("RSU" + start_RSU + " → RSU" + dest_RSU + "의 총 (시간, 에너지): (" + totalTime + ", " + totalEnergy + ")");
+                Destroy(gameObject);        // 목적지에 도착한 차량 제거
+                spawnObject.GetComponent<SpawnCar>().spawnQCar(1, 13, 1, 1);
+                //totalTime = 0.0f;
+                //totalEnergy = 0.0f;
             }
         }
     }
@@ -665,11 +668,10 @@ public class Car : MonoBehaviour
         float reward;       // Q-learning의 reward
         float Wt, We;       // Demand Level에 따른 가중치
 
-        Debug.Log("(" + this.gameObject.name + ") time: " + timer);
-
         // 에너지 계산
         CalEnergy();
-        Debug.Log("(" + this.gameObject.name + ") energy: " + energy);
+
+        Debug.Log("RSU" + prev_RSU + " → " + cur_RSU + "의 (시간, 에너지): (" + timer + ", " + energy + ")");
 
         GetQ_table();
 
@@ -682,6 +684,7 @@ public class Car : MonoBehaviour
             reward = -(Wt * timer / Nt + We * energy / Ne);       // Q-learning의 reward 계산
             RSU_Q_table[i] = (1 - alpha) * RSU_Q_table[i] + alpha * (reward + gamma * RSU_Q_table[demandLevel - 1]);
         }
+            Debug.Log("RSU" + prev_RSU + "(DL 1 ~ 5): " + RSU_Q_table[0] + ", " + RSU_Q_table[1] + ", " + RSU_Q_table[2] + ", " + RSU_Q_table[3] + ", " + RSU_Q_table[4]);
 
         UpdateQ_table();
     }
@@ -713,6 +716,11 @@ public class Car : MonoBehaviour
         switch (prev_RSU)
         {
             case 1:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU_Q_table[i] = RSU.GetComponent<RSU1>().Q_table[i, dest_RSU - 1, prevActionIndex];
+                }
+                break;
                 break;
             case 2:
                 for (int i = 0; i < 5; i++)
@@ -871,6 +879,10 @@ public class Car : MonoBehaviour
         switch (prev_RSU)
         {
             case 1:
+                for (int i = 0; i < 5; i++)
+                {
+                    RSU.GetComponent<RSU1>().Q_table[i, dest_RSU - 1, prevActionIndex] = RSU_Q_table[i];
+                }
                 break;
             case 2:
                 for (int i = 0; i < 5; i++)

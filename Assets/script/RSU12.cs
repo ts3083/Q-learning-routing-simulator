@@ -95,7 +95,8 @@ public class RSU12 : MonoBehaviour
             // 차량 오브젝트의 state(destination) RSU가 현재 RSU인 경우
             if (carList[i].GetComponent<Car>().dest_RSU == current_RSU)
             {
-
+                carList[i].GetComponent<Car>().isEnd = true;
+                carList[i].GetComponent<Car>().cur_RSU = carList[i].GetComponent<Car>().dest_RSU;        // 현재(목적지) RSU 번호로 초기화
             }
             else
             {
@@ -118,12 +119,10 @@ public class RSU12 : MonoBehaviour
     }
 
     // ϵ-greedy 방법에 따라 Q-table에서 다음 action(neighbor RSU)을 선택
-    private int getNextAction()
+    public int getNextAction()
     {
         // 해당 action의 index 값 저장
         actionIndex = 0;
-        Debug.Log(Q_table[0, 12, 1]);
-        Debug.Log(Q_table[0, 12, 2]);
 
         // ϵ 확률로 무작위 action(negibor RSU)을 선택
         if (Random.Range(0, Mathf.Pow(10, epsilonDecimalPointNum)) < epsilon * Mathf.Pow(10, epsilonDecimalPointNum))
@@ -155,10 +154,8 @@ public class RSU12 : MonoBehaviour
                     actionIndex = i;
                 }
             }
-            Debug.Log("DL: " + demandLevel + ", dest_RSU: " + dest_RSU);
         }
 
-        //Debug.Log(actions_RSU[actionIndex]);
         return actions_RSU[actionIndex];
     }
 

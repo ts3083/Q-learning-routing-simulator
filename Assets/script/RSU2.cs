@@ -19,6 +19,7 @@ public class RSU2 : MonoBehaviour
     public int safetyLevel;        // Safety Level, 차량이 넘겨주는 정보
     private int prev_RSU;       // 이전 RSU
     private int next_RSU; // 다음 RSU
+    private int line_num; // 차량 차선 번호
 
     private float epsilon = 0.3f;       // ϵ-greedy의 epsilon 값
     private int epsilonDecimalPointNum = 1;     // ϵ(epsilon) 소수점 자리수
@@ -31,6 +32,15 @@ public class RSU2 : MonoBehaviour
 
     // [action(neightbor RSU) 수], {각각의 action에 대응되는 RSU 번호를 저장}
     private int[] actions_RSU = new int[actionNum] { 1, 3, 7 };
+
+    // RSU1방향 좌표 저장
+    private Vector3[] forward_RSU1 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(-7.18f, 0.427f, -313.79f), new Vector3(-7.18f, 0.427f, -311.54f) };
+
+    // RSU3방향 좌표 저장
+    private Vector3[] forward_RSU3 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(7.14f, 0.427f, -316.25f), new Vector3(7.14f, 0.427f, -318.4f) };
+
+    // RSU7방향 좌표 저장
+    private Vector3[] forward_RSU7 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(1.23f, 0.427f, -307.81f), new Vector3(3.36f, 0.427f, -307.81f) };
 
     // Start is called before the first frame update
     void Start()
@@ -78,7 +88,7 @@ public class RSU2 : MonoBehaviour
             if (carList[i].GetComponent<Car>().dest_RSU == current_RSU)
             {
                 carList[i].GetComponent<Car>().isEnd = true;
-                carList[i].GetComponent<Car>().cur_RSU = carList[i].GetComponent<Car>().dest_RSU;        // 현재(목적지) RSU 번호로 초기화
+                carList[i].GetComponent<Car>().cur_RSU = current_RSU;        // 현재(목적지) RSU 번호로 초기화
             }
             else
             {
@@ -88,9 +98,11 @@ public class RSU2 : MonoBehaviour
                     demandLevel = carList[i].GetComponent<Car>().demandLevel;
                     safetyLevel = carList[i].GetComponent<Car>().safetyLevel;
                     prev_RSU = carList[i].GetComponent<Car>().prev_RSU;
+                    line_num = carList[i].GetComponent<Car>().lineNum;
                     next_RSU = getNextAction();
                     carList[i].GetComponent<Car>().direction = getNextDirection(next_RSU);
                     carList[i].GetComponent<Car>().position = getPosition(next_RSU);
+                    carList[i].GetComponent<Car>().lineNum = line_num;
                     carList[i].GetComponent<Car>().curActionIndex = actionIndex;       // Q-table에서 해당 action(neighbor RSU)의 index를 Car script로 넘겨줌
                     carList[i].GetComponent<Car>().cur_RSU = current_RSU;        // 현재 RSU 번호로 초기화
                 }
@@ -191,37 +203,37 @@ public class RSU2 : MonoBehaviour
             switch (RSU_num)
             {
                 case 3:
-                    return new Vector3(7.87f, 0.427f, -316.25f);
+                    return forward_RSU3[line_num];
                 case 7:
-                    return new Vector3(1.25f, 0.427f, -308.5f);
+                    return forward_RSU7[line_num];
                 default:
-                    return new Vector3(7.87f, 0.427f, -316.25f);
+                    return forward_RSU3[line_num];
             }
         }
-        ////차량이 RSU 3에서 온 경우
-        //else if (prev_RSU == 3)
-        //{
-        //    switch (RSU_num)
-        //    {
-        //        case 1:
-        //            return "straight";
-        //        case 7:
-        //            return "right";
-        //        default:
-        //            return "null";
-        //    }
-        //}
+        //차량이 RSU 3에서 온 경우
+        else if (prev_RSU == 3)
+        {
+            switch (RSU_num)
+            {
+                case 1:
+                    return forward_RSU1[line_num];
+                case 7:
+                    return forward_RSU7[line_num];
+                default:
+                    return forward_RSU1[line_num];
+            }
+        }
         // 그 이외의 경우(차량이 RSU 7에서 온 경우)
         else
         {
             switch (RSU_num)
             {
                 case 1:
-                    return new Vector3(0, 0, 0);
+                    return forward_RSU1[line_num];
                 case 3:
-                    return new Vector3(0, 0, 0);
+                    return forward_RSU3[line_num];
                 default:
-                    return new Vector3(0, 0, 0);
+                    return forward_RSU1[line_num];
             }
         }
     }

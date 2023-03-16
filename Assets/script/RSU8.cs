@@ -18,6 +18,8 @@ public class RSU8 : MonoBehaviour
     private int demandLevel;     // Demand Level, 차량이 넘겨주는 정보
     private int safetyLevel;        // Safety Level, 차량이 넘겨주는 정보
     private int prev_RSU;       // 이전 RSU
+    private int next_RSU; // 다음 RSU
+    private int line_num; // 차량 차선 번호
 
     private float epsilon = 0.3f;       // ϵ-greedy의 epsilon 값
     private int epsilonDecimalPointNum = 1;     // ϵ(epsilon) 소수점 자리수
@@ -30,6 +32,22 @@ public class RSU8 : MonoBehaviour
 
     // [action(neightbor RSU) 수], {각각의 action에 대응되는 RSU 번호를 저장}
     private int[] actions_RSU = new int[actionNum] { 3, 4, 7, 9, 13 };
+
+    // RSU3방향 좌표 저장
+    private Vector3[] forward_RSU3 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(308.79f, 0.427f, -17.12f), new Vector3(306.57f, 0.427f, -17.12f) };
+
+    // RSU4방향 좌표 저장
+    private Vector3[] forward_RSU4 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(324.36f, 0.427f, -16.85f), new Vector3(322.22f, 0.427f, -18.99f) };
+
+    // RSU9방향 좌표 저장
+    private Vector3[] forward_RSU9 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(327f, 0.427f, -1.28f), new Vector3(327f, 0.427f, -3.43f) };
+    
+    // RSU7방향 좌표 저장
+    private Vector3[] forward_RSU7 = new Vector3[5] { new Vector3(0, 0, 0), new Vector3(303.12f, 0.427f, -3.48f), new Vector3(303.12f, 0.427f, -1.11f), new Vector3(303.12f, 0.427f, 1.18f), new Vector3(303.12f, 0.427f, 3.48f) };
+
+    // RSU13방향 좌표 저장
+    private Vector3[] forward_RSU13 = new Vector3[5] { new Vector3(0, 0, 0), new Vector3(316.64f, 0.427f, 6.85f), new Vector3(318.85f, 0.427f, 6.85f), new Vector3(321.16f, 0.427f, 6.85f), new Vector3(323.44f, 0.427f, 6.85f) };
+
 
     // Start is called before the first frame update
     void Start()
@@ -51,6 +69,9 @@ public class RSU8 : MonoBehaviour
                 }
             }
         }
+
+        Q_table[0, 17, 1] = float.MinValue; // RSU4로 이동하지 못하게 설정
+        Q_table[0, 17, 3] = float.MinValue; // RSU9로 이동하지 못하게 설정
     }
 
     // Update is called once per frame
@@ -87,8 +108,12 @@ public class RSU8 : MonoBehaviour
                     demandLevel = carList[i].GetComponent<Car>().demandLevel;
                     safetyLevel = carList[i].GetComponent<Car>().safetyLevel;
                     prev_RSU = carList[i].GetComponent<Car>().prev_RSU;
-                    carList[i].GetComponent<Car>().direction = getNextDirection(getNextAction());
-                    carList[i].GetComponent<Car>().curActionIndex = actionIndex;
+                    line_num = carList[i].GetComponent<Car>().lineNum;
+                    next_RSU = getNextAction();
+                    carList[i].GetComponent<Car>().direction = getNextDirection(next_RSU);
+                    carList[i].GetComponent<Car>().position = getPosition(next_RSU);
+                    carList[i].GetComponent<Car>().lineNum = line_num;
+                    carList[i].GetComponent<Car>().curActionIndex = actionIndex;       // Q-table에서 해당 action(neighbor RSU)의 index를 Car script로 넘겨줌
                     carList[i].GetComponent<Car>().cur_RSU = current_RSU;        // 현재 RSU 번호로 초기화
                 }
             }
@@ -222,6 +247,110 @@ public class RSU8 : MonoBehaviour
                     return "right135";      // 오른쪽(시계) 방향으로 135º 회전
                 default:
                     return "null";
+            }
+        }
+    }
+
+    private Vector3 getPosition(int RSU_num)
+    {
+        // 차량이 RSU 9에서 온 경우
+        if (prev_RSU == 9)
+        {
+            switch (RSU_num)
+            {
+                case 7:
+                    line_num = Random.Range(1, 5);
+                    return forward_RSU7[line_num];
+                case 4:
+                    return forward_RSU4[line_num];      // 왼쪽(반시계) 방향으로 135º 회전
+                case 3:
+                    return forward_RSU3[line_num];
+                case 13:
+                    line_num = Random.Range(1, 5);
+                    return forward_RSU13[line_num];
+                default:
+                    line_num = Random.Range(1, 5);
+                    return forward_RSU7[line_num];
+            }
+        }
+        // 차량이 RSU 7에서 온 경우
+        else if (prev_RSU == 7)
+        {
+            switch (RSU_num)
+            {
+                case 9:
+                    line_num = Random.Range(1, 3);
+                    return forward_RSU9[line_num];
+                case 13:
+                    return forward_RSU13[line_num];
+                case 4:
+                    line_num = Random.Range(1, 3);
+                    return forward_RSU4[line_num];       // 오른쪽(시계) 방향으로 45º 회전
+                case 3:
+                    line_num = Random.Range(1, 3);
+                    return forward_RSU3[line_num];
+                default:
+                    line_num = Random.Range(1, 3);
+                    return forward_RSU9[line_num];
+            }
+        }
+        // 차량이 RSU 4에서 온 경우
+        else if (prev_RSU == 4)
+        {
+            switch (RSU_num)
+            {
+                case 9:
+                    return forward_RSU9[line_num];      // 오른쪽(시계) 방향으로 135º 회전
+                case 7:
+                    line_num = Random.Range(1, 5);
+                    return forward_RSU7[line_num];       // 왼쪽(반시계) 방향으로 45º 회전
+                case 3:
+                    return forward_RSU3[line_num];       // 왼쪽(반시계) 방향으로 135º 회전
+                case 13:
+                    line_num = Random.Range(1, 5);
+                    return forward_RSU13[line_num];       // 오른쪽(시계) 방향으로 45º 회전
+                default:
+                    return forward_RSU9[line_num];
+            }
+        }
+        else if (prev_RSU == 13)
+        {
+            switch (RSU_num)
+            {
+                case 3:
+                    line_num = Random.Range(1, 3);
+                    return forward_RSU3[line_num];
+                case 9:
+                    line_num = Random.Range(1, 3);
+                    return forward_RSU9[line_num];
+                case 4:
+                    line_num = Random.Range(1, 3);
+                    return forward_RSU4[line_num];        // 왼쪽(반시계) 방향으로 45º 회전
+                case 7:
+                    return forward_RSU7[line_num];
+                default:
+                    line_num = Random.Range(1, 3);
+                    return forward_RSU3[line_num];
+            }
+        }
+        // 그 이외의 경우(차량이 RSU 3에서 온 경우)
+        else
+        {
+            switch (RSU_num)
+            {
+                case 13:
+                    line_num = Random.Range(1, 5);
+                    return forward_RSU13[line_num];
+                case 7:
+                    line_num = Random.Range(1, 5);
+                    return forward_RSU7[line_num];
+                case 9:
+                    return forward_RSU9[line_num];
+                case 4:
+                    return forward_RSU4[line_num];      // 오른쪽(시계) 방향으로 135º 회전
+                default:
+                    line_num = Random.Range(1, 5);
+                    return forward_RSU13[line_num];
             }
         }
     }

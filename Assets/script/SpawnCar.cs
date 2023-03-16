@@ -163,7 +163,6 @@ public class SpawnCar : MonoBehaviour
                 return RSUObject.GetComponent<RSU25>().getNextAction();
             default:
                 return 0;
-                break;
         }
     }
 }

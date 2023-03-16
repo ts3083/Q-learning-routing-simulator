@@ -18,6 +18,8 @@ public class RSU11 : MonoBehaviour
     private int demandLevel;     // Demand Level, 차량이 넘겨주는 정보
     private int safetyLevel;        // Safety Level, 차량이 넘겨주는 정보
     private int prev_RSU;       // 이전 RSU
+    private int next_RSU; // 다음 RSU
+    private int line_num; // 차량 차선 번호
 
     private float epsilon = 0.3f;       // ϵ-greedy의 epsilon 값
     private int epsilonDecimalPointNum = 1;     // ϵ(epsilon) 소수점 자리수
@@ -30,6 +32,16 @@ public class RSU11 : MonoBehaviour
 
     // [action(neightbor RSU) 수], {각각의 action에 대응되는 RSU 번호를 저장}
     private int[] actions_RSU = new int[actionNum] { 6, 12, 16 };
+
+    // RSU16방향 좌표 저장
+    private Vector3[] forward_RSU16 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(-318.76f, 0.427f, 322.34f), new Vector3(-316.56f, 0.427f, 322.34f) };
+
+    // RSU12방향 좌표 저장
+    private Vector3[] forward_RSU12 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(-312.76f, 0.427f, 313.76f), new Vector3(-312.76f, 0.427f, 311.6f) };
+
+    // RSU6방향 좌표 저장
+    private Vector3[] forward_RSU6 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(-321.22f, 0.427f, 307.71f), new Vector3(-323.34f, 0.427f, 307.71f) };
+
     // Start is called before the first frame update
     void Start()
     {
@@ -86,7 +98,11 @@ public class RSU11 : MonoBehaviour
                     demandLevel = carList[i].GetComponent<Car>().demandLevel;
                     safetyLevel = carList[i].GetComponent<Car>().safetyLevel;
                     prev_RSU = carList[i].GetComponent<Car>().prev_RSU;
-                    carList[i].GetComponent<Car>().direction = getNextDirection(getNextAction());
+                    line_num = carList[i].GetComponent<Car>().lineNum;
+                    next_RSU = getNextAction();
+                    carList[i].GetComponent<Car>().direction = getNextDirection(next_RSU);
+                    carList[i].GetComponent<Car>().position = getPosition(next_RSU);
+                    carList[i].GetComponent<Car>().lineNum = line_num;
                     carList[i].GetComponent<Car>().curActionIndex = actionIndex;       // Q-table에서 해당 action(neighbor RSU)의 index를 Car script로 넘겨줌
                     carList[i].GetComponent<Car>().cur_RSU = current_RSU;        // 현재 RSU 번호로 초기화
                 }
@@ -172,6 +188,46 @@ public class RSU11 : MonoBehaviour
                     return "left";
                 default:
                     return "null";
+            }
+        }
+    }
+
+    private Vector3 getPosition(int RSU_num)
+    {
+        if (prev_RSU == 6)
+        {
+            switch (RSU_num)
+            {
+                case 16:
+                    return forward_RSU16[line_num];
+                case 12:
+                    return forward_RSU12[line_num];
+                default:
+                    return forward_RSU16[line_num];
+            }
+        }
+        else if (prev_RSU == 12)
+        {
+            switch (RSU_num)
+            {
+                case 6:
+                    return forward_RSU6[line_num];
+                case 16:
+                    return forward_RSU16[line_num];
+                default:
+                    return forward_RSU6[line_num];
+            }
+        }
+        else
+        {
+            switch (RSU_num)
+            {
+                case 6:
+                    return forward_RSU6[line_num];
+                case 12:
+                    return forward_RSU12[line_num];
+                default:
+                    return forward_RSU6[line_num];
             }
         }
     }

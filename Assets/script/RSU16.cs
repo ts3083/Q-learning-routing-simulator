@@ -18,6 +18,8 @@ public class RSU16 : MonoBehaviour
     private int demandLevel;     // Demand Level, 차량이 넘겨주는 정보
     private int safetyLevel;        // Safety Level, 차량이 넘겨주는 정보
     private int prev_RSU;       // 이전 RSU
+    private int next_RSU; // 다음 RSU
+    private int line_num; // 차량 차선 번호
 
     private float epsilon = 0.3f;       // ϵ-greedy의 epsilon 값
     private int epsilonDecimalPointNum = 1;     // ϵ(epsilon) 소수점 자리수
@@ -30,6 +32,16 @@ public class RSU16 : MonoBehaviour
 
     // [action(neightbor RSU) 수], {각각의 action에 대응되는 RSU 번호를 저장}
     private int[] actions_RSU = new int[actionNum] { 11, 17, 21 };
+
+    // RSU21방향 좌표 저장
+    private Vector3[] forward_RSU21 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(-318.76f, 0.427f, 622.29f), new Vector3(-316.54f, 0.427f, 622.29f) };
+    
+    // RSU17방향 좌표 저장
+    private Vector3[] forward_RSU17 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(-312.72f, 0.427f, 613.76f), new Vector3(-312.72f, 0.427f, 611.49f) };
+    
+    // RSU11방향 좌표 저장
+    private Vector3[] forward_RSU11 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(-321.2f, 0.427f, 607.71f), new Vector3(-323.42f, 0.427f, 607.71f) };
+
     // Start is called before the first frame update
     void Start()
     {
@@ -50,6 +62,8 @@ public class RSU16 : MonoBehaviour
                 }
             }
         }
+
+        Q_table[0, 17, 2] = float.MinValue; // RSU21로 이동하지 못하게 설정
     }
 
     // Update is called once per frame
@@ -76,7 +90,7 @@ public class RSU16 : MonoBehaviour
             if (carList[i].GetComponent<Car>().dest_RSU == current_RSU)
             {
                 carList[i].GetComponent<Car>().isEnd = true;
-                carList[i].GetComponent<Car>().cur_RSU = carList[i].GetComponent<Car>().dest_RSU;        // 현재(목적지) RSU 번호로 초기화s
+                carList[i].GetComponent<Car>().cur_RSU = current_RSU;        // 현재(목적지) RSU 번호로 초기화s
             }
             else
             {
@@ -86,7 +100,9 @@ public class RSU16 : MonoBehaviour
                     demandLevel = carList[i].GetComponent<Car>().demandLevel;
                     safetyLevel = carList[i].GetComponent<Car>().safetyLevel;
                     prev_RSU = carList[i].GetComponent<Car>().prev_RSU;
-                    carList[i].GetComponent<Car>().direction = getNextDirection(getNextAction());
+                    next_RSU = getNextAction();
+                    carList[i].GetComponent<Car>().direction = getNextDirection(next_RSU);
+                    carList[i].GetComponent<Car>().position = getPosition(next_RSU);
                     carList[i].GetComponent<Car>().curActionIndex = actionIndex;       // Q-table에서 해당 action(neighbor RSU)의 index를 Car script로 넘겨줌
                     carList[i].GetComponent<Car>().cur_RSU = current_RSU;        // 현재 RSU 번호로 초기화
                 }
@@ -172,6 +188,46 @@ public class RSU16 : MonoBehaviour
                     return "left";
                 default:
                     return "null";
+            }
+        }
+    }
+
+    private Vector3 getPosition(int RSU_num)
+    {
+        if (prev_RSU == 11)
+        {
+            switch (RSU_num)
+            {
+                case 21:
+                    return forward_RSU21[line_num];
+                case 17:
+                    return forward_RSU17[line_num];
+                default:
+                    return forward_RSU21[line_num];
+            }
+        }
+        else if (prev_RSU == 17)
+        {
+            switch (RSU_num)
+            {
+                case 11:
+                    return forward_RSU11[line_num];
+                case 21:
+                    return forward_RSU21[line_num];
+                default:
+                    return forward_RSU11[line_num];
+            }
+        }
+        else
+        {
+            switch (RSU_num)
+            {
+                case 11:
+                    return forward_RSU11[line_num];
+                case 17:
+                    return forward_RSU17[line_num];
+                default:
+                    return forward_RSU11[line_num];
             }
         }
     }

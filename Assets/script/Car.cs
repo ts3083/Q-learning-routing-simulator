@@ -721,7 +721,6 @@ public class Car : MonoBehaviour
                     RSU_Q_table[i] = RSU.GetComponent<RSU1>().Q_table[i, dest_RSU - 1, prevActionIndex];
                 }
                 break;
-                break;
             case 2:
                 for (int i = 0; i < 5; i++)
                 {

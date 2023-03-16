@@ -69,7 +69,7 @@ public class RSU12 : MonoBehaviour
             }
         }
 
-        Q_table[0, 12, 1] = -8.0f;      // 경로 지정을 위한 초기화(Test)
+        //Q_table[0, 12, 1] = -8.0f;      // 경로 지정을 위한 초기화(Test)
     }
 
     // Update is called once per frame

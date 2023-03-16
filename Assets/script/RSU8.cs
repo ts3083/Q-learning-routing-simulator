@@ -70,8 +70,8 @@ public class RSU8 : MonoBehaviour
             }
         }
 
-        Q_table[0, 17, 1] = float.MinValue; // RSU4로 이동하지 못하게 설정
-        Q_table[0, 17, 3] = float.MinValue; // RSU9로 이동하지 못하게 설정
+        Q_table[0, 17, 1] = -5000; // RSU4로 이동하지 못하게 설정
+        Q_table[0, 17, 3] = -5000; // RSU9로 이동하지 못하게 설정
     }
 
     // Update is called once per frame

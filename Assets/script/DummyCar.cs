@@ -28,6 +28,8 @@ public class DummyCar : MonoBehaviour
 
     private GameObject carBack;     // 차량 뒷면 트리거
 
+    public int lineNum;     // 차량이 위치한 차선
+
     public DummyCarRoute[] routeList;       // dummy 차량의 경로 저장
     // 1번 루트: RSU7 -> 6 -> 12
     public int routeNum;        // dummy 차량이 따르는 경로 번호

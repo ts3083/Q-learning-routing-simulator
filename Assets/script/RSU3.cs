@@ -64,7 +64,7 @@ public class RSU3 : MonoBehaviour
             }
         }
 
-        Q_table[0, 17, 1] = float.MinValue; // RSU4로 이동하지 못하게 설정
+        Q_table[0, 17, 1] = -5000; // RSU4로 이동하지 못하게 설정
     }
 
     // Update is called once per frame

@@ -102,8 +102,8 @@ public class RSU1 : MonoBehaviour
                     next_RSU = getNextAction();
                     carList[i].GetComponent<Car>().direction = getNextDirection(next_RSU);
                     carList[i].GetComponent<Car>().position = getPosition(next_RSU);
-                    carList[i].GetComponent<Car>().lineNum = line_num;
-                    carList[i].GetComponent<Car>().curActionIndex = actionIndex;       // Q-table에서 해당 action(neighbor RSU)의 index를 Car script로 넘겨줌
+                    carList[i].GetComponent<Car>().lineNum = line_num; // 방향 이동 후 car의 line_num 저장
+                    carList[i].GetComponent<Car>().curActionIndex = actionIndex;
                     carList[i].GetComponent<Car>().cur_RSU = current_RSU;        // 현재 RSU 번호로 초기화
                 }
             }

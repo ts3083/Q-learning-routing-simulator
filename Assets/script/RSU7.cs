@@ -18,6 +18,8 @@ public class RSU7 : MonoBehaviour
     private int demandLevel;     // Demand Level, 차량이 넘겨주는 정보
     private int safetyLevel;        // Safety Level, 차량이 넘겨주는 정보
     private int prev_RSU;       // 이전 RSU
+    private int next_RSU; // 다음 RSU
+    private int line_num; // 차량 차선 번호
 
     private float epsilon = 0.3f;       // ϵ-greedy의 epsilon 값
     private int epsilonDecimalPointNum = 1;     // ϵ(epsilon) 소수점 자리수
@@ -30,6 +32,19 @@ public class RSU7 : MonoBehaviour
 
     // [action(neightbor RSU) 수], {각각의 action에 대응되는 RSU 번호를 저장}
     private int[] actions_RSU = new int[actionNum] { 2, 6, 8, 12 };
+
+    // RSU8방향 좌표 저장
+    private Vector3[] forward_RSU8 = new Vector3[5] { new Vector3(0, 0, 0), new Vector3(16.56f, 0.427f, -6.62f), new Vector3(16.56f, 0.427f, -8.81f), new Vector3(16.56f, 0.427f, -11.07f), new Vector3(16.56f, 0.427f, -13.33f) };
+
+    // RSU12방향 좌표 저장
+    private Vector3[] forward_RSU12 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(1.23f, 0.427f, 2.22f), new Vector3(3.37f, 0.427f, 2.22f) };
+
+    // RSU6방향 좌표 저장
+    private Vector3[] forward_RSU6 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(-7.31f, 0.427f, -3.8f), new Vector3(-7.31f, 0.427f, -1.65f) };
+
+    // RSU2방향 좌표 저장
+    private Vector3[] forward_RSU2 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(-1.23f, 0.427f, -13.62f), new Vector3(-3.39f, 0.427f, -13.62f) };
+
 
     // Start is called before the first frame update
     void Start()
@@ -77,7 +92,7 @@ public class RSU7 : MonoBehaviour
             if (carList[i].GetComponent<Car>().dest_RSU == current_RSU)
             {
                 carList[i].GetComponent<Car>().isEnd = true;
-                carList[i].GetComponent<Car>().cur_RSU = carList[i].GetComponent<Car>().dest_RSU;        // 현재(목적지) RSU 번호로 초기화
+                carList[i].GetComponent<Car>().cur_RSU = current_RSU;        // 현재(목적지) RSU 번호로 초기화
             }
             else
             {
@@ -87,8 +102,12 @@ public class RSU7 : MonoBehaviour
                     demandLevel = carList[i].GetComponent<Car>().demandLevel;
                     safetyLevel = carList[i].GetComponent<Car>().safetyLevel;
                     prev_RSU = carList[i].GetComponent<Car>().prev_RSU;
-                    carList[i].GetComponent<Car>().direction = getNextDirection(getNextAction());
-                    carList[i].GetComponent<Car>().curActionIndex = actionIndex;       // Q-table에서 해당 action(neighbor RSU)의 index를 Car script로 넘겨줌
+                    line_num = carList[i].GetComponent<Car>().lineNum;
+                    next_RSU = getNextAction();
+                    carList[i].GetComponent<Car>().direction = getNextDirection(next_RSU);
+                    carList[i].GetComponent<Car>().position = getPosition(next_RSU);
+                    carList[i].GetComponent<Car>().lineNum = line_num; // 방향 이동 후 car의 line_num 저장
+                    carList[i].GetComponent<Car>().curActionIndex = actionIndex;
                     carList[i].GetComponent<Car>().cur_RSU = current_RSU;        // 현재 RSU 번호로 초기화
                 }
             }
@@ -197,6 +216,75 @@ public class RSU7 : MonoBehaviour
                     return "right";
                 default:
                     return "null";
+            }
+        }
+    }
+
+    private Vector3 getPosition(int RSU_num)
+    {
+        // 차량이 RSU 2에서 온 경우
+        if (prev_RSU == 2)
+        {
+            switch (RSU_num)
+            {
+                case 12:
+                    return forward_RSU12[line_num];
+                case 6:
+                    return forward_RSU6[line_num];
+                case 8:
+                    line_num = Random.Range(1, 5);
+                    return forward_RSU8[line_num];
+                default:
+                    return forward_RSU12[line_num];
+            }
+        }
+        // 차량이 RSU 6에서 온 경우
+        else if (prev_RSU == 6)
+        {
+            switch (RSU_num)
+            {
+                case 8:
+                    line_num = Random.Range(1, 5);
+                    return forward_RSU8[line_num];
+                case 12:
+                    return forward_RSU12[line_num];
+                case 2:
+                    return forward_RSU2[line_num];
+                default:
+                    line_num = Random.Range(1, 5);
+                    return forward_RSU8[line_num];
+            }
+        }
+        // 차량이 RSU 8에서 온 경우
+        else if (prev_RSU == 8)
+        {
+            line_num = Random.Range(1, 3);
+            switch (RSU_num)
+            {
+                case 6:
+                    return forward_RSU6[line_num];
+                case 2:
+                    return forward_RSU2[line_num];
+                case 12:
+                    return forward_RSU12[line_num];
+                default:
+                    return forward_RSU6[line_num];
+            }
+        }
+        // 그 이외의 경우(차량이 RSU 12에서 온 경우)
+        else
+        {
+            switch (RSU_num)
+            {
+                case 2:
+                    return forward_RSU2[line_num];
+                case 8:
+                    line_num = Random.Range(1, 5);
+                    return forward_RSU8[line_num];
+                case 6:
+                    return forward_RSU6[line_num];
+                default:
+                    return forward_RSU2[line_num];
             }
         }
     }

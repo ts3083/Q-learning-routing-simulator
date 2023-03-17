@@ -26,6 +26,7 @@ TagManager:
   - Q_car
   - NarrowRoadEnterAngleO
   - NarrowRoadEnterAngleX
+  - DummyCar
   layers:
   - Default
   - TransparentFX

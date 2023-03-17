@@ -34,19 +34,19 @@ public class RSU12 : MonoBehaviour
     private int[] actions_RSU = new int[actionNum] { 7, 13, 17, 11, 6 };
 
     // RSU7방향 좌표 저장
-    private Vector3[] forward_RSU7 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(-1.16f, 0.427f, 297.82f), new Vector3(-3.38f, 0.427f, 297.82f) };
+    private Vector3[] forward_RSU7 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(-1.16f, 0.427f, 296f), new Vector3(-3.38f, 0.427f, 296f) };
 
     // RSU6방향 좌표 저장
-    private Vector3[] forward_RSU6 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(-16.98f, 0.427f, 300.5f), new Vector3(-19.1f, 0.427f, 302.62f) };
+    private Vector3[] forward_RSU6 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(-17.47f, 0.427f, 300f), new Vector3(-19.72f, 0.427f, 302f) };
 
     // RSU11방향 좌표 저장
-    private Vector3[] forward_RSU11 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(-17.11f, 0.427f, 316.23f), new Vector3(-17.11f, 0.427f, 318.36f) };
+    private Vector3[] forward_RSU11 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(-19f, 0.427f, 316.23f), new Vector3(-19f, 0.427f, 318.36f) };
 
     // RSU17방향 좌표 저장
-    private Vector3[] forward_RSU17 = new Vector3[5] { new Vector3(0, 0, 0), new Vector3(-3.4f, 0.427f, 321.86f), new Vector3(-1.13f, 0.427f, 321.86f), new Vector3(1.13f, 0.427f, 321.86f), new Vector3(3.4f, 0.427f, 321.86f) };
+    private Vector3[] forward_RSU17 = new Vector3[5] { new Vector3(0, 0, 0), new Vector3(-3.4f, 0.427f, 324f), new Vector3(-1.13f, 0.427f, 324f), new Vector3(1.13f, 0.427f, 324f), new Vector3(3.4f, 0.427f, 324f) };
 
     // RSU13방향 좌표 저장
-    private Vector3[] forward_RSU13 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(7.39f, 0.427f, 308.69f), new Vector3(7.39f, 0.427f, 306.55f) };
+    private Vector3[] forward_RSU13 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(9f, 0.427f, 308.69f), new Vector3(9f, 0.427f, 306.55f) };
 
     // Start is called before the first frame update
     void Start()
@@ -87,33 +87,48 @@ public class RSU12 : MonoBehaviour
         for (int i = 0; i < carListNum; i++)
         {
             // 차량 오브젝트에 대해서만 실행
-            if (!carList[i].CompareTag("Q_car"))
+            if (carList[i].CompareTag("Q_car"))
             {
-                continue;
+                // 차량 오브젝트의 state(destination) RSU가 현재 RSU인 경우, 각각의 RSU에서 수정
+                if (carList[i].GetComponent<Car>().dest_RSU == current_RSU)
+                {
+                    carList[i].GetComponent<Car>().isEnd = true;
+                    carList[i].GetComponent<Car>().cur_RSU = current_RSU;        // 현재(목적지) RSU 번호로 초기화
+                }
+                else
+                {
+                    if (carList[i].GetComponent<Car>().direction == "null")
+                    {
+                        dest_RSU = carList[i].GetComponent<Car>().dest_RSU;
+                        demandLevel = carList[i].GetComponent<Car>().demandLevel;
+                        safetyLevel = carList[i].GetComponent<Car>().safetyLevel;
+                        prev_RSU = carList[i].GetComponent<Car>().prev_RSU;
+                        line_num = carList[i].GetComponent<Car>().lineNum;
+                        next_RSU = getNextAction();
+                        carList[i].GetComponent<Car>().direction = getNextDirection(next_RSU);
+                        carList[i].GetComponent<Car>().position = getPosition(next_RSU);
+                        carList[i].GetComponent<Car>().lineNum = line_num;      // 방향 이동 후 car의 line_num 저장
+                        carList[i].GetComponent<Car>().curActionIndex = actionIndex;
+                        carList[i].GetComponent<Car>().cur_RSU = current_RSU;        // 현재 RSU 번호로 초기화
+                    }
+                }
             }
-
-            // 차량 오브젝트의 state(destination) RSU가 현재 RSU인 경우
-            if (carList[i].GetComponent<Car>().dest_RSU == current_RSU)
+            else if (carList[i].CompareTag("DummyCar"))
             {
-                carList[i].GetComponent<Car>().isEnd = true;
-                carList[i].GetComponent<Car>().cur_RSU = carList[i].GetComponent<Car>().dest_RSU;        // 현재(목적지) RSU 번호로 초기화
+                if (carList[i].GetComponent<DummyCar>().direction == "null")
+                {
+                    prev_RSU = carList[i].GetComponent<DummyCar>().prev_RSU;
+                    next_RSU = carList[i].GetComponent<DummyCar>().routeList[carList[i].GetComponent<DummyCar>().routeIndex];
+                    line_num = carList[i].GetComponent<DummyCar>().lineNum;
+                    carList[i].GetComponent<DummyCar>().direction = getNextDirection(next_RSU);
+                    carList[i].GetComponent<DummyCar>().position = getPosition(next_RSU);
+                    carList[i].GetComponent<DummyCar>().lineNum = line_num;     // 방향 이동 후 car의 line_num 저장
+                    carList[i].GetComponent<DummyCar>().cur_RSU = current_RSU;        // 현재 RSU 번호로 초기화
+                }
             }
             else
             {
-                if (carList[i].GetComponent<Car>().direction == "null")
-                {
-                    dest_RSU = carList[i].GetComponent<Car>().dest_RSU;
-                    demandLevel = carList[i].GetComponent<Car>().demandLevel;
-                    safetyLevel = carList[i].GetComponent<Car>().safetyLevel;
-                    prev_RSU = carList[i].GetComponent<Car>().prev_RSU;
-                    line_num = carList[i].GetComponent<Car>().lineNum;
-                    next_RSU = getNextAction();
-                    carList[i].GetComponent<Car>().direction = getNextDirection(next_RSU);
-                    carList[i].GetComponent<Car>().position = getPosition(next_RSU);
-                    carList[i].GetComponent<Car>().lineNum = line_num;
-                    carList[i].GetComponent<Car>().curActionIndex = actionIndex;       // Q-table에서 해당 action(neighbor RSU)의 index를 Car script로 넘겨줌
-                    carList[i].GetComponent<Car>().cur_RSU = current_RSU;        // 현재 RSU 번호로 초기화
-                }
+                continue;
             }
         }
     }

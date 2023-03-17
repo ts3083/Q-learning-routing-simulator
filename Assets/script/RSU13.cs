@@ -21,7 +21,7 @@ public class RSU13 : MonoBehaviour
     private int next_RSU; // 다음 RSU
     private int line_num; // 차량 차선 번호
 
-    private float epsilon = 0.3f;       // ϵ-greedy의 epsilon 값
+    private float epsilon = 0.0f;       // ϵ-greedy의 epsilon 값
     private int epsilonDecimalPointNum = 1;     // ϵ(epsilon) 소수점 자리수
 
     // [state(destination RSU) 수, action(neighbor RUS) 수], Demand Level [time, energy]
@@ -34,16 +34,16 @@ public class RSU13 : MonoBehaviour
     private int[] actions_RSU = new int[actionNum] { 8, 14, 18, 12 };
 
     // RSU8방향 좌표 저장
-    private Vector3[] forward_RSU8 = new Vector3[5] { new Vector3(0, 0, 0), new Vector3(313.47f, 0.427f, 298.08f), new Vector3(311.14f, 0.427f, 298.08f), new Vector3(308.82f, 0.427f, 298.08f), new Vector3(306.56f, 0.427f, 298.08f) };
+    private Vector3[] forward_RSU8 = new Vector3[5] { new Vector3(0, 0, 0), new Vector3(313.47f, 0.427f, 296f), new Vector3(311.14f, 0.427f, 296f), new Vector3(308.82f, 0.427f, 296f), new Vector3(306.56f, 0.427f, 296f) };
 
     // RSU14방향 좌표 저장
     private Vector3[] forward_RSU14 = new Vector3[5] { new Vector3(0, 0, 0), new Vector3(326.85f, 0.427f, 308.47f), new Vector3(326.85f, 0.427f, 306.16f), new Vector3(326.85f, 0.427f, 303.81f), new Vector3(326.85f, 0.427f, 301.52f) };
     
     // RSU18방향 좌표 저장
-    private Vector3[] forward_RSU18 = new Vector3[5] { new Vector3(0, 0, 0), new Vector3(316.58f, 0.427f, 321.97f), new Vector3(318.89f, 0.427f, 321.97f), new Vector3(321.18f, 0.427f, 321.97f), new Vector3(323.39f, 0.427f, 321.97f) };
+    private Vector3[] forward_RSU18 = new Vector3[5] { new Vector3(0, 0, 0), new Vector3(316.55f, 0.427f, 324f), new Vector3(318.85f, 0.427f, 324f), new Vector3(321.15f, 0.427f, 324f), new Vector3(323.45f, 0.427f, 324f) };
 
     // RSU12방향 좌표 저장
-    private Vector3[] forward_RSU12 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(303.16f, 0.427f, 311.2f), new Vector3(303.16f, 0.427f, 313.43f) };
+    private Vector3[] forward_RSU12 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(301f, 0.427f, 311.2f), new Vector3(301f, 0.427f, 313.43f) };
     
     // Start is called before the first frame update
     void Start()
@@ -66,7 +66,7 @@ public class RSU13 : MonoBehaviour
             }
         }
 
-        Q_table[0, 17, 1] = -5000; // RSU14로 이동하지 못하게 설정
+        Q_table[0, 17, 1] = -5000f; // RSU14로 이동하지 못하게 설정
     }
 
     // Update is called once per frame

@@ -5,12 +5,6 @@ using UnityEngine;
 using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 using static UnityEngine.EventSystems.EventTrigger;
 
-[System.Serializable]
-public class DummyCarRoute
-{
-    public string[] route;
-}
-
 public class DummyCar : MonoBehaviour
 {
     // 차량 속도 선언 - 10, 15, 20
@@ -28,12 +22,13 @@ public class DummyCar : MonoBehaviour
 
     private GameObject carBack;     // 차량 뒷면 트리거
 
-    public int lineNum;     // 차량이 위치한 차선
+    public int lineNum;     // 차량이 위치한 차
 
-    public DummyCarRoute[] routeList;       // dummy 차량의 경로 저장
-    // 1번 루트: RSU7 -> 6 -> 12
-    public int routeNum;        // dummy 차량이 따르는 경로 번호
-    private int routeIndex = 0;     // dummy 차량이 따르는 경로 index
+    public int[] routeList;       // dummy 차량의 경로 저장, 다음 RSU에서 이동할 RSU 번호부터 시작
+    public int routeIndex = 0;     // dummy 차량이 따르는 경로 index
+
+    public int cur_RSU;        // 현재 RSU
+    public int prev_RSU;        // 이전 RSU
 
     // Start is called before the first frame update
     void Start()
@@ -57,20 +52,24 @@ public class DummyCar : MonoBehaviour
             BackTriggerSettingBySpeed(0);
         }
 
+        if (other.CompareTag("null"))
+        {
+            direction = "null";
+        }
+
         if (other.CompareTag("CrossRoad"))
         {
-            direction = routeList[routeNum - 1].route[routeIndex];
-            routeIndex++;
-            if(routeIndex > getMaxRouteIndex())
-            {
-                routeIndex = 0;
-            }
-
             // 이동방향에 따른 좌표를 받아옴
             transform.position = position;
             if (direction.Contains("left") || direction.Contains("right"))
             {
                 new_drive(direction);
+            }
+
+            routeIndex++;
+            if(routeIndex > routeList.Length - 1)
+            {
+                routeIndex = 0;
             }
         }
     }
@@ -102,18 +101,24 @@ public class DummyCar : MonoBehaviour
         if (other.CompareTag("NarrowRoadEnterAngleX"))
         {
             BackTriggerSettingBySpeed(15);
+            prev_RSU = cur_RSU;
+            cur_RSU = 0;
         }
 
         // speed 15 제한 도로에 진입하는 경우, 경사각 O
         if (other.CompareTag("NarrowRoadEnterAngleO"))
         {
             BackTriggerSettingBySpeed(15);
+            prev_RSU = cur_RSU;
+            cur_RSU = 0;
         }
 
         // speed 20 제한 도로에 진입하는 경우, 경사각 X
         if (other.CompareTag("WideRoadEnter"))
         {
             BackTriggerSettingBySpeed(20);
+            prev_RSU = cur_RSU;
+            cur_RSU = 0;
         }
     }
 
@@ -401,16 +406,5 @@ public class DummyCar : MonoBehaviour
     {
         transform.eulerAngles = new Vector3(0, angle, 0);
         beforeRotation = angle;
-    }
-
-    private int getMaxRouteIndex()
-    {
-        switch (routeNum)
-        {
-            case 1:
-                return 2;
-            default:
-                return 0;
-        }
     }
 }

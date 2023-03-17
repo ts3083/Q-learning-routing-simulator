@@ -21,7 +21,7 @@ public class RSU8 : MonoBehaviour
     private int next_RSU; // 다음 RSU
     private int line_num; // 차량 차선 번호
 
-    private float epsilon = 0.3f;       // ϵ-greedy의 epsilon 값
+    private float epsilon = 0.0f;       // ϵ-greedy의 epsilon 값
     private int epsilonDecimalPointNum = 1;     // ϵ(epsilon) 소수점 자리수
 
     // [state(destination RSU) 수, action(neighbor RUS) 수], Demand Level [time, energy]
@@ -34,19 +34,19 @@ public class RSU8 : MonoBehaviour
     private int[] actions_RSU = new int[actionNum] { 3, 4, 7, 9, 13 };
 
     // RSU3방향 좌표 저장
-    private Vector3[] forward_RSU3 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(308.79f, 0.427f, -17.12f), new Vector3(306.57f, 0.427f, -17.12f) };
+    private Vector3[] forward_RSU3 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(308.79f, 0.427f, -19f), new Vector3(306.57f, 0.427f, -19f) };
 
     // RSU4방향 좌표 저장
-    private Vector3[] forward_RSU4 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(324.36f, 0.427f, -16.85f), new Vector3(322.22f, 0.427f, -18.99f) };
+    private Vector3[] forward_RSU4 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(325.14f, 0.427f, -17.61f), new Vector3(323f, 0.427f, -19.95f) };
 
     // RSU9방향 좌표 저장
-    private Vector3[] forward_RSU9 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(327f, 0.427f, -1.28f), new Vector3(327f, 0.427f, -3.43f) };
+    private Vector3[] forward_RSU9 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(329.5f, 0.427f, -1.28f), new Vector3(329.5f, 0.427f, -3.43f) };
     
     // RSU7방향 좌표 저장
-    private Vector3[] forward_RSU7 = new Vector3[5] { new Vector3(0, 0, 0), new Vector3(303.12f, 0.427f, -3.48f), new Vector3(303.12f, 0.427f, -1.11f), new Vector3(303.12f, 0.427f, 1.18f), new Vector3(303.12f, 0.427f, 3.48f) };
+    private Vector3[] forward_RSU7 = new Vector3[5] { new Vector3(0, 0, 0), new Vector3(301f, 0.427f, -3.48f), new Vector3(301f, 0.427f, -1.11f), new Vector3(301f, 0.427f, 1.18f), new Vector3(301f, 0.427f, 3.48f) };
 
     // RSU13방향 좌표 저장
-    private Vector3[] forward_RSU13 = new Vector3[5] { new Vector3(0, 0, 0), new Vector3(316.64f, 0.427f, 6.85f), new Vector3(318.85f, 0.427f, 6.85f), new Vector3(321.16f, 0.427f, 6.85f), new Vector3(323.44f, 0.427f, 6.85f) };
+    private Vector3[] forward_RSU13 = new Vector3[5] { new Vector3(0, 0, 0), new Vector3(316.64f, 0.427f, 9f), new Vector3(318.85f, 0.427f, 9f), new Vector3(321.16f, 0.427f, 9f), new Vector3(323.44f, 0.427f, 9f) };
 
 
     // Start is called before the first frame update
@@ -70,8 +70,8 @@ public class RSU8 : MonoBehaviour
             }
         }
 
-        Q_table[0, 17, 1] = -5000; // RSU4로 이동하지 못하게 설정
-        Q_table[0, 17, 3] = -5000; // RSU9로 이동하지 못하게 설정
+        Q_table[0, 17, 1] = -5000f; // RSU4로 이동하지 못하게 설정
+        Q_table[0, 17, 3] = -5000f; // RSU9로 이동하지 못하게 설정
     }
 
     // Update is called once per frame
@@ -98,7 +98,7 @@ public class RSU8 : MonoBehaviour
             if (carList[i].GetComponent<Car>().dest_RSU == current_RSU)
             {
                 carList[i].GetComponent<Car>().isEnd = true;
-                carList[i].GetComponent<Car>().cur_RSU = carList[i].GetComponent<Car>().dest_RSU;        // 현재(목적지) RSU 번호로 초기화
+                carList[i].GetComponent<Car>().cur_RSU = current_RSU;        // 현재(목적지) RSU 번호로 초기화
             }
             else
             {

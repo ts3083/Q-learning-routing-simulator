@@ -21,7 +21,7 @@ public class RSU11 : MonoBehaviour
     private int next_RSU; // 다음 RSU
     private int line_num; // 차량 차선 번호
 
-    private float epsilon = 0.3f;       // ϵ-greedy의 epsilon 값
+    private float epsilon = 0.0f;       // ϵ-greedy의 epsilon 값
     private int epsilonDecimalPointNum = 1;     // ϵ(epsilon) 소수점 자리수
 
     // [state(destination RSU) 수, action(neighbor RUS) 수], Demand Level [time, energy]
@@ -88,7 +88,7 @@ public class RSU11 : MonoBehaviour
             if (carList[i].GetComponent<Car>().dest_RSU == current_RSU)
             {
                 carList[i].GetComponent<Car>().isEnd = true;
-                carList[i].GetComponent<Car>().cur_RSU = carList[i].GetComponent<Car>().dest_RSU;        // 현재(목적지) RSU 번호로 초기화
+                carList[i].GetComponent<Car>().cur_RSU = current_RSU;        // 현재(목적지) RSU 번호로 초기화
             }
             else
             {

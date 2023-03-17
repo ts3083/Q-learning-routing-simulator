@@ -266,7 +266,7 @@ public class Car : MonoBehaviour
             {
                 Debug.Log("RSU" + start_RSU + " → RSU" + dest_RSU + "의 총 (시간, 에너지): (" + totalTime + ", " + totalEnergy + ")");
                 Destroy(gameObject);        // 목적지에 도착한 차량 제거
-                spawnObject.GetComponent<SpawnCar>().spawnQCar(1, 13, 1, 1);
+                spawnObject.GetComponent<SpawnCar>().spawnQCar(start_RSU, dest_RSU, 1, 1);
                 //totalTime = 0.0f;
                 //totalEnergy = 0.0f;
             }

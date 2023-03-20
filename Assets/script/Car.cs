@@ -218,6 +218,12 @@ public class Car : MonoBehaviour
             timer_on = true;        // 시간 측정 시작
         }
 
+        // Test(임시 트래픽)
+        if(other.CompareTag("TestNarrowRoadEnterAngleO") || other.CompareTag("TestNarrowRoadEnterAngleX"))
+        {
+            timer_on = true;
+        }
+
         if (other.CompareTag("null"))
         {
             // 출발지에서 출발하여 null trigger를 지나는 경우
@@ -318,6 +324,32 @@ public class Car : MonoBehaviour
             prev_RSU = cur_RSU;
             cur_RSU = 0;
             theta = 0;      // 경사각 0
+            //getDirection = false;
+        }
+
+        // Test(speed 5 제한 도로에 진입하는 경우, 경사각 X)
+        if (other.CompareTag("TestNarrowRoadEnterAngleX"))
+        {
+            BackTriggerSettingBySpeed(5);
+            //setLayerCar();
+            prevActionIndex = curActionIndex;
+            curActionIndex = -1;
+            prev_RSU = cur_RSU;
+            cur_RSU = 0;
+            theta = 0;      // 경사각 0
+            //getDirection = false;
+        }
+
+        // Test(speed 15 제한 도로에 진입하는 경우, 경사각 O)
+        if (other.CompareTag("TestNarrowRoadEnterAngleO"))
+        {
+            BackTriggerSettingBySpeed(5);
+            //setLayerCar();
+            prevActionIndex = curActionIndex;
+            curActionIndex = -1;
+            prev_RSU = cur_RSU;
+            cur_RSU = 0;
+            theta = 10;     // 경사각 10
             //getDirection = false;
         }
     }
@@ -599,6 +631,13 @@ public class Car : MonoBehaviour
             current_speed = speed[1];
             speedLimit = speed[1];
 
+        }
+        // Test(속도가 5인 경우)
+        else if (speed_ == 5)
+        {
+            carBack.transform.localPosition = new Vector3(0, 0, -1f);
+            current_speed = 5;
+            speedLimit = 5;
         }
         else // 속도가 0인 경우
         {

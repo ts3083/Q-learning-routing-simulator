@@ -21,7 +21,7 @@ public class RSU1 : MonoBehaviour
     private int next_RSU; // 다음 RSU
     private int line_num; // 차량 차선 번호
 
-    private float epsilon = 0.3f;       // ϵ-greedy의 epsilon 값
+    private float epsilon = 0.0f;       // ϵ-greedy의 epsilon 값
     private int epsilonDecimalPointNum = 1;     // ϵ(epsilon) 소수점 자리수
 
     // [state(destination RSU) 수, action(neighbor RUS) 수], Demand Level [time, energy]
@@ -37,7 +37,7 @@ public class RSU1 : MonoBehaviour
     private Vector3[] forward_RSU6 = new Vector3[5] { new Vector3(0, 0, 0), new Vector3(-313.42f, 0.427f, -307.63f), new Vector3(-311.24f, 0.427f, -307.63f), new Vector3(-308.97f, 0.427f, -307.63f), new Vector3(-306.66f, 0.427f, -307.63f) };
 
     // RSU2방향 좌표 저장
-    private Vector3[] forward_RSU2 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(-303.2f, 0.427f, -316.22f), new Vector3(-303.2f, 0.427f, -318.39f) };
+    private Vector3[] forward_RSU2 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(-301f, 0.427f, -316.22f), new Vector3(-301f, 0.427f, -318.39f) };
 
 
     // Start is called before the first frame update
@@ -60,8 +60,6 @@ public class RSU1 : MonoBehaviour
                 }
             }
         }
-
-        Q_table[0, 12, 1] = -8.0f;      // 경로 지정을 위한 초기화(Test)
     }
 
     // Update is called once per frame

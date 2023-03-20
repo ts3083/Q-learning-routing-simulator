@@ -64,7 +64,7 @@ public class RSU : MonoBehaviour
     private void ifDistInRange()
     {
         // carList 배열에 속해있는 모든 오브젝트(Collider)에 대하여
-        for(int i = 0; i < carListNum; i++)
+        for (int i = 0; i < carListNum; i++)
         {
             // 차량 오브젝트에 대해서만 실행하기 위해서
             if (!carList[i].CompareTag("SportCar2"))
@@ -332,25 +332,25 @@ public class RSU : MonoBehaviour
     // 4거리 신호 발생
     private void InvokeTrafficSignal4()
     {
-        if(temp % 4 == 0)
+        if (temp % 4 == 0)
         {
             // 3번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
             signalFunc(0);
             temp++;
         }
-        else if(temp % 4 == 1)
+        else if (temp % 4 == 1)
         {
             // 2번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
             signalFunc(90);
             temp++;
         }
-        else if(temp % 4 == 2)
+        else if (temp % 4 == 2)
         {
             // 1번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
             signalFunc(180);
             temp++;
         }
-        else if(temp % 4 == 3)
+        else if (temp % 4 == 3)
         {
             // 4번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
             signalFunc(270);
@@ -373,7 +373,7 @@ public class RSU : MonoBehaviour
             signalFunc(90);
             temp++;
         }
-        else if(temp % 3 == 2)
+        else if (temp % 3 == 2)
         {
             // 4번 도로 차량의 신호를 켬, 나머지 도로 차량의 신호를 끔
             signalFunc(270);
@@ -451,7 +451,7 @@ public class RSU : MonoBehaviour
     }
 
     // 차량 방향 결정 함수
-    private void DecideCarDirection(Collider car ,int vacantRoadNum = 0)
+    private void DecideCarDirection(Collider car, int vacantRoadNum = 0)
     {
         List<string> move;
 
@@ -473,7 +473,7 @@ public class RSU : MonoBehaviour
                         move = new List<string> { "left", "right" };
                     }
                     // 2번 도로에서 오는 경우
-                    else if(car.GetComponent<Car>().beforeRotation == 90)
+                    else if (car.GetComponent<Car>().beforeRotation == 90)
                     {
                         move = new List<string> { "straight", "right" };
                     }

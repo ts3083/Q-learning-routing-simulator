@@ -21,7 +21,7 @@ public class RSU17 : MonoBehaviour
     private int next_RSU; // 다음 RSU
     private int line_num; // 차량 차선 번호
 
-    private float epsilon = 0.3f;       // ϵ-greedy의 epsilon 값
+    private float epsilon = 0.0f;       // ϵ-greedy의 epsilon 값
     private int epsilonDecimalPointNum = 1;     // ϵ(epsilon) 소수점 자리수
 
     // [state(destination RSU) 수, action(neighbor RUS) 수], Demand Level [time, energy]
@@ -34,16 +34,16 @@ public class RSU17 : MonoBehaviour
     private int[] actions_RSU = new int[actionNum] { 12, 18, 22, 16 };
 
     // RSU12방향 좌표 저장
-    private Vector3[] forward_RSU12 = new Vector3[5] { new Vector3(0, 0, 0), new Vector3(-6.49f, 0.427f, 598.45f), new Vector3(-8.89f, 0.427f, 598.45f), new Vector3(-11.2f, 0.427f, 598.45f), new Vector3(-13.41f, 0.427f, 598.45f) };
+    private Vector3[] forward_RSU12 = new Vector3[5] { new Vector3(0, 0, 0), new Vector3(-6.49f, 0.427f, 597f), new Vector3(-8.89f, 0.427f, 597f), new Vector3(-11.2f, 0.427f, 597f), new Vector3(-13.41f, 0.427f, 597f) };
 
     // RSU18방향 좌표 저장
-    private Vector3[] forward_RSU18 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(2.23f, 0.427f, 613.78f), new Vector3(2.23f, 0.427f, 611.47f) };
+    private Vector3[] forward_RSU18 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(4.5f, 0.427f, 613.78f), new Vector3(4.5f, 0.427f, 611.47f) };
 
     // RSU22방향 좌표 저장
-    private Vector3[] forward_RSU22 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(-3.77f, 0.427f, 622.24f), new Vector3(-1.58f, 0.427f, 622.24f) };
+    private Vector3[] forward_RSU22 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(-3.77f, 0.427f, 624.5f), new Vector3(-1.58f, 0.427f, 624.5f) };
 
     // RSU16방향 좌표 저장
-    private Vector3[] forward_RSU16 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(-12.32f, 0.427f, 616.18f), new Vector3(-12.32f, 0.427f, 618.41f) };
+    private Vector3[] forward_RSU16 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(-14.5f, 0.427f, 616.18f), new Vector3(-14.5f, 0.427f, 618.41f) };
 
     // Start is called before the first frame update
     void Start()
@@ -66,7 +66,7 @@ public class RSU17 : MonoBehaviour
             }
         }
 
-        Q_table[0, 17, 2] = -5000; // RSU22로 이동하지 못하게 설정
+        Q_table[0, 17, 2] = -5000f; // RSU22로 이동하지 못하게 설정
     }
 
     // Update is called once per frame

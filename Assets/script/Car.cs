@@ -46,31 +46,26 @@ public class Car : MonoBehaviour
 
     // 차량 속도 선언 - 10, 15, 20
     private int[] speed = new int[] { 15, 20 };
-    // 현재 차량의 위치에 따른 속도가 다름 => current speed 변수 선언
-    private static int init_speed = 10;     // 초기 속도(m/s)
-    public int current_speed = init_speed;      // 초기 속도 10(m/s)
+    private static int init_speed = 10;     // 초기 속도(10m/s)
+    public int current_speed = init_speed;      // 현재 차량의 위치에 따른 속도가 다름 => current speed 변수 선언
 
-    // 차량 정지 및 직진 신호
-    public bool signal;
-    public bool moveDirection = false;
+    public bool signal;     // 차량 정지 및 직진 신호
     //public List<string> signal_str;
     //int temp = 0;
 
     //public float timer = 0.0f;
     float Passtime;
-    int waitingTime = 200;
-    public int beforeRotation; // 회전 이전의 rotation
+    //int waitingTime = 200;
+    public int beforeRotation;      // 회전 이전의 rotation
     private Vector3 rotation;
     Vector3 startPosition, startRotation;
     public string[][] driveSelect;
     public string[][] rsuSelect;
     public string[] a;
-    private List<GameObject> carList; // scene에 존재하는 차량(SportsCar2) 저장, test
-    private int speedLimit = 30; // 속도 제한
-    private bool isCrossRoad = false;
+    private int speedLimit;     // 속도 제한
 
-    public string direction = "null";
-    public Vector3 position;
+    public string direction = "null";       // 차량 이동방향
+    public Vector3 position;        // 월드 좌표를 기준으로 이동시킬 차량의 위치
     public float lRotateFactor; // 사거리에서 좌회전시 회전량 결정 요소
     public float rRotateFactor; // 사거리에서 우회전시 회전량 결정 요소
     private GameObject carBack; // 차량 뒷면 트리거
@@ -83,10 +78,11 @@ public class Car : MonoBehaviour
     private GameObject SportCar2;
     private GameObject steering_wheel;
     //public bool getDirection; // 자동차가 RSU로부터 방향을 결정 받았는지 여부
-    public int lineNum; // 자동차가 위치한 차선
 
     int CarLayerName;
     int RotateLayerName;
+
+    public int lineNum;     // 차량이 위치한 차선
 
     // 교차로에서 차량에 적용되는 레이어 - 디폴트
     void setLayerCar()
@@ -123,7 +119,7 @@ public class Car : MonoBehaviour
         startPosition = transform.position;
         startRotation = transform.eulerAngles;
         rigid = GetComponent<Rigidbody>();
-        carBack = transform.GetChild(8).gameObject;
+        carBack = transform.GetChild(8).gameObject;     // carBack 게임 오브젝트 가져오기
         BL = transform.GetChild(0).gameObject;
         BR = transform.GetChild(1).gameObject;
         door_fl = transform.GetChild(2).gameObject;
@@ -185,7 +181,7 @@ public class Car : MonoBehaviour
     {
         // Time.deltaTime은 화면이 한번 깜빡이는 시간 = 한 프레임의 시간
         // 화면을 60번 깜빡이면 (초당 60프레) 1/60이 들어간다
-        transform.position += transform.forward * current_speed * Time.deltaTime;
+        transform.position += transform.forward * current_speed * Time.deltaTime;       // 차량 이동
 
         //timer += Time.deltaTime * 50;
         //Debug.Log(timer);
@@ -193,7 +189,7 @@ public class Car : MonoBehaviour
         //Debug.Log(Passtime);
         //rsuSelecter();
         //Debug.Log(rsuSelect);
-        rotation = this.transform.eulerAngles;
+        //rotation = this.transform.eulerAngles;
         //Debug.Log(this.rotation.y);
         //Time.timeScale = 0.02f;
 
@@ -216,10 +212,16 @@ public class Car : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // speed 15 제한 도로에 진입하는 경우, 시간 측정 시작
+        // 시간 측정 시작
         if (other.CompareTag("NarrowRoadEnterAngleO") || other.CompareTag("NarrowRoadEnterAngleX") || other.CompareTag("WideRoadEnter"))
         {
             timer_on = true;        // 시간 측정 시작
+        }
+
+        // Test(임시 트래픽)
+        if(other.CompareTag("TestNarrowRoadEnterAngleO") || other.CompareTag("TestNarrowRoadEnterAngleX"))
+        {
+            timer_on = true;
         }
 
         if (other.CompareTag("null"))
@@ -238,15 +240,8 @@ public class Car : MonoBehaviour
             BackTriggerSettingBySpeed(0);
         }
 
-        if (other.CompareTag("CrossRoadReady")) // 이건 왜 필요함?
+        if (other.CompareTag("CrossRoad"))
         {
-            BackTriggerSettingBySpeed(init_speed);
-        }
-
-        if (other.CompareTag("CrossRoad") || other.CompareTag("Corner"))
-        {
-            //moveDirection = true;
-            //isCrossRoad = true;
             //BackTriggerSettingBySpeed(init_speed);
             //setLayerRotateCar();
             //getDirection = true;
@@ -277,46 +272,17 @@ public class Car : MonoBehaviour
             {
                 Debug.Log("RSU" + start_RSU + " → RSU" + dest_RSU + "의 총 (시간, 에너지): (" + totalTime + ", " + totalEnergy + ")");
                 Destroy(gameObject);        // 목적지에 도착한 차량 제거
-                spawnObject.GetComponent<SpawnCar>().spawnQCar(1, 13, 1, 1);
+                spawnObject.GetComponent<SpawnCar>().spawnQCar(start_RSU, dest_RSU, 1, 1);
                 //totalTime = 0.0f;
                 //totalEnergy = 0.0f;
             }
         }
     }
 
-    private void OnTriggerStay(Collider other)
-    {
-        // 좁은 도로에서 탈출하는 경우 - 속도 0km/h
-        if ((other.CompareTag("NarrowRoadExit") || other.CompareTag("WideRoadExit")) && !isCrossRoad) // 이미 CrossRoad와 만났다면 신호 무시
-        {
-            if (signal)
-            {
-                BackTriggerSettingBySpeed(init_speed);
-            }
-            else
-            {
-                BackTriggerSettingBySpeed(0);
-            }
-        }
-
-        //if (other.CompareTag("CrossRoad") || other.CompareTag("Corner"))
-        //{
-        //    //BackTriggerSettingBySpeed(init_speed);
-        //    if (direction.Contains("left") || direction.Contains("right"))
-        //    {
-        //        drive(direction);
-        //    }
-        //}
-    }
+      
 
     private void OnTriggerExit(Collider other)
     {
-        //if (other.CompareTag("CrossRoad") || other.CompareTag("Corner"))
-        //{
-        //    //Debug.Log("교차로 탈출!");
-        //    isCrossRoad = false;
-        //}
-
         if (other.CompareTag("carBack"))
         {
             BackTriggerSettingBySpeed(speedLimit);
@@ -358,6 +324,32 @@ public class Car : MonoBehaviour
             prev_RSU = cur_RSU;
             cur_RSU = 0;
             theta = 0;      // 경사각 0
+            //getDirection = false;
+        }
+
+        // Test(speed 5 제한 도로에 진입하는 경우, 경사각 X)
+        if (other.CompareTag("TestNarrowRoadEnterAngleX"))
+        {
+            BackTriggerSettingBySpeed(5);
+            //setLayerCar();
+            prevActionIndex = curActionIndex;
+            curActionIndex = -1;
+            prev_RSU = cur_RSU;
+            cur_RSU = 0;
+            theta = 0;      // 경사각 0
+            //getDirection = false;
+        }
+
+        // Test(speed 15 제한 도로에 진입하는 경우, 경사각 O)
+        if (other.CompareTag("TestNarrowRoadEnterAngleO"))
+        {
+            BackTriggerSettingBySpeed(5);
+            //setLayerCar();
+            prevActionIndex = curActionIndex;
+            curActionIndex = -1;
+            prev_RSU = cur_RSU;
+            cur_RSU = 0;
+            theta = 10;     // 경사각 10
             //getDirection = false;
         }
     }
@@ -639,6 +631,13 @@ public class Car : MonoBehaviour
             current_speed = speed[1];
             speedLimit = speed[1];
 
+        }
+        // Test(속도가 5인 경우)
+        else if (speed_ == 5)
+        {
+            carBack.transform.localPosition = new Vector3(0, 0, -1f);
+            current_speed = 5;
+            speedLimit = 5;
         }
         else // 속도가 0인 경우
         {

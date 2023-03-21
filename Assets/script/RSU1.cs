@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class RSU1 : MonoBehaviour
 {
+    public float maxQ;
     private int current_RSU = 1;        // 현재 RSU
     private float RSU_effectRange = 20f;        // RSU 영향 범위
 
@@ -128,7 +129,7 @@ public class RSU1 : MonoBehaviour
         else
         {
             // maxQ 값 저장, 가장 작은 float 값으로 초기화
-            float maxQ = float.MinValue;
+            maxQ = float.MinValue;
 
             for (int i = 0; i < actionNum; i++)
             {

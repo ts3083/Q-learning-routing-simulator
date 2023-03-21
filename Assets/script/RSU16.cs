@@ -63,7 +63,7 @@ public class RSU16 : MonoBehaviour
             }
         }
 
-        Q_table[0, 17, 2] = -5000f; // RSU21로 이동하지 못하게 설정
+        Q_table[0, 17, 2] = float.MinValue; // RSU21로 이동하지 못하게 설정
     }
 
     // Update is called once per frame

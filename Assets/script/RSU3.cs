@@ -64,7 +64,7 @@ public class RSU3 : MonoBehaviour
             }
         }
 
-        Q_table[0, 17, 1] = -5000f; // RSU4로 이동하지 못하게 설정
+        Q_table[0, 17, 1] = float.MinValue; // RSU4로 이동하지 못하게 설정
     }
 
     // Update is called once per frame
@@ -117,7 +117,7 @@ public class RSU3 : MonoBehaviour
     public int getNextAction()
     {
         // 해당 action의 index 값 저장
-        int actionIndex = 0;
+        actionIndex = 0;
 
         // ϵ 확률로 무작위 action(negibor RSU)을 선택
         if (Random.Range(0, Mathf.Pow(10, epsilonDecimalPointNum)) < epsilon * Mathf.Pow(10, epsilonDecimalPointNum))

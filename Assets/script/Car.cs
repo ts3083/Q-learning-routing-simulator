@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
 public class Car : MonoBehaviour
 {
@@ -83,6 +84,8 @@ public class Car : MonoBehaviour
     int RotateLayerName;
 
     public int lineNum;     // 차량이 위치한 차선
+
+    private bool isCarInfoUpdateNeeded = true;     // 차량의 RSU, index 정보 update 필요 여부
 
     // 교차로에서 차량에 적용되는 레이어 - 디폴트
     void setLayerCar()
@@ -276,6 +279,8 @@ public class Car : MonoBehaviour
                 //totalTime = 0.0f;
                 //totalEnergy = 0.0f;
             }
+
+            isCarInfoUpdateNeeded = true;
         }
     }
 
@@ -289,7 +294,7 @@ public class Car : MonoBehaviour
         }
 
         // speed 15 제한 도로에 진입하는 경우, 경사각 X
-        if (other.CompareTag("NarrowRoadEnterAngleX"))
+        if (isCarInfoUpdateNeeded && other.CompareTag("NarrowRoadEnterAngleX"))
         {
             BackTriggerSettingBySpeed(15);
             //setLayerCar();
@@ -298,11 +303,12 @@ public class Car : MonoBehaviour
             prev_RSU = cur_RSU;
             cur_RSU = 0;
             theta = 0;      // 경사각 0
+            isCarInfoUpdateNeeded = false;
             //getDirection = false;
         }
 
         // speed 15 제한 도로에 진입하는 경우, 경사각 O
-        if (other.CompareTag("NarrowRoadEnterAngleO"))
+        if (isCarInfoUpdateNeeded && other.CompareTag("NarrowRoadEnterAngleO"))
         {
             BackTriggerSettingBySpeed(15);
             //setLayerCar();
@@ -311,11 +317,12 @@ public class Car : MonoBehaviour
             prev_RSU = cur_RSU;
             cur_RSU = 0;
             theta = 10;     // 경사각 10
+            isCarInfoUpdateNeeded = false;
             //getDirection = false;
         }
 
         // speed 20 제한 도로에 진입하는 경우, 경사각 X
-        if (other.CompareTag("WideRoadEnter"))
+        if (isCarInfoUpdateNeeded && other.CompareTag("WideRoadEnter"))
         {
             BackTriggerSettingBySpeed(20);
             //setLayerCar();
@@ -324,11 +331,12 @@ public class Car : MonoBehaviour
             prev_RSU = cur_RSU;
             cur_RSU = 0;
             theta = 0;      // 경사각 0
+            isCarInfoUpdateNeeded = false;
             //getDirection = false;
         }
 
         // Test(speed 5 제한 도로에 진입하는 경우, 경사각 X)
-        if (other.CompareTag("TestNarrowRoadEnterAngleX"))
+        if (isCarInfoUpdateNeeded && other.CompareTag("TestNarrowRoadEnterAngleX"))
         {
             BackTriggerSettingBySpeed(5);
             //setLayerCar();
@@ -337,11 +345,12 @@ public class Car : MonoBehaviour
             prev_RSU = cur_RSU;
             cur_RSU = 0;
             theta = 0;      // 경사각 0
+            isCarInfoUpdateNeeded = false;
             //getDirection = false;
         }
 
         // Test(speed 15 제한 도로에 진입하는 경우, 경사각 O)
-        if (other.CompareTag("TestNarrowRoadEnterAngleO"))
+        if (isCarInfoUpdateNeeded && other.CompareTag("TestNarrowRoadEnterAngleO"))
         {
             BackTriggerSettingBySpeed(5);
             //setLayerCar();
@@ -350,6 +359,7 @@ public class Car : MonoBehaviour
             prev_RSU = cur_RSU;
             cur_RSU = 0;
             theta = 10;     // 경사각 10
+            isCarInfoUpdateNeeded = false;
             //getDirection = false;
         }
     }

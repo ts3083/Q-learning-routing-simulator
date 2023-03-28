@@ -5,6 +5,8 @@ using UnityEngine;
 public class RSU1 : MonoBehaviour
 {
     public float maxQ;
+    public int dest_count = 1;
+
     private int current_RSU = 1;        // 현재 RSU
     private float RSU_effectRange = 20f;        // RSU 영향 범위
 

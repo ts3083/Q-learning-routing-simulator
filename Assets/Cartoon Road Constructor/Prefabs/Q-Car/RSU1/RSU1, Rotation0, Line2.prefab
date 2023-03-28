@@ -502,6 +502,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e939d2cec041b04c93b8087f819ee51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  txtFilePath: 
+  txtFileName: 
+  maxQvalueOfSourceDest: 
+  dest_count: 1
   isEnd: 0
   start_RSU: 1
   dest_RSU: 18
@@ -533,7 +537,7 @@ TrailRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 77072618072391787}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1

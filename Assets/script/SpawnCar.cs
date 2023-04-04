@@ -52,6 +52,7 @@ public class SpawnCar : MonoBehaviour
                 RSUObject.GetComponent<RSU1>().dest_RSU = destRSU;
                 RSUObject.GetComponent<RSU1>().safetyLevel = safetyLevel;
                 RSUObject.GetComponent<RSU1>().demandLevel = demandLevel;
+                //return Random.Range(2, 6);
                 switch (RSUObject.GetComponent<RSU1>().getNextAction())
                 {
                     case 2:

@@ -5,6 +5,9 @@ using System.IO;
 
 public class Car : MonoBehaviour
 {
+    public string txtFilePath, txtFileName, maxQvalueOfSourceDest;
+    public int dest_count;
+
     //public bool isStart = true;        // 출발지 여부 저장
     public bool isEnd = false;     // 도착지 여부 저장
 
@@ -149,6 +152,12 @@ public class Car : MonoBehaviour
     private void Start()
     {
         spawnObject = GameObject.Find("SpawnCar");
+        txtFileName = "test.txt";
+        txtFilePath = Application.dataPath + "/" + txtFileName;
+        if (File.Exists(txtFilePath) == false)
+        {
+            File.Create(txtFilePath);
+        }
     }
 
     //private void InvokeTrafficSignal()
@@ -184,6 +193,7 @@ public class Car : MonoBehaviour
     {
         // Time.deltaTime은 화면이 한번 깜빡이는 시간 = 한 프레임의 시간
         // 화면을 60번 깜빡이면 (초당 60프레) 1/60이 들어간다
+        Time.timeScale = 30f;
         transform.position += transform.forward * current_speed * Time.deltaTime;       // 차량 이동
 
         //timer += Time.deltaTime * 50;
@@ -202,6 +212,11 @@ public class Car : MonoBehaviour
             timer += Time.deltaTime;
         }
     }
+
+    //void checkError()
+    //{
+    //    if (transform.position.y < 100 || )
+    //}
 
     private void OnCollisionEnter(Collision collision)
     {
@@ -264,8 +279,8 @@ public class Car : MonoBehaviour
             UpdateRSU();
 
             // 차량이 교차로를 이동할 때 걸린 시간과 필요한 에너지를 합계에 포함
-            totalTime += timer;
-            totalEnergy += energy;
+            //totalTime += timer;
+            //totalEnergy += energy;
 
             timer = 0.0f;       // 다시 0으로 초기화
             energy = 0.0f;      // 다시 0으로 초기화
@@ -273,7 +288,14 @@ public class Car : MonoBehaviour
             // 목적지에 도착한 경우
             if (isEnd)
             {
-                Debug.Log("RSU" + start_RSU + " → RSU" + dest_RSU + "의 총 (시간, 에너지): (" + totalTime + ", " + totalEnergy + ")");
+                //Debug.Log("RSU" + start_RSU + " → RSU" + dest_RSU + "의 총 (시간, 에너지): (" + totalTime + ", " + totalEnergy + ")");
+                maxQvalueOfSourceDest = GameObject.Find("RSU1").GetComponent<RSU1>().maxQvalueOfSource().ToString("F3");
+                dest_count = GameObject.Find("RSU1").GetComponent<RSU1>().dest_count;
+
+                File.AppendAllText(txtFilePath, "\n" + dest_count + " " + maxQvalueOfSourceDest);
+                dest_count++;
+                GameObject.Find("RSU1").GetComponent<RSU1>().dest_count = dest_count;
+
                 Destroy(gameObject);        // 목적지에 도착한 차량 제거
                 spawnObject.GetComponent<SpawnCar>().spawnQCar(start_RSU, dest_RSU, 1, 1);
                 //totalTime = 0.0f;
@@ -680,7 +702,7 @@ public class Car : MonoBehaviour
         // 에너지 계산
         CalEnergy();
 
-        Debug.Log("RSU" + prev_RSU + " → " + cur_RSU + "의 (시간, 에너지): (" + timer + ", " + energy + ")");
+        //Debug.Log("RSU" + prev_RSU + " → " + cur_RSU + "의 (시간, 에너지): (" + timer + ", " + energy + ")");
 
         GetQ_table();
 
@@ -693,7 +715,7 @@ public class Car : MonoBehaviour
             reward = -(Wt * timer / Nt + We * energy / Ne);       // Q-learning의 reward 계산
             RSU_Q_table[i] = (1 - alpha) * RSU_Q_table[i] + alpha * (reward + gamma * RSU_Q_table[demandLevel - 1]);
         }
-            Debug.Log("RSU" + prev_RSU + "(DL 1 ~ 5): " + RSU_Q_table[0] + ", " + RSU_Q_table[1] + ", " + RSU_Q_table[2] + ", " + RSU_Q_table[3] + ", " + RSU_Q_table[4]);
+        Debug.Log("RSU" + prev_RSU + "(DL 1 ~ 5): " + RSU_Q_table[0] + ", " + RSU_Q_table[1] + ", " + RSU_Q_table[2] + ", " + RSU_Q_table[3] + ", " + RSU_Q_table[4]);
 
         UpdateQ_table();
     }

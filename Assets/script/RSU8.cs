@@ -65,7 +65,7 @@ public class RSU8 : MonoBehaviour
 
                 for (int k = 0; k < actionNum; k++)
                 {
-                    Q_table[i, j, k] = -10.0f;
+                    Q_table[i, j, k] = -15.0f;
                 }
             }
         }
@@ -75,7 +75,7 @@ public class RSU8 : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         carList = Physics.OverlapSphere(transform.position, RSU_effectRange);       // RSU_effectRange 범위 내의 모든 오브젝트(Collider)를 가져옴
         carListNum = carList.Length;        // carList 배열의 크기

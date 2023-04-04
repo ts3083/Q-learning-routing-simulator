@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class RSU1 : MonoBehaviour
 {
-    public float maxQ;
+    public float maxQofSource;
+    public int dest_count = 1;
+
     private int current_RSU = 1;        // 현재 RSU
     private float RSU_effectRange = 20f;        // RSU 영향 범위
 
@@ -57,14 +59,14 @@ public class RSU1 : MonoBehaviour
 
                 for (int k = 0; k < actionNum; k++)
                 {
-                    Q_table[i, j, k] = -10.0f;
+                    Q_table[i, j, k] = -15.0f;
                 }
             }
         }
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         carList = Physics.OverlapSphere(transform.position, RSU_effectRange);       // RSU_effectRange 범위 내의 모든 오브젝트(Collider)를 가져옴
         carListNum = carList.Length;        // carList 배열의 크기
@@ -129,7 +131,7 @@ public class RSU1 : MonoBehaviour
         else
         {
             // maxQ 값 저장, 가장 작은 float 값으로 초기화
-            maxQ = float.MinValue;
+            float maxQ = float.MinValue;
 
             for (int i = 0; i < actionNum; i++)
             {
@@ -148,6 +150,13 @@ public class RSU1 : MonoBehaviour
         }
 
         return actions_RSU[actionIndex];
+    }
+
+    public float maxQvalueOfSource()
+    {
+        maxQofSource = Mathf.Max(Q_table[0, 17, 0], Q_table[0, 17, 1]);
+
+        return maxQofSource;
     }
 
     // 이전 RSU에 따라 getNextAction() 함수에서 반환되는 다음 RSU로 가기 위한 direction을 반환, 각각의 RSU에서 수정 필요

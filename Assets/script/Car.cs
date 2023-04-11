@@ -39,9 +39,11 @@ public class Car : MonoBehaviour
     private int Ne = 10000;       // normalization for energy
 
     private float alpha = 0.1f;     // Q-learning의 learning rate
-    private float gamma = 0.99f;     // Q-learning의 discount factor
+    private float gamma = 0.9f;     // Q-learning의 discount factor
 
     private float[] RSU_Q_table = new float[5];       // 이전 RSU의 특정 state(destination RSU)에서의 Q-table
+    public float[] nextMaxQ_value = new float[5];       // 현재 RSU의 특정 state(destination RSU)에서의 max Q-value
+    private float arrivalReward = 10.0f;        // 차량이 목적지에 도착했을 때 reward
     private GameObject spawnObject;     // SpawnCar script를 컨포넌트로 가지고 있는 오브젝트
 
     // Start is called before the first frame update
@@ -193,9 +195,8 @@ public class Car : MonoBehaviour
     {
         // Time.deltaTime은 화면이 한번 깜빡이는 시간 = 한 프레임의 시간
         // 화면을 60번 깜빡이면 (초당 60프레) 1/60이 들어간다
-        Time.timeScale = 10f;
-        Time.fixedDeltaTime = 0.02f * Time.timeScale;
-        transform.position += transform.forward * current_speed * Time.fixedDeltaTime;       // 차량 이동
+        Time.timeScale = 30f;
+        transform.position += transform.forward * current_speed * Time.deltaTime;       // 차량 이동
 
         //timer += Time.deltaTime * 50;
         //Debug.Log(timer);
@@ -210,7 +211,7 @@ public class Car : MonoBehaviour
         // 시간 측정
         if (timer_on)
         {
-            timer += Time.fixedDeltaTime;
+            timer += Time.deltaTime;
         }
     }
 
@@ -276,38 +277,38 @@ public class Car : MonoBehaviour
         {
             timer_on = false;       // 시간 측정 끝
 
-            // 이전 RSU의 Q-table update
-            UpdateRSU();
-
             // 차량이 교차로를 이동할 때 걸린 시간과 필요한 에너지를 합계에 포함
             //totalTime += timer;
             //totalEnergy += energy;
 
-            timer = 0.0f;       // 다시 0으로 초기화
-            energy = 0.0f;      // 다시 0으로 초기화
-
             // 목적지에 도착한 경우
             if (isEnd)
             {
+                UpdateRSU(arrivalReward);
+
                 //Debug.Log("RSU" + start_RSU + " → RSU" + dest_RSU + "의 총 (시간, 에너지): (" + totalTime + ", " + totalEnergy + ")");
                 maxQvalueOfSourceDest = GameObject.Find("RSU1").GetComponent<RSU1>().maxQvalueOfSource().ToString("F3");
                 dest_count = GameObject.Find("RSU1").GetComponent<RSU1>().dest_count;
 
                 File.AppendAllText(txtFilePath, "\n" + dest_count + " " + maxQvalueOfSourceDest);
-                
                 dest_count++;
                 GameObject.Find("RSU1").GetComponent<RSU1>().dest_count = dest_count;
-                GameObject.Find("RSU1").GetComponent<RSU1>().epsilon /= dest_count;
 
                 Destroy(gameObject);        // 목적지에 도착한 차량 제거
                 spawnObject.GetComponent<SpawnCar>().spawnQCar(start_RSU, dest_RSU, 1, 1);
-                //totalTime = 0.0f;
-                //totalEnergy = 0.0f;
             }
+            else
+            {
+                // 이전 RSU의 Q-table update
+                UpdateRSU();
 
-            isCarInfoUpdateNeeded = true;
+                timer = 0.0f;       // 다시 0으로 초기화
+                energy = 0.0f;      // 다시 0으로 초기화
+
+                isCarInfoUpdateNeeded = true;
+            }
         }
-    }
+    } 
 
     private void OnTriggerExit(Collider other)
     {
@@ -695,7 +696,7 @@ public class Car : MonoBehaviour
     }
 
     // 차량에서 이전 RSU의 Q-table update
-    private void UpdateRSU()
+    private void UpdateRSU(float additionalReward = 0.0f)
     {
         float reward;       // Q-learning의 reward
         float Wt, We;       // Demand Level에 따른 가중치
@@ -713,8 +714,8 @@ public class Car : MonoBehaviour
             Wt = 1.0f - 0.25f * i;
             We = 0.25f * i;
 
-            reward = -(Wt * timer / Nt + We * energy / Ne);       // Q-learning의 reward 계산
-            RSU_Q_table[i] = (1 - alpha) * RSU_Q_table[i] + alpha * (reward + gamma * RSU_Q_table[demandLevel - 1]);
+            reward = -(Wt * timer / Nt + We * energy / Ne) + additionalReward;       // Q-learning의 reward 계산
+            RSU_Q_table[i] = (1 - alpha) * RSU_Q_table[i] + alpha * (reward + gamma * nextMaxQ_value[i]);
         }
         Debug.Log("RSU" + prev_RSU + "(DL 1 ~ 5): " + RSU_Q_table[0] + ", " + RSU_Q_table[1] + ", " + RSU_Q_table[2] + ", " + RSU_Q_table[3] + ", " + RSU_Q_table[4]);
 

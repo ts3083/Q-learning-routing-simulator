@@ -114,6 +114,10 @@ public class RSU18 : MonoBehaviour
                     carList[i].GetComponent<Car>().lineNum = line_num;
                     carList[i].GetComponent<Car>().curActionIndex = actionIndex;       // Q-table에서 해당 action(neighbor RSU)의 index를 Car script로 넘겨줌
                     carList[i].GetComponent<Car>().cur_RSU = current_RSU;        // 현재 RSU 번호로 초기화
+                    for (int j = 0; j < 5; j++)      // state(destination RSU) 별 max Q-value를 넘겨줌
+                    {
+                        carList[i].GetComponent<Car>().nextMaxQ_value[j] = getMaxQ_value(j);
+                    }
                 }
             }
         }
@@ -344,5 +348,21 @@ public class RSU18 : MonoBehaviour
                     return forward_RSU13[line_num];
             }
         }
+    }
+
+    // Demand Level 별 max Q-value, DL은 실제 demand level - 1
+    private float getMaxQ_value(int DL)
+    {
+        float maxQ = float.MinValue;
+
+        for (int i = 0; i < actionNum; i++)
+        {
+            if (maxQ < Q_table[DL, dest_RSU - 1, i])
+            {
+                maxQ = Q_table[DL, dest_RSU - 1, i];
+            }
+        }
+
+        return maxQ;
     }
 }

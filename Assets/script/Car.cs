@@ -39,7 +39,7 @@ public class Car : MonoBehaviour
     private int Ne = 10000;       // normalization for energy
 
     private float alpha = 0.1f;     // Q-learning의 learning rate
-    private float gamma = 0.9f;     // Q-learning의 discount factor
+    private float gamma = 0.99f;     // Q-learning의 discount factor
 
     private float[] RSU_Q_table = new float[5];       // 이전 RSU의 특정 state(destination RSU)에서의 Q-table
     private GameObject spawnObject;     // SpawnCar script를 컨포넌트로 가지고 있는 오브젝트
@@ -193,8 +193,9 @@ public class Car : MonoBehaviour
     {
         // Time.deltaTime은 화면이 한번 깜빡이는 시간 = 한 프레임의 시간
         // 화면을 60번 깜빡이면 (초당 60프레) 1/60이 들어간다
-        Time.timeScale = 30f;
-        transform.position += transform.forward * current_speed * Time.deltaTime;       // 차량 이동
+        Time.timeScale = 10f;
+        Time.fixedDeltaTime = 0.02f * Time.timeScale;
+        transform.position += transform.forward * current_speed * Time.fixedDeltaTime;       // 차량 이동
 
         //timer += Time.deltaTime * 50;
         //Debug.Log(timer);
@@ -209,7 +210,7 @@ public class Car : MonoBehaviour
         // 시간 측정
         if (timer_on)
         {
-            timer += Time.deltaTime;
+            timer += Time.fixedDeltaTime;
         }
     }
 
@@ -293,8 +294,10 @@ public class Car : MonoBehaviour
                 dest_count = GameObject.Find("RSU1").GetComponent<RSU1>().dest_count;
 
                 File.AppendAllText(txtFilePath, "\n" + dest_count + " " + maxQvalueOfSourceDest);
+                
                 dest_count++;
                 GameObject.Find("RSU1").GetComponent<RSU1>().dest_count = dest_count;
+                GameObject.Find("RSU1").GetComponent<RSU1>().epsilon /= dest_count;
 
                 Destroy(gameObject);        // 목적지에 도착한 차량 제거
                 spawnObject.GetComponent<SpawnCar>().spawnQCar(start_RSU, dest_RSU, 1, 1);
@@ -305,8 +308,6 @@ public class Car : MonoBehaviour
             isCarInfoUpdateNeeded = true;
         }
     }
-
-      
 
     private void OnTriggerExit(Collider other)
     {

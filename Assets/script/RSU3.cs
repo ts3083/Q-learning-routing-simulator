@@ -21,7 +21,7 @@ public class RSU3 : MonoBehaviour
     private int next_RSU; // 다음 RSU
     private int line_num; // 차량 차선 번호
 
-    private float epsilon = 0.0f;       // ϵ-greedy의 epsilon 값
+    private float epsilon;       // ϵ-greedy의 epsilon 값
     private int epsilonDecimalPointNum = 1;     // ϵ(epsilon) 소수점 자리수
 
     // [state(destination RSU) 수, action(neighbor RUS) 수], Demand Level [time, energy]
@@ -118,9 +118,10 @@ public class RSU3 : MonoBehaviour
     {
         // 해당 action의 index 값 저장
         actionIndex = 0;
+        epsilon = GameObject.Find("RSU1").GetComponent<RSU1>().epsilon;
 
         // ϵ 확률로 무작위 action(negibor RSU)을 선택
-        if (Random.Range(0, Mathf.Pow(10, epsilonDecimalPointNum)) < epsilon * Mathf.Pow(10, epsilonDecimalPointNum))
+        if (Random.Range(0.00000f, 1.00000f) < epsilon)
         {
             // 무작위로 선택한 action(neighbor RSU)이 이전 RSU가 아닌 경우
             do

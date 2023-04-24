@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 using System.IO;
 
@@ -21,6 +23,7 @@ public class Car : MonoBehaviour
 
     public int cur_RSU;        // 현재 RSU
     public int prev_RSU;        // 이전 RSU
+    public int next_RSU; // 다음 RSU
 
     public float totalTime = 0.0f;      // 차량이 출발지에서 목적지까지 총 소요된 시간
     public float timer = 0.0f;      // 교차로 사이에 이동 시간 측정
@@ -195,7 +198,7 @@ public class Car : MonoBehaviour
     {
         // Time.deltaTime은 화면이 한번 깜빡이는 시간 = 한 프레임의 시간
         // 화면을 60번 깜빡이면 (초당 60프레) 1/60이 들어간다
-        Time.timeScale = 30f;
+        Time.timeScale = 3f;
         //Time.fixedDeltaTime = 0.02f * Time.timeScale;
         transform.position += transform.forward * current_speed * Time.deltaTime;       // 차량 이동
 
@@ -240,7 +243,7 @@ public class Car : MonoBehaviour
         }
 
         // Test(임시 트래픽)
-        if(other.CompareTag("TestNarrowRoadEnterAngleO") || other.CompareTag("TestNarrowRoadEnterAngleX"))
+        if (other.CompareTag("TestNarrowRoadEnterAngleO") || other.CompareTag("TestNarrowRoadEnterAngleX"))
         {
             timer_on = true;
         }
@@ -267,10 +270,11 @@ public class Car : MonoBehaviour
             //setLayerRotateCar();
             //getDirection = true;
             // 이동방향에 따른 좌표를 받아옴
+            //cross();
             transform.position = position;
             if (direction.Contains("left") || direction.Contains("right"))
             {
-                new_drive(direction); 
+                new_drive(direction);
             }
         }
 
@@ -309,7 +313,48 @@ public class Car : MonoBehaviour
                 isCarInfoUpdateNeeded = true;
             }
         }
-    } 
+    }
+
+    async void cross()
+    {
+        var task = Task.Run(() => Wait(10));
+        await task;
+        transform.position = position;
+        if (direction.Contains("left") || direction.Contains("right"))
+        {
+            new_drive(direction);
+        }
+    }
+
+    private void Wait(float waitTime)
+    {
+        for (int i = 0; i < waitTime; ++i)
+        {
+            Thread.Sleep(1000);
+        }
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag("NarrowRoadExit") || other.CompareTag("WideRoadExit"))
+        {
+            // direction 방향의 도로에 car 오브젝트가 있는지 확인 - 있으면 true, 없으면 false
+            if (detector()) // 오브젝트가 있는 경우
+            {
+                BackTriggerSettingBySpeed(0);
+            }
+            else // 오브젝트가 없는 경우 - forwarding 가능
+            {
+                BackTriggerSettingBySpeed(speedLimit);
+            }
+        }
+    }
+
+    private bool detector()
+    {
+        return GameObject.Find("DetectTrigger" + cur_RSU + "-" + next_RSU)
+            .GetComponent<DetectTrigger>().detected;
+    }
 
     private void OnTriggerExit(Collider other)
     {

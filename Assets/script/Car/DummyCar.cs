@@ -9,7 +9,7 @@ public class DummyCar : MonoBehaviour
 {
     // 차량 속도 선언 - 10, 15, 20
     private int[] speed = new int[] { 15, 20 };
-    private static int init_speed = 10;     // 초기 속도(10m/s)
+    private static int init_speed = 0;     // 초기 속도(10m/s)
     public int current_speed = init_speed;      // 현재 차량의 위치에 따른 속도가 다름 => current speed 변수 선언
     private int speedLimit;     // 속도 제한
 
@@ -29,6 +29,10 @@ public class DummyCar : MonoBehaviour
 
     public int cur_RSU;        // 현재 RSU
     public int prev_RSU;        // 이전 RSU
+    public int next_RSU; // 다음 RSU
+
+    float timer = 0;
+
 
     // Start is called before the first frame update
     void Start()
@@ -39,9 +43,13 @@ public class DummyCar : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        transform.position += transform.forward * current_speed * Time.deltaTime;       // 차량 이동
+        timer += Time.deltaTime;
+        if (timer > 30)
+        {
+            transform.position += transform.forward * 10 * Time.deltaTime;       // 차량 이동
+        }
     }
 
     private void OnTriggerEnter(Collider other)

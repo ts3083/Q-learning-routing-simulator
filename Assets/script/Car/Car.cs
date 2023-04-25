@@ -315,25 +315,6 @@ public class Car : MonoBehaviour
         }
     }
 
-    async void cross()
-    {
-        var task = Task.Run(() => Wait(10));
-        await task;
-        transform.position = position;
-        if (direction.Contains("left") || direction.Contains("right"))
-        {
-            new_drive(direction);
-        }
-    }
-
-    private void Wait(float waitTime)
-    {
-        for (int i = 0; i < waitTime; ++i)
-        {
-            Thread.Sleep(1000);
-        }
-    }
-
     private void OnTriggerStay(Collider other)
     {
         if (other.CompareTag("NarrowRoadExit") || other.CompareTag("WideRoadExit"))
@@ -688,7 +669,7 @@ public class Car : MonoBehaviour
     }
 
     // 차량 후면 트리거(차량간 거리 조절) 위치 조정
-    private void BackTriggerSettingBySpeed(int speed_)
+    public void BackTriggerSettingBySpeed(int speed_)
     {
         // 초기 속도(init_speed)인 경우
         if (speed_ == init_speed)

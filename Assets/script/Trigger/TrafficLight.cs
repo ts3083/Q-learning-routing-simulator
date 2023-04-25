@@ -11,6 +11,7 @@ public class TrafficLight : MonoBehaviour
     private float nextLightDelay;        // 다음 번 신호 대기 시간
     public bool isLightOn;      // 신호가 켜져 있는지 여부 저장
     public int carMoveSpeed = 10;       // 신호를 받은 차량의 이동 속도(Car.cs or DummyCar.cs의 init_speed)
+    public int lineNum;
 
     // Start is called before the first frame update
     void Start()

@@ -131,7 +131,7 @@ public class DummyCar : MonoBehaviour
     }
 
     // 차량 후면 트리거(차량간 거리 조절) 위치 조정
-    private void BackTriggerSettingBySpeed(int speed_)
+    public void BackTriggerSettingBySpeed(int speed_)
     {
         // 초기 속도(init_speed)인 경우
         if (speed_ == init_speed)

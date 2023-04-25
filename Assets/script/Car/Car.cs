@@ -91,6 +91,7 @@ public class Car : MonoBehaviour
     int CarLayerName;
     int RotateLayerName;
 
+    public int prev_lineNum;
     public int lineNum;     // 차량이 위치한 차선
 
     private bool isCarInfoUpdateNeeded = true;     // 차량의 RSU, index 정보 update 필요 여부
@@ -198,7 +199,7 @@ public class Car : MonoBehaviour
     {
         // Time.deltaTime은 화면이 한번 깜빡이는 시간 = 한 프레임의 시간
         // 화면을 60번 깜빡이면 (초당 60프레) 1/60이 들어간다
-        Time.timeScale = 3f;
+        Time.timeScale = 5f;
         //Time.fixedDeltaTime = 0.02f * Time.timeScale;
         transform.position += transform.forward * current_speed * Time.deltaTime;       // 차량 이동
 
@@ -319,14 +320,24 @@ public class Car : MonoBehaviour
     {
         if (other.CompareTag("NarrowRoadExit") || other.CompareTag("WideRoadExit"))
         {
-            // direction 방향의 도로에 car 오브젝트가 있는지 확인 - 있으면 true, 없으면 false
-            if (detector()) // 오브젝트가 있는 경우
+            if (other.GetComponent<TrafficLight>().isLightOn == false) // red light
             {
                 BackTriggerSettingBySpeed(0);
             }
-            else // 오브젝트가 없는 경우 - forwarding 가능
+            else // blue light
             {
-                BackTriggerSettingBySpeed(speedLimit);
+                // direction 방향의 도로에 car 오브젝트가 있는지 확인 - 있으면 true, 없으면 false
+                if (detector()) // 이동하려는 direction 도로에 차량이 있음
+                {
+                    BackTriggerSettingBySpeed(0);
+                }
+                else
+                {
+                    if (other.GetComponent<TrafficLight>().lightOn_lineNum.Equals(prev_lineNum))
+                    {
+                        BackTriggerSettingBySpeed(speedLimit);
+                    }
+                }
             }
         }
     }

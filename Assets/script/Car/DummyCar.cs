@@ -62,6 +62,7 @@ public class DummyCar : MonoBehaviour
 
         if (other.CompareTag("null"))
         {
+            Destroy(gameObject);
             direction = "null";
         }
 
@@ -82,21 +83,21 @@ public class DummyCar : MonoBehaviour
         }
     }
 
-    private void OnTriggerStay(Collider other)
-    {
-        // 좁은 도로에서 탈출하는 경우 - 속도 0km/h
-        if (other.CompareTag("NarrowRoadExit") || other.CompareTag("WideRoadExit")) // 이미 CrossRoad와 만났다면 신호 무시
-        {
-            if (signal)
-            {
-                BackTriggerSettingBySpeed(init_speed);
-            }
-            else
-            {
-                BackTriggerSettingBySpeed(0);
-            }
-        }
-    }
+    //private void OnTriggerStay(Collider other)
+    //{
+    //    // 좁은 도로에서 탈출하는 경우 - 속도 0km/h
+    //    if (other.CompareTag("NarrowRoadExit") || other.CompareTag("WideRoadExit")) // 이미 CrossRoad와 만났다면 신호 무시
+    //    {
+    //        if (signal)
+    //        {
+    //            BackTriggerSettingBySpeed(init_speed);
+    //        }
+    //        else
+    //        {
+    //            BackTriggerSettingBySpeed(0);
+    //        }
+    //    }
+    //}
 
     private void OnTriggerExit(Collider other)
     {

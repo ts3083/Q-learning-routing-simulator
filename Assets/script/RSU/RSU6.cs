@@ -100,6 +100,7 @@ public class RSU6 : MonoBehaviour
                         safetyLevel = carList[i].GetComponent<Car>().safetyLevel;
                         prev_RSU = carList[i].GetComponent<Car>().prev_RSU;
                         line_num = carList[i].GetComponent<Car>().lineNum;
+                        carList[i].GetComponent<Car>().prev_lineNum = line_num; // 차량의 이전 차선 저장
                         next_RSU = getNextAction();
                         carList[i].GetComponent<Car>().direction = getNextDirection(next_RSU);
                         carList[i].GetComponent<Car>().position = getPosition(next_RSU);

@@ -195,7 +195,7 @@ public class Car : MonoBehaviour
     {
         // Time.deltaTime은 화면이 한번 깜빡이는 시간 = 한 프레임의 시간
         // 화면을 60번 깜빡이면 (초당 60프레) 1/60이 들어간다
-        Time.timeScale = 30f;
+        Time.timeScale = 10f;
         //Time.fixedDeltaTime = 0.02f * Time.timeScale;
         transform.position += transform.forward * current_speed * Time.deltaTime;       // 차량 이동
 
@@ -643,7 +643,7 @@ public class Car : MonoBehaviour
     }
 
     // 차량 후면 트리거(차량간 거리 조절) 위치 조정
-    private void BackTriggerSettingBySpeed(int speed_)
+    public void BackTriggerSettingBySpeed(int speed_)
     {
         // 초기 속도(init_speed)인 경우
         if (speed_ == init_speed)

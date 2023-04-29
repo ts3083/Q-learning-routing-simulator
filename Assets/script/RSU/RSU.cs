@@ -310,23 +310,23 @@ public class RSU : MonoBehaviour
     private void signalFunc(int beforeRotate)
     {
         // carList 배열에 속해있는 모든 오브젝트(Collider)에 대하여
-        for (int i = 0; i < carListNum; i++)
-        {
-            // 차량 오브젝트에 대해서만 실행하기 위해서
-            if (!carList[i].CompareTag("SportCar2"))
-            {
-                continue;
-            }
+        //for (int i = 0; i < carListNum; i++)
+        //{
+        //    // 차량 오브젝트에 대해서만 실행하기 위해서
+        //    if (!carList[i].CompareTag("SportCar2"))
+        //    {
+        //        continue;
+        //    }
 
-            if (carList[i].GetComponent<Car>().beforeRotation == beforeRotate)
-            {
-                carList[i].GetComponent<Car>().signal = true;
-            }
-            else
-            {
-                carList[i].GetComponent<Car>().signal = false;
-            }
-        }
+        //    if (carList[i].GetComponent<Car>().beforeRotation == beforeRotate)
+        //    {
+        //        carList[i].GetComponent<Car>().signal = true;
+        //    }
+        //    else
+        //    {
+        //        carList[i].GetComponent<Car>().signal = false;
+        //    }
+        //}
     }
 
     // 4거리 신호 발생

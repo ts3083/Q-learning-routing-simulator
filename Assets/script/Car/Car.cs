@@ -58,7 +58,7 @@ public class Car : MonoBehaviour
     private static int init_speed = 10;     // 초기 속도(10m/s)
     public int current_speed = init_speed;      // 현재 차량의 위치에 따른 속도가 다름 => current speed 변수 선언
 
-    public bool signal;     // 차량 정지 및 직진 신호
+    //public bool signal;     // 차량 정지 및 직진 신호
     //public List<string> signal_str;
     //int temp = 0;
 

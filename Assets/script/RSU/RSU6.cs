@@ -107,7 +107,6 @@ public class RSU6 : MonoBehaviour
                         carList[i].GetComponent<Car>().lineNum = line_num; // 방향 이동 후 car의 line_num 저장
                         carList[i].GetComponent<Car>().curActionIndex = actionIndex;
                         carList[i].GetComponent<Car>().cur_RSU = current_RSU;        // 현재 RSU 번호로 초기화
-                        carList[i].GetComponent<Car>().next_RSU = next_RSU; // 다음 RSU
                         for (int j = 0; j < 5; j++)      // state(destination RSU) 별 max Q-value를 넘겨줌
                         {
                             carList[i].GetComponent<Car>().nextMaxQ_value[j] = getMaxQ_value(j);
@@ -115,20 +114,23 @@ public class RSU6 : MonoBehaviour
                     }
                 }
             }
-            //else if (carList[i].CompareTag("DummyCar"))
-            //{
-            //    if (carList[i].GetComponent<DummyCar>().direction == "null")
-            //    {
-            //        prev_RSU = carList[i].GetComponent<DummyCar>().prev_RSU;
-            //        next_RSU = carList[i].GetComponent<DummyCar>().routeList[carList[i].GetComponent<DummyCar>().routeIndex];
-            //        line_num = carList[i].GetComponent<DummyCar>().lineNum;
-            //        carList[i].GetComponent<DummyCar>().direction = getNextDirection(next_RSU);
-            //        carList[i].GetComponent<DummyCar>().position = getPosition(next_RSU);
-            //        carList[i].GetComponent<DummyCar>().lineNum = line_num;     // 방향 이동 후 car의 line_num 저장
-            //        carList[i].GetComponent<DummyCar>().cur_RSU = current_RSU;        // 현재 RSU 번호로 초기화
-            //        carList[i].GetComponent<DummyCar>().next_RSU = next_RSU; // 다음 RSU
-            //    }
-            //}
+            else if (carList[i].CompareTag("DummyCar"))
+            {
+                if (carList[i].GetComponent<DummyCar>().direction == "null")
+                {
+                    prev_RSU = carList[i].GetComponent<DummyCar>().prev_RSU;
+                    next_RSU = carList[i].GetComponent<DummyCar>().routeList[carList[i].GetComponent<DummyCar>().routeIndex];
+                    line_num = carList[i].GetComponent<DummyCar>().lineNum;
+                    carList[i].GetComponent<DummyCar>().direction = getNextDirection(next_RSU);
+                    carList[i].GetComponent<DummyCar>().position = getPosition(next_RSU);
+                    carList[i].GetComponent<DummyCar>().lineNum = line_num;     // 방향 이동 후 car의 line_num 저장
+                    carList[i].GetComponent<DummyCar>().cur_RSU = current_RSU;        // 현재 RSU 번호로 초기화
+                }
+            }
+            else
+            {
+                continue;
+            }
         }
     }
 

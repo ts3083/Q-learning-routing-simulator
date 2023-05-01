@@ -45,11 +45,7 @@ public class DummyCar : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        timer += Time.deltaTime;
-        if (timer > 30)
-        {
-            transform.position += transform.forward * 10 * Time.deltaTime;       // 차량 이동
-        }
+        transform.position += transform.forward * 10 * Time.deltaTime;       // 차량 이동
     }
 
     private void OnTriggerEnter(Collider other)
@@ -62,7 +58,6 @@ public class DummyCar : MonoBehaviour
 
         if (other.CompareTag("null"))
         {
-            Destroy(gameObject);
             direction = "null";
         }
 

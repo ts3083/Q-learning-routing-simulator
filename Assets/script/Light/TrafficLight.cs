@@ -12,12 +12,14 @@ public class TrafficLight : MonoBehaviour
     public bool isLightOn;      // 신호가 켜져 있는지 여부 저장
     public int lightOn_lineNum = 0;
     public int carMoveSpeed = 10;       // 신호를 받은 차량의 이동 속도(Car.cs or DummyCar.cs의 init_speed)
-    public int lineNum; 
+    public int lineNum;
+    public float blueLightTerm;
 
     // Start is called before the first frame update
     void Start()
     {
         lightOnTime = 20;
+        blueLightTerm = 20 / 4;
 
         startLightOnDelay = (signalTurn - 1) * lightOnTime;
         nextLightDelay = (roadNum - 1) * lightOnTime;
@@ -39,10 +41,29 @@ public class TrafficLight : MonoBehaviour
             // 신호 켬
             isLightOn = true;
 
-            for (int i = 1; i <= lineNum; i++)
+            // 2차선 : 신호가 켜지면 1번과 2번 lineNum 번갈아 2번 켜지도록 설정
+            // 4차선 : 1번부터 4번까지 돌아가면서 켜지도록 설정
+            if (lineNum == 2)
             {
-                lightOn_lineNum = i;
-                yield return new WaitForSeconds(lightOnTime / lineNum);
+                lightOn_lineNum = 1;
+                yield return new WaitForSeconds(lightOnTime / 4);
+
+                lightOn_lineNum = 2;
+                yield return new WaitForSeconds(lightOnTime / 4);
+
+                lightOn_lineNum = 1;
+                yield return new WaitForSeconds(lightOnTime / 4);
+
+                lightOn_lineNum = 2;
+                yield return new WaitForSeconds(lightOnTime / 4);
+            } 
+            else if(lineNum == 4)
+            {
+                for (int i = 1; i <= 4; i++)
+                {
+                    lightOn_lineNum = i;
+                    yield return new WaitForSeconds(lightOnTime / 4);
+                }
             }
 
             // 신호 끔

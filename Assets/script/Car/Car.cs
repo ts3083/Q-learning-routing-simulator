@@ -94,7 +94,7 @@ public class Car : MonoBehaviour
     public int prev_lineNum;
     public int lineNum;     // 차량이 위치한 차선
 
-    private bool isCarInfoUpdateNeeded = true;     // 차량의 RSU, index 정보 update 필요 여부
+    public bool isCarInfoUpdateNeeded = true;     // 차량의 RSU, index 정보 update 필요 여부
 
     // 교차로에서 차량에 적용되는 레이어 - 디폴트
     void setLayerCar()
@@ -225,15 +225,20 @@ public class Car : MonoBehaviour
     //    if (transform.position.y < 100 || )
     //}
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        //앞 차와 충돌하는 경우
-        //if (collision.collider.CompareTag("carBack"))
-        //{
-        //    Debug.Log("충돌!");
-        //    speed = 0;
-        //}
-    }
+    //private void OnCollisionEnter(Collision collision)
+    //{
+    //    if (collision.collider.CompareTag("carBack"))
+    //    {
+    //        BackTriggerSettingBySpeed(0);
+    //    }
+    //}
+    //private void OnCollisionExit(Collision collision)
+    //{
+    //    if (collision.collider.CompareTag("carBack"))
+    //    {
+    //        BackTriggerSettingBySpeed(speedLimit);
+    //    }
+    //}
 
     private void OnTriggerEnter(Collider other)
     {
@@ -336,6 +341,10 @@ public class Car : MonoBehaviour
                     if (other.GetComponent<TrafficLight>().lightOn_lineNum.Equals(prev_lineNum))
                     {
                         BackTriggerSettingBySpeed(speedLimit);
+                    }
+                    else
+                    {
+                        BackTriggerSettingBySpeed(0);
                     }
                 }
             }
@@ -685,21 +694,21 @@ public class Car : MonoBehaviour
         // 초기 속도(init_speed)인 경우
         if (speed_ == init_speed)
         {
-            carBack.transform.localPosition = new Vector3(0, 0, -3f);
+            //carBack.transform.localPosition = new Vector3(0, 0, -3f);
             current_speed = init_speed;
             speedLimit = init_speed;
         }
         // 속도가 15인 경우
         else if (speed_ == 15)
         {
-            carBack.transform.localPosition = new Vector3(0, 0, -5f);
+            //carBack.transform.localPosition = new Vector3(0, 0, -5f);
             current_speed = speed[0];
             speedLimit = speed[0];
         }
         // 속도가 30인 경우
         else if (speed_ == 20)
         {
-            carBack.transform.localPosition = new Vector3(0, 0, -10f);
+            //carBack.transform.localPosition = new Vector3(0, 0, -10f);
             current_speed = speed[1];
             speedLimit = speed[1];
 
@@ -707,13 +716,13 @@ public class Car : MonoBehaviour
         // Test(속도가 5인 경우)
         else if (speed_ == 5)
         {
-            carBack.transform.localPosition = new Vector3(0, 0, -1f);
+            //carBack.transform.localPosition = new Vector3(0, 0, -1f);
             current_speed = 5;
             speedLimit = 5;
         }
         else // 속도가 0인 경우
         {
-            carBack.transform.localPosition = new Vector3(0, 0, -3f);
+            //carBack.transform.localPosition = new Vector3(0, 0, -3f);
             current_speed = 0;
             speedLimit = init_speed;
         }

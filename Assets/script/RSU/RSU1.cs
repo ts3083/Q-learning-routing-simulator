@@ -164,7 +164,7 @@ public class RSU1 : MonoBehaviour
     }
 
     // 이전 RSU에 따라 getNextAction() 함수에서 반환되는 다음 RSU로 가기 위한 direction을 반환, 각각의 RSU에서 수정 필요
-    private string getNextDirection(int RSU_num)
+    public string getNextDirection(int RSU_num)
     {
         switch (RSU_num)
         {

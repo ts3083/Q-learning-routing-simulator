@@ -27,17 +27,21 @@ public class DummyCar : MonoBehaviour
     public int lineNum;     // 차량이 위치한 차선
     //private bool isCrossroad = false;       // 차량이 exit 트리거를 통과하여 교차로로 이동하였는지 여부
 
-    public int[] routeList;       // dummy 차량의 경로 저장, 다음 RSU에서 이동할 RSU 번호부터 시작
-    private int routeListLength;        // routeList의 길이
-    public int routeIndex = 0;     // dummy 차량이 따르는 경로 index
+    //public int[] routeList;       // dummy 차량의 경로 저장, 다음 RSU에서 이동할 RSU 번호부터 시작
+    //private int routeListLength;        // routeList의 길이
+    //public int routeIndex = 0;     // dummy 차량이 따르는 경로 index
 
     public int cur_RSU;        // 현재 RSU
     public int prev_RSU;        // 이전 RSU
+    public int next_RSU;        // 다음 RSU
+    public int prev_lineNum;
 
     private bool isCarInfoUpdateNeeded = true;     // 차량의 RSU정보 update 필요 여부
 
-    public int curRoadNum;      // 현재 차선의 개수
-    public int nextRoadNum;     // 다음 차선의 개수
+    //public int curRoadNum;      // 현재 차선의 개수
+    //public int nextRoadNum;     // 다음 차선의 개수
+
+    private crossroadMove DummyCarMoveDecision = new();     // 교차로에서 DummyCar의 이동 결정
 
     // Start is called before the first frame update
     void Start()
@@ -45,7 +49,7 @@ public class DummyCar : MonoBehaviour
         carBack = transform.GetChild(8).gameObject;     // carBack 게임 오브젝트 가져오기
         BackTriggerSettingBySpeed(start_speed);      // 초기 속도(10m/s)로 CarBack 트리거 설정
         beforeRotation = (int)transform.eulerAngles.y;
-        routeListLength = routeList.Length;
+        //routeListLength = routeList.Length;
     }
 
     // Update is called once per frame
@@ -55,7 +59,7 @@ public class DummyCar : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Time.timeScale = 3f;
+        Time.timeScale = 2f;
 
         transform.position += transform.forward * current_speed * Time.deltaTime;       // 차량 이동        
 
@@ -102,11 +106,11 @@ public class DummyCar : MonoBehaviour
                 new_drive(direction);
             }
 
-            routeIndex++;
-            if (routeIndex > routeListLength - 1)
-            {
-                routeIndex = 0;
-            }
+            //routeIndex++;
+            //if (routeIndex > routeListLength - 1)
+            //{
+            //    routeIndex = 0;
+            //}
         }
 
         if(other.CompareTag("NarrowRoadExit") || other.CompareTag("WideRoadExit"))
@@ -140,6 +144,55 @@ public class DummyCar : MonoBehaviour
         {
             BackTriggerSettingBySpeed(20);
         }
+
+        if (other.CompareTag("NarrowRoadExit") || other.CompareTag("WideRoadExit"))
+        {
+            // RSU로 부터 현재 RSU에 대한 정보를 받은 경우에만 실행
+            //if(cur_RSU != 0)
+            //{
+            //    DummyCarMoveDecision.getNextDirection(prev_RSU, cur_RSU, ref lineNum, ref direction, ref position);
+            //}
+
+            // 방향(direction)이 null이 아닌 경우에만 이동하도록 설정
+            if(direction == "null")
+            {
+                BackTriggerSettingBySpeed(0);
+            }
+            else
+            {
+                BackTriggerSettingBySpeed(init_speed);
+            }
+
+            if (other.GetComponent<TrafficLight>().isLightOn == false) // red light
+            {
+                BackTriggerSettingBySpeed(0);
+            }
+            else // blue light
+            {
+                // direction 방향의 도로에 car 오브젝트가 있는지 확인 - 있으면 true, 없으면 false
+                if (detector()) // 이동하려는 direction 도로에 차량이 있음
+                {
+                    BackTriggerSettingBySpeed(0);
+                }
+                else
+                {
+                    if (other.GetComponent<TrafficLight>().lightOn_lineNum.Equals(prev_lineNum))
+                    {
+                        BackTriggerSettingBySpeed(speedLimit);
+                    }
+                    else
+                    {
+                        BackTriggerSettingBySpeed(0);
+                    }
+                }
+            }
+        }
+    }
+
+    private bool detector()
+    {
+        return GameObject.Find("DetectTrigger" + cur_RSU + "-" + next_RSU)
+            .GetComponent<DetectTrigger>().detected;
     }
 
     private void OnTriggerExit(Collider other)
@@ -155,8 +208,8 @@ public class DummyCar : MonoBehaviour
             prev_RSU = cur_RSU;
             cur_RSU = 0;
             currentLineNum = lineNum;
-            curRoadNum = nextRoadNum;
-            nextRoadNum = 0;
+            //curRoadNum = nextRoadNum;
+            //nextRoadNum = 0;
             isCarInfoUpdateNeeded = false;
         }
 
@@ -166,8 +219,8 @@ public class DummyCar : MonoBehaviour
             prev_RSU = cur_RSU;
             cur_RSU = 0;
             currentLineNum = lineNum;
-            curRoadNum = nextRoadNum;
-            nextRoadNum = 0;
+            //curRoadNum = nextRoadNum;
+            //nextRoadNum = 0;
             isCarInfoUpdateNeeded = false;
         }
 
@@ -177,8 +230,8 @@ public class DummyCar : MonoBehaviour
             prev_RSU = cur_RSU;
             cur_RSU = 0;
             currentLineNum = lineNum;
-            curRoadNum = nextRoadNum;
-            nextRoadNum = 0;
+            //curRoadNum = nextRoadNum;
+            //nextRoadNum = 0;
             isCarInfoUpdateNeeded = false;
         }
     }

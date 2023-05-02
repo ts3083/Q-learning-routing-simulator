@@ -5,7 +5,7 @@ using UnityEngine;
 public class crossroadMove : MonoBehaviour
 {
     // 해당 RSU에서 이동할 수 있는 다음 RSU(action) 리스트
-    private int[,] action_RSUList = new int[25, 5]
+    private static int[,] action_RSUList = new int[25, 5]
     {
         { 2, 6, 0, 0, 0 },
         { 1, 3, 7, 0, 0  },
@@ -34,14 +34,14 @@ public class crossroadMove : MonoBehaviour
         { 20, 24, 0, 0, 0 }
     };
     // 해당 RSU에서 다음 RSU(action)을 선택할 확률 리스트, 누적 확률(1 ~ 10)
-    private int[,] probabilityList = new int[25, 5]
+    private static int[,] probabilityList = new int[25, 5]
     {
         {0, 0, 0, 0, 0 },
         {0, 0, 0, 0, 0 },
         {0, 0, 0, 0, 0 },
         {0, 0, 0, 0, 0 },
         {0, 0, 0, 0, 0 },
-        {1, 3, 6, 10, 0 },       // RSU6
+        {1, 2, 5, 10, 0 },       // RSU6
         {0, 0, 0, 0, 0 },
         {0, 0, 0, 0, 0 },
         {0, 0, 0, 0, 0 },
@@ -62,7 +62,7 @@ public class crossroadMove : MonoBehaviour
         {0, 0, 0, 0, 0 },
         {0, 0, 0, 0, 0 }
     };
-    private int[] RSURoadNum = new int[25] { 2, 3, 3, 4, 2, 4, 4, 5, 4, 3, 3, 5, 4, 5, 3, 3, 4, 5, 4, 4, 2, 4, 3, 3, 2 };       // 해당 RSU가 있는 교차로에 연결된 도로 갯수
+    private static int[] RSURoadNum = new int[25] { 2, 3, 3, 4, 2, 4, 4, 5, 4, 3, 3, 5, 4, 5, 3, 3, 4, 5, 4, 4, 2, 4, 3, 3, 2 };       // 해당 RSU가 있는 교차로에 연결된 도로 갯수
 
     // Start is called before the first frame update
     void Start()
@@ -76,7 +76,7 @@ public class crossroadMove : MonoBehaviour
         
     }
 
-    private int DecideNextRSU(int prevRSU, int curRSU)
+    public int DecideNextRSU(int prevRSU, int curRSU)
     {
         int selectedRSU = 0;     // 선택된 RSU 번호에 해당하는 index 저장
         int randNum = -1;        // Random.Range() 함수를 통해 생성되는 난수
@@ -105,112 +105,143 @@ public class crossroadMove : MonoBehaviour
         return selectedRSU;
     }
 
-    public string getNextDirection(int prevRSU, int curRSU)
-    {
-        switch(curRSU)
-        {
-            case 1:
-                RSU1 temp1 = new();
-                temp1.prev_RSU = prevRSU;
-                return temp1.getNextDirection(DecideNextRSU(prevRSU, curRSU));
-            case 2:
-                RSU2 temp2 = new();
-                temp2.prev_RSU = prevRSU;
-                return temp2.getNextDirection(DecideNextRSU(prevRSU, curRSU));
-            case 3:
-                RSU3 temp3 = new();
-                temp3.prev_RSU = prevRSU;
-                return temp3.getNextDirection(DecideNextRSU(prevRSU, curRSU));
-            case 4:
-                RSU4 temp4 = new();
-                temp4.prev_RSU = prevRSU;
-                return temp4.getNextDirection(DecideNextRSU(prevRSU, curRSU));
-            case 5:
-                RSU5 temp5 = new();
-                temp5.prev_RSU = prevRSU;
-                return temp5.getNextDirection(DecideNextRSU(prevRSU, curRSU));
-            case 6:
-                RSU6 temp6 = new();
-                temp6.prev_RSU = prevRSU;
-                return temp6.getNextDirection(DecideNextRSU(prevRSU, curRSU));
-            case 7:
-                RSU7 temp7 = new();
-                temp7.prev_RSU = prevRSU;
-                return temp7.getNextDirection(DecideNextRSU(prevRSU, curRSU));
-            case 8:
-                RSU8 temp8 = new();
-                temp8.prev_RSU = prevRSU;
-                return temp8.getNextDirection(DecideNextRSU(prevRSU, curRSU));
-            case 9:
-                RSU9 temp9 = new();
-                temp9.prev_RSU = prevRSU;
-                return temp9.getNextDirection(DecideNextRSU(prevRSU, curRSU));
-            case 10:
-                RSU10 temp10 = new();
-                temp10.prev_RSU = prevRSU;
-                return temp10.getNextDirection(DecideNextRSU(prevRSU, curRSU));
-            case 11:
-                RSU11 temp11 = new();
-                temp11.prev_RSU = prevRSU;
-                return temp11.getNextDirection(DecideNextRSU(prevRSU, curRSU));
-            case 12:
-                RSU12 temp12 = new();
-                temp12.prev_RSU = prevRSU;
-                return temp12.getNextDirection(DecideNextRSU(prevRSU, curRSU));
-            case 13:
-                RSU13 temp13 = new();
-                temp13.prev_RSU = prevRSU;
-                return temp13.getNextDirection(DecideNextRSU(prevRSU, curRSU));
-            case 14:
-                RSU14 temp14 = new();
-                temp14.prev_RSU = prevRSU;
-                return temp14.getNextDirection(DecideNextRSU(prevRSU, curRSU));
-            case 15:
-                RSU15 temp15 = new();
-                temp15.prev_RSU = prevRSU;
-                return temp15.getNextDirection(DecideNextRSU(prevRSU, curRSU));
-            case 16:
-                RSU16 temp16 = new();
-                temp16.prev_RSU = prevRSU;
-                return temp16.getNextDirection(DecideNextRSU(prevRSU, curRSU));
-            case 17:
-                RSU17 temp17 = new();
-                temp17.prev_RSU = prevRSU;
-                return temp17.getNextDirection(DecideNextRSU(prevRSU, curRSU));
-            case 18:
-                RSU18 temp18 = new();
-                temp18.prev_RSU = prevRSU;
-                return temp18.getNextDirection(DecideNextRSU(prevRSU, curRSU));
-            case 19:
-                RSU19 temp19 = new();
-                temp19.prev_RSU = prevRSU;
-                return temp19.getNextDirection(DecideNextRSU(prevRSU, curRSU));
-            case 20:
-                RSU20 temp20 = new();
-                temp20.prev_RSU = prevRSU;
-                return temp20.getNextDirection(DecideNextRSU(prevRSU, curRSU));
-            case 21:
-                RSU21 temp21 = new();
-                temp21.prev_RSU = prevRSU;
-                return temp21.getNextDirection(DecideNextRSU(prevRSU, curRSU));
-            case 22:
-                RSU22 temp22 = new();
-                temp22.prev_RSU = prevRSU;
-                return temp22.getNextDirection(DecideNextRSU(prevRSU, curRSU));
-            case 23:
-                RSU23 temp23 = new();
-                temp23.prev_RSU = prevRSU;
-                return temp23.getNextDirection(DecideNextRSU(prevRSU, curRSU));
-            case 24:
-                RSU24 temp24 = new();
-                temp24.prev_RSU = prevRSU;
-                return temp24.getNextDirection(DecideNextRSU(prevRSU, curRSU));
-            case 25:
-                RSU25 temp25 = new();
-                temp25.prev_RSU = prevRSU;
-                return temp25.getNextDirection(DecideNextRSU(prevRSU, curRSU));
-            default:
-                return "null";
-        }
-    }
+    // DummyCar에서 다음 경로 결정 함수(이전 RSU, 현재 RSU, DummyCar script의 차선 번호, DummyCar script의 direction, DummyCar script의 position)
+    //public void getNextDirection(int prevRSU, int curRSU, ref int lineNum, ref string direction, ref Vector3 position)
+    //{
+    //    int nextRSU = DecideNextRSU(prevRSU, curRSU);       // 다음으로 이동할 RSU
+
+    //    switch(curRSU)
+    //    {
+    //        case 1:
+    //            RSU1 temp1 = new();
+    //            temp1.prev_RSU = prevRSU;
+    //            direction = temp1.getNextDirection(nextRSU);
+    //            break;
+    //        case 2:
+    //            RSU2 temp2 = new();
+    //            temp2.prev_RSU = prevRSU;
+    //            direction = temp2.getNextDirection(nextRSU);
+    //            break;
+    //        case 3:
+    //            RSU3 temp3 = new();
+    //            temp3.prev_RSU = prevRSU;
+    //            direction = temp3.getNextDirection(nextRSU);
+    //            break;
+    //        case 4:
+    //            RSU4 temp4 = new();
+    //            temp4.prev_RSU = prevRSU;
+    //            direction = temp4.getNextDirection(nextRSU);
+    //            break;
+    //        case 5:
+    //            RSU5 temp5 = new();
+    //            temp5.prev_RSU = prevRSU;
+    //            direction = temp5.getNextDirection(nextRSU);
+    //            break;
+    //        case 6:     // TEST
+    //            RSU6 temp6 = new();
+    //            temp6.prev_RSU = prevRSU;
+    //            temp6.line_num = lineNum;
+    //            direction = temp6.getNextDirection(nextRSU);
+    //            position = temp6.getPosition(nextRSU);
+    //            lineNum = temp6.line_num;
+    //            break;
+    //        case 7:
+    //            RSU7 temp7 = new();
+    //            temp7.prev_RSU = prevRSU;
+    //            direction = temp7.getNextDirection(nextRSU);
+    //            break;
+    //        case 8:
+    //            RSU8 temp8 = new();
+    //            temp8.prev_RSU = prevRSU;
+    //            direction = temp8.getNextDirection(nextRSU);
+    //            break;
+    //        case 9:
+    //            RSU9 temp9 = new();
+    //            temp9.prev_RSU = prevRSU;
+    //            direction = temp9.getNextDirection(nextRSU);
+    //            break;
+    //        case 10:
+    //            RSU10 temp10 = new();
+    //            temp10.prev_RSU = prevRSU;
+    //            direction = temp10.getNextDirection(nextRSU);
+    //            break;
+    //        case 11:
+    //            RSU11 temp11 = new();
+    //            temp11.prev_RSU = prevRSU;
+    //            direction = temp11.getNextDirection(nextRSU);
+    //            break;
+    //        case 12:
+    //            RSU12 temp12 = new();
+    //            temp12.prev_RSU = prevRSU;
+    //            direction = temp12.getNextDirection(nextRSU);
+    //            break;
+    //        case 13:
+    //            RSU13 temp13 = new();
+    //            temp13.prev_RSU = prevRSU;
+    //            direction = temp13.getNextDirection(nextRSU);
+    //            break;
+    //        case 14:
+    //            RSU14 temp14 = new();
+    //            temp14.prev_RSU = prevRSU;
+    //            direction = temp14.getNextDirection(nextRSU);
+    //            break;
+    //        case 15:
+    //            RSU15 temp15 = new();
+    //            temp15.prev_RSU = prevRSU;
+    //            direction = temp15.getNextDirection(nextRSU);
+    //            break;
+    //        case 16:
+    //            RSU16 temp16 = new();
+    //            temp16.prev_RSU = prevRSU;
+    //            direction = temp16.getNextDirection(nextRSU);
+    //            break;
+    //        case 17:
+    //            RSU17 temp17 = new();
+    //            temp17.prev_RSU = prevRSU;
+    //            direction = temp17.getNextDirection(nextRSU);
+    //            break;
+    //        case 18:
+    //            RSU18 temp18 = new();
+    //            temp18.prev_RSU = prevRSU;
+    //            direction = temp18.getNextDirection(nextRSU);
+    //            break;
+    //        case 19:
+    //            RSU19 temp19 = new();
+    //            temp19.prev_RSU = prevRSU;
+    //            direction = temp19.getNextDirection(nextRSU);
+    //            break;
+    //        case 20:
+    //            RSU20 temp20 = new();
+    //            temp20.prev_RSU = prevRSU;
+    //            direction = temp20.getNextDirection(nextRSU);
+    //            break;
+    //        case 21:
+    //            RSU21 temp21 = new();
+    //            temp21.prev_RSU = prevRSU;
+    //            direction = temp21.getNextDirection(nextRSU);
+    //            break;
+    //        case 22:
+    //            RSU22 temp22 = new();
+    //            temp22.prev_RSU = prevRSU;
+    //            direction = temp22.getNextDirection(nextRSU);
+    //            break;
+    //        case 23:
+    //            RSU23 temp23 = new();
+    //            temp23.prev_RSU = prevRSU;
+    //            direction = temp23.getNextDirection(nextRSU);
+    //            break;
+    //        case 24:
+    //            RSU24 temp24 = new();
+    //            temp24.prev_RSU = prevRSU;
+    //            direction = temp24.getNextDirection(nextRSU);
+    //            break;
+    //        case 25:
+    //            RSU25 temp25 = new();
+    //            temp25.prev_RSU = prevRSU;
+    //            direction = temp25.getNextDirection(nextRSU);
+    //            break;
+    //        default:
+    //            break;
+    //    }
+    //}
 }

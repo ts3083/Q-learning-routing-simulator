@@ -199,7 +199,7 @@ public class Car : MonoBehaviour
     {
         // Time.deltaTime은 화면이 한번 깜빡이는 시간 = 한 프레임의 시간
         // 화면을 60번 깜빡이면 (초당 60프레) 1/60이 들어간다
-        Time.timeScale = 5f;
+        Time.timeScale = 3f;
         //Time.fixedDeltaTime = 0.02f * Time.timeScale;
         transform.position += transform.forward * current_speed * Time.deltaTime;       // 차량 이동
 

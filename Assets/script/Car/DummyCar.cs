@@ -9,7 +9,7 @@ public class DummyCar : MonoBehaviour
 {
     // 차량 속도 선언 - 10, 15, 20
     private int[] speed = new int[] { 15, 20 };
-    private static int init_speed = 0;     // 초기 속도(10m/s)
+    private static int init_speed = 10;     // 초기 속도(10m/s)
     public int current_speed = init_speed;      // 현재 차량의 위치에 따른 속도가 다름 => current speed 변수 선언
     private int speedLimit;     // 속도 제한
 
@@ -45,7 +45,7 @@ public class DummyCar : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        transform.position += transform.forward * 10 * Time.deltaTime;       // 차량 이동
+        transform.position += transform.forward * current_speed * Time.deltaTime;       // 차량 이동
     }
 
     private void OnTriggerEnter(Collider other)
@@ -59,6 +59,7 @@ public class DummyCar : MonoBehaviour
         if (other.CompareTag("null"))
         {
             direction = "null";
+            BackTriggerSettingBySpeed(0);
         }
 
         if (other.CompareTag("CrossRoad"))
@@ -132,28 +133,28 @@ public class DummyCar : MonoBehaviour
         // 초기 속도(init_speed)인 경우
         if (speed_ == init_speed)
         {
-            carBack.transform.localPosition = new Vector3(0, 0, -3f);
+            //carBack.transform.localPosition = new Vector3(0, 0, -3f);
             current_speed = init_speed;
             speedLimit = init_speed;
         }
         // 속도가 15인 경우
         else if (speed_ == 15)
         {
-            carBack.transform.localPosition = new Vector3(0, 0, -5f);
+            //carBack.transform.localPosition = new Vector3(0, 0, -5f);
             current_speed = speed[0];
             speedLimit = speed[0];
         }
         // 속도가 30인 경우
         else if (speed_ == 20)
         {
-            carBack.transform.localPosition = new Vector3(0, 0, -10f);
+            //carBack.transform.localPosition = new Vector3(0, 0, -10f);
             current_speed = speed[1];
             speedLimit = speed[1];
 
         }
         else // 속도가 0인 경우
         {
-            carBack.transform.localPosition = new Vector3(0, 0, -3f);
+            //carBack.transform.localPosition = new Vector3(0, 0, -3f);
             current_speed = 0;
             speedLimit = init_speed;
         }

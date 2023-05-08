@@ -138,6 +138,7 @@ public class RSU17 : MonoBehaviour
                 continue;
             }
         }
+    }
 
     // ϵ-greedy 방법에 따라 Q-table에서 다음 action(neighbor RSU)을 선택
     public int getNextAction()

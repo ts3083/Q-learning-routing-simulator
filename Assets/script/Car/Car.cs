@@ -58,7 +58,7 @@ public class Car : MonoBehaviour
     private static int init_speed = 10;     // 초기 속도(10m/s)
     public int current_speed = init_speed;      // 현재 차량의 위치에 따른 속도가 다름 => current speed 변수 선언
 
-    public bool signal;     // 차량 정지 및 직진 신호
+    //public bool signal;     // 차량 정지 및 직진 신호
     //public List<string> signal_str;
     //int temp = 0;
 
@@ -199,7 +199,7 @@ public class Car : MonoBehaviour
     {
         // Time.deltaTime은 화면이 한번 깜빡이는 시간 = 한 프레임의 시간
         // 화면을 60번 깜빡이면 (초당 60프레) 1/60이 들어간다
-        Time.timeScale = 4f;
+        Time.timeScale = 3f;
         //Time.fixedDeltaTime = 0.02f * Time.timeScale;
         transform.position += transform.forward * current_speed * Time.deltaTime;       // 차량 이동
 

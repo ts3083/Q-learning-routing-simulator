@@ -17,7 +17,7 @@ public class RSU9 : MonoBehaviour
     private int actionIndex;        // Q-table에서 해당 action(neighbor RSU)의 index
     private int demandLevel;     // Demand Level, 차량이 넘겨주는 정보
     private int safetyLevel;        // Safety Level, 차량이 넘겨주는 정보
-    private int prev_RSU;       // 이전 RSU
+    public int prev_RSU;       // 이전 RSU
 
     private float epsilon = 0.3f;       // ϵ-greedy의 epsilon 값
     private int epsilonDecimalPointNum = 1;     // ϵ(epsilon) 소수점 자리수
@@ -138,7 +138,7 @@ public class RSU9 : MonoBehaviour
     }
 
     // 이전 RSU에 따라 getNextAction() 함수에서 반환되는 다음 RSU로 가기 위한 direction을 반환, 각각의 RSU에서 수정 필요
-    private string getNextDirection(int RSU_num)
+    public string getNextDirection(int RSU_num)
     {
         // 차량이 RSU 4에서 온 경우
         if (prev_RSU == 4)

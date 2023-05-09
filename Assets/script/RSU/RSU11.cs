@@ -5,7 +5,7 @@ using UnityEngine;
 public class RSU11 : MonoBehaviour
 {
     private int current_RSU = 11;
-    private float RSU_effectRange = 20f;        // RSU 영향 범위
+    private float RSU_effectRange = 30f;        // RSU 영향 범위
 
     private Collider[] carList;     // RSU 영향 범위 내의 차량 리스트, 배열 내의 모든 오브젝트가 차량이 아님!
     private int carListNum;     // 차량 리스트 내의 차량 수, 배열 내의 모든 오브젝트가 차량이 아님!

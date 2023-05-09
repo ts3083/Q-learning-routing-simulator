@@ -8,7 +8,7 @@ public class RSU1 : MonoBehaviour
     public int dest_count = 1;
 
     private int current_RSU = 1;        // 현재 RSU
-    private float RSU_effectRange = 20f;        // RSU 영향 범위
+    private float RSU_effectRange = 30f;        // RSU 영향 범위
 
     private Collider[] carList;     // RSU 영향 범위 내의 차량 리스트, 배열 내의 모든 오브젝트가 차량이 아님!
     private int carListNum;     // 차량 리스트 내의 차량 수, 배열 내의 모든 오브젝트가 차량이 아님!
@@ -24,7 +24,7 @@ public class RSU1 : MonoBehaviour
     private int next_RSU; // 다음 RSU
     private int line_num; // 차량 차선 번호
 
-    public float epsilon = 0.3f;       // ϵ-greedy의 epsilon 값
+    public float epsilon = 0.0f;       // ϵ-greedy의 epsilon 값
 
     // [state(destination RSU) 수, action(neighbor RUS) 수], Demand Level [time, energy]
     public float[,,] Q_table = new float[5, stateNum, actionNum];       // Demand Level 1, [100, 0] / Demand Level 2, [75, 25] / Demand Level 3, [50, 50] / Demand Level 4, [25, 75] / Demand Level 5, [0, 100]

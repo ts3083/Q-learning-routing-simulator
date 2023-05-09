@@ -103,7 +103,6 @@ public class DummyCar : MonoBehaviour
             {
                 new_drive(direction);
             }
-
             //routeIndex++;
             //if (routeIndex > routeListLength - 1)
             //{

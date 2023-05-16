@@ -59,8 +59,6 @@ public class DummyCar : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Time.timeScale = 2f;
-
         transform.position += transform.forward * current_speed * Time.deltaTime;       // 차량 이동        
 
         // Delay 시간 측정
@@ -105,7 +103,6 @@ public class DummyCar : MonoBehaviour
             {
                 new_drive(direction);
             }
-
             //routeIndex++;
             //if (routeIndex > routeListLength - 1)
             //{

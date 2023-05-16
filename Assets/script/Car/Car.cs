@@ -43,6 +43,7 @@ public class Car : MonoBehaviour
 
     private float alpha = 0.1f;     // Q-learning의 learning rate
     private float gamma = 0.9f;     // Q-learning의 discount factor
+    private float road_length;
 
     private float[] RSU_Q_table = new float[5];       // 이전 RSU의 특정 state(destination RSU)에서의 Q-table
     public float[] nextMaxQ_value = new float[5];       // 현재 RSU의 특정 state(destination RSU)에서의 max Q-value
@@ -56,7 +57,7 @@ public class Car : MonoBehaviour
     // 차량 속도 선언 - 10, 15, 20
     private int[] speed = new int[] { 15, 20 };
     private static int init_speed = 10;     // 초기 속도(10m/s)
-    public int current_speed = init_speed;      // 현재 차량의 위치에 따른 속도가 다름 => current speed 변수 선언
+    public int avg_speed = init_speed;      // 현재 차량의 위치에 따른 속도가 다름 => current speed 변수 선언
 
     //public bool signal;     // 차량 정지 및 직진 신호
     //public List<string> signal_str;
@@ -157,7 +158,7 @@ public class Car : MonoBehaviour
 
     private void Start()
     {
-        spawnObject = GameObject.Find("SpawnCar");
+        spawnObject = GameObject.Find("ProcessObject");
         txtFileName = "test.txt";
         txtFilePath = Application.dataPath + "/" + txtFileName;
         if (File.Exists(txtFilePath) == false)
@@ -199,9 +200,9 @@ public class Car : MonoBehaviour
     {
         // Time.deltaTime은 화면이 한번 깜빡이는 시간 = 한 프레임의 시간
         // 화면을 60번 깜빡이면 (초당 60프레) 1/60이 들어간다
-        Time.timeScale = 3f;
+        Time.timeScale = 10f;
         //Time.fixedDeltaTime = 0.02f * Time.timeScale;
-        transform.position += transform.forward * current_speed * Time.deltaTime;       // 차량 이동
+        transform.position += transform.forward * avg_speed * Time.deltaTime;       // 차량 이동
 
         //timer += Time.deltaTime * 50;
         //Debug.Log(timer);
@@ -375,6 +376,7 @@ public class Car : MonoBehaviour
             cur_RSU = 0;
             theta = 0;      // 경사각 0
             isCarInfoUpdateNeeded = false;
+            road_length = 300;
             //getDirection = false;
         }
 
@@ -389,6 +391,7 @@ public class Car : MonoBehaviour
             cur_RSU = 0;
             theta = 10;     // 경사각 10
             isCarInfoUpdateNeeded = false;
+            road_length = 424.3f;
             //getDirection = false;
         }
 
@@ -403,6 +406,7 @@ public class Car : MonoBehaviour
             cur_RSU = 0;
             theta = 0;      // 경사각 0
             isCarInfoUpdateNeeded = false;
+            road_length = 300;
             //getDirection = false;
         }
 
@@ -417,6 +421,7 @@ public class Car : MonoBehaviour
             cur_RSU = 0;
             theta = 0;      // 경사각 0
             isCarInfoUpdateNeeded = false;
+            road_length = 300;
             //getDirection = false;
         }
 
@@ -431,6 +436,7 @@ public class Car : MonoBehaviour
             cur_RSU = 0;
             theta = 10;     // 경사각 10
             isCarInfoUpdateNeeded = false;
+            road_length = 424.3f;
             //getDirection = false;
         }
     }
@@ -695,21 +701,21 @@ public class Car : MonoBehaviour
         if (speed_ == init_speed)
         {
             //carBack.transform.localPosition = new Vector3(0, 0, -3f);
-            current_speed = init_speed;
+            avg_speed = init_speed;
             speedLimit = init_speed;
         }
         // 속도가 15인 경우
         else if (speed_ == 15)
         {
             //carBack.transform.localPosition = new Vector3(0, 0, -5f);
-            current_speed = speed[0];
+            avg_speed = speed[0];
             speedLimit = speed[0];
         }
         // 속도가 30인 경우
         else if (speed_ == 20)
         {
             //carBack.transform.localPosition = new Vector3(0, 0, -10f);
-            current_speed = speed[1];
+            avg_speed = speed[1];
             speedLimit = speed[1];
 
         }
@@ -717,13 +723,13 @@ public class Car : MonoBehaviour
         else if (speed_ == 5)
         {
             //carBack.transform.localPosition = new Vector3(0, 0, -1f);
-            current_speed = 5;
+            avg_speed = 5;
             speedLimit = 5;
         }
         else // 속도가 0인 경우
         {
             //carBack.transform.localPosition = new Vector3(0, 0, -3f);
-            current_speed = 0;
+            avg_speed = 0;
             speedLimit = init_speed;
         }
         // 그 이외의 경우
@@ -772,16 +778,18 @@ public class Car : MonoBehaviour
     // 에너지 계산
     private void CalEnergy()
     {
+        float avg_speed = road_length / timer;
+
         // Slope Resistance Power
-        float SRP = m * g * current_speed * Mathf.Sin(theta * Mathf.Deg2Rad);
+        float SRP = m * g * avg_speed * Mathf.Sin(theta * Mathf.Deg2Rad);
         //Debug.Log("(" + this.gameObject.name + ") SRP: " + SRP);
 
         // Air Resistance Power
-        float ARP = 0.5f * p * Cw * A * Mathf.Pow(current_speed, 3);
+        float ARP = 0.5f * p * Cw * A * Mathf.Pow(avg_speed, 3);
         //Debug.Log("(" + this.gameObject.name + ") ARP: " + ARP);
 
         // Rolling Resistance Power
-        float RRP = u * m * g * current_speed;
+        float RRP = u * m * g * avg_speed;
         //Debug.Log("(" + this.gameObject.name + ") RRP: " + RRP);
 
         // Total Energy

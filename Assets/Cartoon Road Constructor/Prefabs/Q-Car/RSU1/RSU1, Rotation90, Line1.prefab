@@ -388,26 +388,34 @@ MonoBehaviour:
   isEnd: 0
   start_RSU: 1
   dest_RSU: 18
-  demandLevel: 1
+  demandLevel: 5
   safetyLevel: 1
   curActionIndex: 0
   prevActionIndex: 0
   cur_RSU: 1
   prev_RSU: 0
+  next_RSU: 0
   totalTime: 0
   timer: 0
   totalEnergy: 0
   energy: 0
   theta: 0
+  nextMaxQ_value:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
   current_speed: 10
-  signal: 1
   beforeRotation: 0
   a: []
   direction: straight
   position: {x: 0, y: 0, z: 0}
   lRotateFactor: 1.05
   rRotateFactor: 1.64
+  prev_lineNum: 0
   lineNum: 1
+  isCarInfoUpdateNeeded: 1
 --- !u!96 &-3647563724910150801
 TrailRenderer:
   serializedVersion: 2

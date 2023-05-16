@@ -96,7 +96,6 @@ GameObject:
   - component: {fileID: 65485476236681731}
   - component: {fileID: 65485476085816749}
   - component: {fileID: 65485476085816746}
-  - component: {fileID: 65485476085816748}
   m_Layer: 0
   m_Name: SportCar2
   m_TagString: Untagged
@@ -156,24 +155,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 2.766377, y: 1.740866, z: 6.25728}
   m_Center: {x: 0.0464469, y: 0.1295677, z: 0.4695782}
---- !u!114 &65485476085816748
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 65485476237114915}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0e939d2cec041b04c93b8087f819ee51, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 5
-  way: 4
-  turn: 3
-  rsu_row: 5
-  rsu_col: 5
-  a: []
 --- !u!1 &65485476237114917
 GameObject:
   m_ObjectHideFlags: 0

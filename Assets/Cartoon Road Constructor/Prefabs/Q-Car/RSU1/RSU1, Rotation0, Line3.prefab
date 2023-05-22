@@ -392,7 +392,7 @@ GameObject:
   - component: {fileID: 4490357765643860119}
   - component: {fileID: 5711075955215274626}
   - component: {fileID: 6394271851399812255}
-  - component: {fileID: 4617613612352914107}
+  - component: {fileID: -5199346547803203304}
   m_Layer: 0
   m_Name: RSU1, Rotation0, Line3
   m_TagString: Untagged
@@ -453,7 +453,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 2.8, y: 2.6, z: 6.2}
   m_Center: {x: 0, y: -0.2, z: 0}
---- !u!114 &4617613612352914107
+--- !u!114 &-5199346547803203304
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -462,7 +462,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4490357765643560119}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c89da8ee6aed244af908350ccb56e735, type: 3}
+  m_Script: {fileID: 11500000, guid: 0e939d2cec041b04c93b8087f819ee51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   txtFilePath: 

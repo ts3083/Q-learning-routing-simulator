@@ -16,13 +16,30 @@ public class SpawnCar : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        StartCoroutine("spawnQcarWhenStart");
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+
+    // 시뮬레이션 시작시 Q_car 자동 생성 함수
+    IEnumerator spawnQcarWhenStart()
+    {
+        int startRSU = 1;       // 시작 RSU
+        int destRSU = 20;       // 종료 RSU
+        int safetyLevel = 1;        // Safety Level
+        int demandLevel = 1;        // Demand Level
+        int numberOfQcar = 100;      // 생성할 Q_car 개수
+
+        for(int i = 0; i < numberOfQcar; i++)
+        {
+            spawnQCar(startRSU, destRSU, safetyLevel, demandLevel);
+
+            yield return new WaitForSeconds(2);
+        }
     }
 
     // 출발지에 Q_car 생성
@@ -55,7 +72,6 @@ public class SpawnCar : MonoBehaviour
                 RSUObject.GetComponent<RSU1>().dest_RSU = destRSU;
                 RSUObject.GetComponent<RSU1>().safetyLevel = safetyLevel;
                 RSUObject.GetComponent<RSU1>().demandLevel = demandLevel;
-                //return Random.Range(2, 6);
                 switch (RSUObject.GetComponent<RSU1>().getNextAction())
                 {
                     case 2:
@@ -66,7 +82,7 @@ public class SpawnCar : MonoBehaviour
                         return -1;
                 }
             case 2:
-                //RSUObject.GetComponent<RSU2>().prev_RSU = startRSU;
+                RSUObject.GetComponent<RSU2>().prev_RSU = startRSU;
                 RSUObject.GetComponent<RSU2>().dest_RSU = destRSU;
                 RSUObject.GetComponent<RSU2>().safetyLevel = safetyLevel;
                 RSUObject.GetComponent<RSU2>().demandLevel = demandLevel;
@@ -82,6 +98,7 @@ public class SpawnCar : MonoBehaviour
                         return -1;
                 }
             case 3:
+                RSUObject.GetComponent<RSU3>().prev_RSU = startRSU;
                 RSUObject.GetComponent<RSU3>().dest_RSU = destRSU;
                 RSUObject.GetComponent<RSU3>().safetyLevel = safetyLevel;
                 RSUObject.GetComponent<RSU3>().demandLevel = demandLevel;
@@ -97,6 +114,7 @@ public class SpawnCar : MonoBehaviour
                         return -1;
                 }
             case 4:
+                RSUObject.GetComponent<RSU4>().prev_RSU = startRSU;
                 RSUObject.GetComponent<RSU4>().dest_RSU = destRSU;
                 RSUObject.GetComponent<RSU4>().safetyLevel = safetyLevel;
                 RSUObject.GetComponent<RSU4>().demandLevel = demandLevel;
@@ -114,6 +132,7 @@ public class SpawnCar : MonoBehaviour
                         return -1;
                 }
             case 5:
+                RSUObject.GetComponent<RSU5>().prev_RSU = startRSU;
                 RSUObject.GetComponent<RSU5>().dest_RSU = destRSU;
                 RSUObject.GetComponent<RSU5>().safetyLevel = safetyLevel;
                 RSUObject.GetComponent<RSU5>().demandLevel = demandLevel;

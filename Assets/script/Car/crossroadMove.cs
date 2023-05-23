@@ -41,7 +41,7 @@ public class crossroadMove : MonoBehaviour
         {0, 0, 0, 0, 0 },
         {0, 0, 0, 0, 0 },
         {0, 0, 0, 0, 0 },
-        {0, 5, 0, 10, 0 },       // RSU6
+        {1, 5, 6, 10, 0 },       // RSU6
         {0, 5, 0, 10, 0 },// RSU7
         {0, 0, 0, 0, 0 },
         {0, 0, 0, 0, 0 },
@@ -76,7 +76,7 @@ public class crossroadMove : MonoBehaviour
         
     }
 
-    public int DecideNextRSU(int prevRSU, int curRSU)
+    public static int DecideNextRSU(int prevRSU, int curRSU)
     {
         int selectedRSU = 0;     // 선택된 RSU 번호에 해당하는 index 저장
         int randNum = -1;        // Random.Range() 함수를 통해 생성되는 난수

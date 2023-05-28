@@ -41,7 +41,7 @@ public class DummyCar : MonoBehaviour
     //public int curRoadNum;      // 현재 차선의 개수
     //public int nextRoadNum;     // 다음 차선의 개수
 
-    private crossroadMove DummyCarMoveDecision = new();     // 교차로에서 DummyCar의 이동 결정
+    //private crossroadMove DummyCarMoveDecision = new();     // 교차로에서 DummyCar의 이동 결정
 
     // Start is called before the first frame update
     void Start()
@@ -49,16 +49,14 @@ public class DummyCar : MonoBehaviour
         carBack = transform.GetChild(8).gameObject;     // carBack 게임 오브젝트 가져오기
         BackTriggerSettingBySpeed(start_speed);      // 초기 속도(10m/s)로 CarBack 트리거 설정
         beforeRotation = (int)transform.eulerAngles.y;
+        start_speed = init_speed;
+        current_speed = init_speed;
         //routeListLength = routeList.Length;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
     }
 
     private void FixedUpdate()
     {
+        Time.timeScale = 5f;
         transform.position += transform.forward * current_speed * Time.deltaTime;       // 차량 이동        
 
         // Delay 시간 측정
@@ -132,15 +130,15 @@ public class DummyCar : MonoBehaviour
         //    }
         //}
 
-        if (other.CompareTag("NarrowRoadEnterAngleO") || other.CompareTag("NarrowRoadEnterAngleX"))
-        {
-            BackTriggerSettingBySpeed(15);
-        }
+        //if (other.CompareTag("NarrowRoadEnterAngleO") || other.CompareTag("NarrowRoadEnterAngleX"))
+        //{
+        //    BackTriggerSettingBySpeed(15);
+        //}
 
-        if (other.CompareTag("WideRoadEnter"))
-        {
-            BackTriggerSettingBySpeed(20);
-        }
+        //if (other.CompareTag("WideRoadEnter"))
+        //{
+        //    BackTriggerSettingBySpeed(20);
+        //}
 
         if (other.CompareTag("NarrowRoadExit") || other.CompareTag("WideRoadExit"))
         {
@@ -150,8 +148,8 @@ public class DummyCar : MonoBehaviour
             //    DummyCarMoveDecision.getNextDirection(prev_RSU, cur_RSU, ref lineNum, ref direction, ref position);
             //}
 
-            // 방향(direction)이 null이 아닌 경우에만 이동하도록 설정
-            if(direction == "null")
+            //방향(direction)이 null이 아닌 경우에만 이동하도록 설정
+            if (direction == "null")
             {
                 BackTriggerSettingBySpeed(0);
             }

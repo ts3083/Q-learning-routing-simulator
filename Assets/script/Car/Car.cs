@@ -7,9 +7,6 @@ using System.IO;
 
 public class Car : MonoBehaviour
 {
-    public string txtFilePath, txtFileName, maxQvalueOfSourceDest;
-    public int dest_count;
-
     //public bool isStart = true;        // 출발지 여부 저장
     public bool isEnd = false;     // 도착지 여부 저장
 
@@ -76,8 +73,6 @@ public class Car : MonoBehaviour
 
     public string direction = "null";       // 차량 이동방향
     public Vector3 position;        // 월드 좌표를 기준으로 이동시킬 차량의 위치
-    public float lRotateFactor; // 사거리에서 좌회전시 회전량 결정 요소
-    public float rRotateFactor; // 사거리에서 우회전시 회전량 결정 요소
     private GameObject carBack; // 차량 뒷면 트리거
     private GameObject BL;
     private GameObject BR;
@@ -145,8 +140,8 @@ public class Car : MonoBehaviour
         //carBack.transform.Translate(new Vector3(0, 0, -2), Space.Self);
         BackTriggerSettingBySpeed(init_speed);
         //direction = decideDirection(); // 진행방향 랜덤 결정
-        CarLayerName = LayerMask.NameToLayer("Car");
-        RotateLayerName = LayerMask.NameToLayer("RotateCar");
+        //CarLayerName = LayerMask.NameToLayer("Car");
+        //RotateLayerName = LayerMask.NameToLayer("RotateCar");
         //setLayerCar();
         //if (direction.Equals("right"))
         //{
@@ -159,12 +154,6 @@ public class Car : MonoBehaviour
     private void Start()
     {
         spawnObject = GameObject.Find("ProcessObject");
-        txtFileName = "test.txt";
-        txtFilePath = Application.dataPath + "/" + txtFileName;
-        if (File.Exists(txtFilePath) == false)
-        {
-            File.Create(txtFilePath);
-        }
     }
 
     //private void InvokeTrafficSignal()
@@ -299,15 +288,10 @@ public class Car : MonoBehaviour
                 UpdateRSU(arrivalReward);
 
                 //Debug.Log("RSU" + start_RSU + " → RSU" + dest_RSU + "의 총 (시간, 에너지): (" + totalTime + ", " + totalEnergy + ")");
-                maxQvalueOfSourceDest = GameObject.Find("RSU1").GetComponent<RSU1>().maxQvalueOfSource(demandLevel).ToString("F3");
-                dest_count = GameObject.Find("RSU1").GetComponent<RSU1>().dest_count;
-
-                File.AppendAllText(txtFilePath, "\n" + dest_count + " " + maxQvalueOfSourceDest);
-                dest_count++;
-                GameObject.Find("RSU1").GetComponent<RSU1>().dest_count = dest_count;
+                //RSU_parameters.writeMaxQValue(start_RSU, dest_RSU, demandLevel);        // source RSU의 MaxQ 값을 기록
 
                 Destroy(gameObject);        // 목적지에 도착한 차량 제거
-                spawnObject.GetComponent<SpawnCar>().spawnQCar(start_RSU, dest_RSU, 1, 5);
+                spawnObject.GetComponent<SpawnCar>().spawnQCar(start_RSU, dest_RSU, 1, 1);
             }
             else
             {
@@ -333,7 +317,7 @@ public class Car : MonoBehaviour
             else // blue light
             {
                 // direction 방향의 도로에 car 오브젝트가 있는지 확인 - 있으면 true, 없으면 false
-                if (detector()) // 이동하려는 direction 도로에 차량이 있음
+                if (!isEnd && detector()) // 이동하려는 direction 도로에 차량이 있음
                 {
                     BackTriggerSettingBySpeed(0);
                 }
@@ -373,7 +357,7 @@ public class Car : MonoBehaviour
             prevActionIndex = curActionIndex;
             curActionIndex = -1;
             prev_RSU = cur_RSU;
-            cur_RSU = 0;
+            next_RSU = cur_RSU = 0;
             theta = 0;      // 경사각 0
             isCarInfoUpdateNeeded = false;
             road_length = 300;
@@ -388,7 +372,7 @@ public class Car : MonoBehaviour
             prevActionIndex = curActionIndex;
             curActionIndex = -1;
             prev_RSU = cur_RSU;
-            cur_RSU = 0;
+            next_RSU = cur_RSU = 0;
             theta = 10;     // 경사각 10
             isCarInfoUpdateNeeded = false;
             road_length = 424.3f;
@@ -403,7 +387,7 @@ public class Car : MonoBehaviour
             prevActionIndex = curActionIndex;
             curActionIndex = -1;
             prev_RSU = cur_RSU;
-            cur_RSU = 0;
+            next_RSU = cur_RSU = 0;
             theta = 0;      // 경사각 0
             isCarInfoUpdateNeeded = false;
             road_length = 300;

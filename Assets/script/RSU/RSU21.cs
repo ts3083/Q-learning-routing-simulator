@@ -36,9 +36,7 @@ public class RSU21 : MonoBehaviour
     private Vector3[] forward_RSU16 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(-321.21f, 0.427f, 922.5f), new Vector3(-323.41f, 0.427f, 922.5f) };
 
     // RSU22 방향 좌표 저장
-    private Vector3[] forward_RSU22 = new Vector3[5] { new Vector3(0, 0, 0), new Vector3(-312.5f, 0.427f, 936.5f), new Vector3(-312.5f, 0.427f, 938.9f), new Vector3(-312.5f, 0.427f, 941.19f), new Vector3(-312.5f, 0.427f, 943.422f) };
-
-    private crossroadMove DummyCarMove = new();     // DummyCar의 교차로에서 이동을 결정
+    private Vector3[] forward_RSU22 = new Vector3[5] { new Vector3(0, 0, 0), new Vector3(-312.5f, 0.427f, 933.419f), new Vector3(-312.5f, 0.427f, 931.155f), new Vector3(-312.5f, 0.427f, 928.856f), new Vector3(-312.5f, 0.427f, 926.601f) };
 
     // Start is called before the first frame update
     void Start()
@@ -117,7 +115,7 @@ public class RSU21 : MonoBehaviour
                     //next_RSU = carList[i].GetComponent<DummyCar>().routeList[carList[i].GetComponent<DummyCar>().routeIndex];
                     line_num = carList[i].GetComponent<DummyCar>().lineNum;
                     carList[i].GetComponent<DummyCar>().prev_lineNum = line_num; // 차량의 이전 차선 저장
-                    next_RSU = DummyCarMove.DecideNextRSU(prev_RSU, current_RSU);
+                    next_RSU = crossroadMove.DecideNextRSU(prev_RSU, current_RSU);
                     carList[i].GetComponent<DummyCar>().direction = getNextDirection(next_RSU);
                     carList[i].GetComponent<DummyCar>().position = getPosition(next_RSU);
                     carList[i].GetComponent<DummyCar>().lineNum = line_num;     // 방향 이동 후 car의 line_num 저장

@@ -92,35 +92,35 @@ public class Car : MonoBehaviour
 
     public bool isCarInfoUpdateNeeded = true;     // 차량의 RSU, index 정보 update 필요 여부
 
-    // 교차로에서 차량에 적용되는 레이어 - 디폴트
-    void setLayerCar()
-    {
-        this.gameObject.layer = CarLayerName;
-        BL.gameObject.layer = CarLayerName;
-        BR.gameObject.layer = CarLayerName;
-        door_fl.gameObject.layer = CarLayerName;
-        door_fr.gameObject.layer = CarLayerName;
-        FL.gameObject.layer = CarLayerName;
-        FR.gameObject.layer = CarLayerName;
-        SportCar2.gameObject.layer = CarLayerName;
-        steering_wheel.gameObject.layer = CarLayerName;
-        carBack.gameObject.layer = CarLayerName;
-    }
+    //// 교차로에서 차량에 적용되는 레이어 - 디폴트
+    //void setLayerCar()
+    //{
+    //    this.gameObject.layer = CarLayerName;
+    //    BL.gameObject.layer = CarLayerName;
+    //    BR.gameObject.layer = CarLayerName;
+    //    door_fl.gameObject.layer = CarLayerName;
+    //    door_fr.gameObject.layer = CarLayerName;
+    //    FL.gameObject.layer = CarLayerName;
+    //    FR.gameObject.layer = CarLayerName;
+    //    SportCar2.gameObject.layer = CarLayerName;
+    //    steering_wheel.gameObject.layer = CarLayerName;
+    //    carBack.gameObject.layer = CarLayerName;
+    //}
 
-    // 교차로에서 차량에 적용되는 레이어 - 현재 사용X
-    void setLayerRotateCar()
-    {
-        this.gameObject.layer = RotateLayerName;
-        BL.gameObject.layer = RotateLayerName;
-        BR.gameObject.layer = RotateLayerName;
-        door_fl.gameObject.layer = RotateLayerName;
-        door_fr.gameObject.layer = RotateLayerName;
-        FL.gameObject.layer = RotateLayerName;
-        FR.gameObject.layer = RotateLayerName;
-        SportCar2.gameObject.layer = RotateLayerName;
-        steering_wheel.gameObject.layer = RotateLayerName;
-        carBack.gameObject.layer = RotateLayerName;
-    }
+    //// 교차로에서 차량에 적용되는 레이어 - 현재 사용X
+    //void setLayerRotateCar()
+    //{
+    //    this.gameObject.layer = RotateLayerName;
+    //    BL.gameObject.layer = RotateLayerName;
+    //    BR.gameObject.layer = RotateLayerName;
+    //    door_fl.gameObject.layer = RotateLayerName;
+    //    door_fr.gameObject.layer = RotateLayerName;
+    //    FL.gameObject.layer = RotateLayerName;
+    //    FR.gameObject.layer = RotateLayerName;
+    //    SportCar2.gameObject.layer = RotateLayerName;
+    //    steering_wheel.gameObject.layer = RotateLayerName;
+    //    carBack.gameObject.layer = RotateLayerName;
+    //}
 
     void Awake()
     {

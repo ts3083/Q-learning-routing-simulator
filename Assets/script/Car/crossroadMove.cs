@@ -64,7 +64,7 @@ public class crossroadMove : MonoBehaviour
     };
     private static int[] RSURoadNum = new int[25] { 2, 3, 3, 4, 2, 4, 4, 5, 4, 3, 3, 5, 4, 5, 3, 3, 4, 5, 4, 4, 2, 4, 3, 3, 2 };       // 해당 RSU가 있는 교차로에 연결된 도로 갯수
 
-    public int DecideNextRSU(int prevRSU, int curRSU)
+    public static int DecideNextRSU(int prevRSU, int curRSU)
     {
         int selectedRSU = 0;     // 선택된 RSU 번호에 해당하는 index 저장
         int randNum = -1;        // Random.Range() 함수를 통해 생성되는 난수

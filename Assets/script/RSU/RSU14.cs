@@ -331,7 +331,7 @@ public class RSU14 : MonoBehaviour
                     return forward_RSU9[line_num];
                 case 13:
                     line_num = Random.Range(1, 5);
-                    return forward_RSU9[line_num];
+                    return forward_RSU13[line_num];
                 case 15:
                     return forward_RSU15[line_num];        // 왼쪽(반시계) 방향으로 45º 회전
                 case 20:

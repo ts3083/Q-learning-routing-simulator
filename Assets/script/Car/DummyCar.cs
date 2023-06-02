@@ -64,6 +64,7 @@ public class DummyCar : MonoBehaviour
 
     private void FixedUpdate()
     {
+        Time.timeScale = 3f;
         transform.position += transform.forward * current_speed * Time.deltaTime;       // 차량 이동        
 
         // Delay 시간 측정
@@ -188,6 +189,10 @@ public class DummyCar : MonoBehaviour
 
     private bool detector()
     {
+        if (cur_RSU == 0)
+        {
+            return true;
+        }
         return GameObject.Find("DetectTrigger" + cur_RSU + "-" + next_RSU)
             .GetComponent<DetectTrigger>().detected;
     }

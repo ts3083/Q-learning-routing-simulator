@@ -189,7 +189,7 @@ public class Car : MonoBehaviour
     {
         // Time.deltaTime은 화면이 한번 깜빡이는 시간 = 한 프레임의 시간
         // 화면을 60번 깜빡이면 (초당 60프레) 1/60이 들어간다
-        Time.timeScale = 10f;
+        Time.timeScale = 3f;
         //Time.fixedDeltaTime = 0.02f * Time.timeScale;
         transform.position += transform.forward * avg_speed * Time.deltaTime;       // 차량 이동
 
@@ -288,7 +288,7 @@ public class Car : MonoBehaviour
                 UpdateRSU(arrivalReward);
 
                 //Debug.Log("RSU" + start_RSU + " → RSU" + dest_RSU + "의 총 (시간, 에너지): (" + totalTime + ", " + totalEnergy + ")");
-                //RSU_parameters.writeMaxQValue(start_RSU, dest_RSU, demandLevel);        // source RSU의 MaxQ 값을 기록
+                RSU_parameters.writeMaxQValue(start_RSU, dest_RSU, demandLevel);        // source RSU의 MaxQ 값을 기록
 
                 Destroy(gameObject);        // 목적지에 도착한 차량 제거
                 spawnObject.GetComponent<SpawnCar>().spawnQCar(start_RSU, dest_RSU, 1, 1);
@@ -317,7 +317,7 @@ public class Car : MonoBehaviour
             else // blue light
             {
                 // direction 방향의 도로에 car 오브젝트가 있는지 확인 - 있으면 true, 없으면 false
-                if (!isEnd && detector()) // 이동하려는 direction 도로에 차량이 있음
+                if (detector()) // 이동하려는 direction 도로에 차량이 있음
                 {
                     BackTriggerSettingBySpeed(0);
                 }
@@ -338,6 +338,14 @@ public class Car : MonoBehaviour
 
     private bool detector()
     {
+        if (cur_RSU == 0)
+        {
+            return true;
+        }
+        if (isEnd) // 목적지 rsu에 도착한 것이라면 object detect 무시
+        {
+            return false;
+        }
         return GameObject.Find("DetectTrigger" + cur_RSU + "-" + next_RSU)
             .GetComponent<DetectTrigger>().detected;
     }
@@ -512,7 +520,7 @@ public class Car : MonoBehaviour
             else if (direction.Equals("right135"))
             {
                 rightMove(225);
-                Debug.Log(90);
+                //Debug.Log(90);
             }
         }
         else if (beforeRotation >= 130 && beforeRotation <= 140)

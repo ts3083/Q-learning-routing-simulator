@@ -36,12 +36,12 @@ public class DummyCar : MonoBehaviour
     public int next_RSU;        // 다음 RSU
     public int prev_lineNum;
 
-    private bool isCarInfoUpdateNeeded = true;     // 차량의 RSU정보 update 필요 여부
+    public bool isCarInfoUpdateNeeded = false;     // 차량의 RSU정보 update 필요 여부
 
     //public int curRoadNum;      // 현재 차선의 개수
     //public int nextRoadNum;     // 다음 차선의 개수
 
-    private crossroadMove DummyCarMoveDecision = new();     // 교차로에서 DummyCar의 이동 결정
+    //private crossroadMove DummyCarMoveDecision = new();     // 교차로에서 DummyCar의 이동 결정
 
     // Start is called before the first frame update
     void Start()
@@ -97,12 +97,15 @@ public class DummyCar : MonoBehaviour
         {
             //isCrossroad = true;
 
+            isCarInfoUpdateNeeded = true;
+
             // 이동방향에 따른 좌표를 받아옴
             transform.position = position;
             if (direction.Contains("left") || direction.Contains("right"))
             {
                 new_drive(direction);
             }
+
             //routeIndex++;
             //if (routeIndex > routeListLength - 1)
             //{
@@ -110,10 +113,10 @@ public class DummyCar : MonoBehaviour
             //}
         }
 
-        if(other.CompareTag("NarrowRoadExit") || other.CompareTag("WideRoadExit"))
-        {
-            isCarInfoUpdateNeeded = true;
-        }
+        //if(other.CompareTag("NarrowRoadExit") || other.CompareTag("WideRoadExit"))
+        //{
+        //    isCarInfoUpdateNeeded = true;
+        //}
     }
 
     private void OnTriggerStay(Collider other)
@@ -150,15 +153,15 @@ public class DummyCar : MonoBehaviour
             //    DummyCarMoveDecision.getNextDirection(prev_RSU, cur_RSU, ref lineNum, ref direction, ref position);
             //}
 
-            // 방향(direction)이 null이 아닌 경우에만 이동하도록 설정
-            if(direction == "null")
-            {
-                BackTriggerSettingBySpeed(0);
-            }
-            else
-            {
-                BackTriggerSettingBySpeed(init_speed);
-            }
+            //// 방향(direction)이 null이 아닌 경우에만 이동하도록 설정
+            //if(direction == "null")
+            //{
+            //    BackTriggerSettingBySpeed(0);
+            //}
+            //else
+            //{
+            //    BackTriggerSettingBySpeed(speedLimit);
+            //}
 
             if (other.GetComponent<TrafficLight>().isLightOn == false) // red light
             {
@@ -188,6 +191,11 @@ public class DummyCar : MonoBehaviour
 
     private bool detector()
     {
+        if(cur_RSU == 0)
+        {
+            return true;
+        }
+
         return GameObject.Find("DetectTrigger" + cur_RSU + "-" + next_RSU)
             .GetComponent<DetectTrigger>().detected;
     }
@@ -231,6 +239,11 @@ public class DummyCar : MonoBehaviour
             //nextRoadNum = 0;
             isCarInfoUpdateNeeded = false;
         }
+
+        //if (other.CompareTag("NarrowRoadExit") || other.CompareTag("WideRoadExit"))
+        //{
+        //    BackTriggerSettingBySpeed(speedLimit);
+        //}
     }
 
     // 차량 후면 트리거(차량간 거리 조절) 위치 조정
@@ -353,7 +366,6 @@ public class DummyCar : MonoBehaviour
             else if (direction.Equals("right135"))
             {
                 rightMove(225);
-                Debug.Log(90);
             }
         }
         else if (beforeRotation >= 130 && beforeRotation <= 140)

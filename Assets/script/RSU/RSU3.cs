@@ -22,7 +22,7 @@ public class RSU3 : MonoBehaviour
     private int line_num; // 차량 차선 번호
 
     //private float epsilon;       // ϵ-greedy의 epsilon 값
-    private int epsilonDecimalPointNum = 1;     // ϵ(epsilon) 소수점 자리수
+    //private int epsilonDecimalPointNum = 1;     // ϵ(epsilon) 소수점 자리수
 
     // [state(destination RSU) 수, action(neighbor RUS) 수], Demand Level [time, energy]
     public float[,,] Q_table = new float[5, stateNum, actionNum];       // Demand Level 1, [100, 0] / Demand Level 2, [75, 25] / Demand Level 3, [50, 50] / Demand Level 4, [25, 75] / Demand Level 5, [0, 100]
@@ -58,7 +58,7 @@ public class RSU3 : MonoBehaviour
 
                 for (int k = 0; k < actionNum; k++)
                 {
-                    Q_table[i, j, k] = -15.0f;
+                    Q_table[i, j, k] = RSU_parameters.initial_Q_value;
                 }
             }
         }
@@ -110,6 +110,7 @@ public class RSU3 : MonoBehaviour
                         {
                             carList[i].GetComponent<Car>().nextMaxQ_value[j] = getMaxQ_value(j);
                         }
+                        //carList[i].GetComponent<Car>().isCarInfoUpdateNeeded = true;
                     }
                 }
             }
@@ -127,6 +128,7 @@ public class RSU3 : MonoBehaviour
                     carList[i].GetComponent<DummyCar>().lineNum = line_num;     // 방향 이동 후 car의 line_num 저장
                     carList[i].GetComponent<DummyCar>().cur_RSU = current_RSU;        // 현재 RSU 번호로 초기화
                     carList[i].GetComponent<DummyCar>().next_RSU = next_RSU;
+                    //carList[i].GetComponent<DummyCar>().isCarInfoUpdateNeeded = true;
                 }
             }
             else

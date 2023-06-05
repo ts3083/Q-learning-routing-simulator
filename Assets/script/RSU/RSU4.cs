@@ -60,7 +60,7 @@ public class RSU4 : MonoBehaviour
 
                 for (int k = 0; k < actionNum; k++)
                 {
-                    Q_table[i, j, k] = -15.0f;
+                    Q_table[i, j, k] = RSU_parameters.initial_Q_value;
                 }
             }
         }
@@ -110,6 +110,7 @@ public class RSU4 : MonoBehaviour
                         {
                             carList[i].GetComponent<Car>().nextMaxQ_value[j] = getMaxQ_value(j);
                         }
+                        //carList[i].GetComponent<Car>().isCarInfoUpdateNeeded = true;
                     }
                 }
             }
@@ -127,6 +128,7 @@ public class RSU4 : MonoBehaviour
                     carList[i].GetComponent<DummyCar>().lineNum = line_num;     // 방향 이동 후 car의 line_num 저장
                     carList[i].GetComponent<DummyCar>().cur_RSU = current_RSU;        // 현재 RSU 번호로 초기화
                     carList[i].GetComponent<DummyCar>().next_RSU = next_RSU;
+                    //carList[i].GetComponent<DummyCar>().isCarInfoUpdateNeeded = true;
                 }
             }
             else
@@ -294,7 +296,7 @@ public class RSU4 : MonoBehaviour
                     return forward_RSU3[line_num];
             }
         }
-        // 그 이외의 경(차량이 RSU 9에서 온 경우)
+        // 그 이외의 경우(차량이 RSU 9에서 온 경우)
         else
         {
             switch (RSU_num)

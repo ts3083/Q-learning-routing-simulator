@@ -32,7 +32,7 @@ public class SpawnCar : MonoBehaviour
         int destRSU = 20;       // 종료 RSU
         int safetyLevel = 1;        // Safety Level
         int demandLevel = 1;        // Demand Level
-        int numberOfQcar = 100;      // 생성할 Q_car 개수
+        int numberOfQcar = 60;      // 생성할 Q_car 개수
 
         for(int i = 0; i < numberOfQcar; i++)
         {

@@ -36,7 +36,7 @@ public class Car : MonoBehaviour
     private float A = 1.8f;     // frontal area of the car(m^2)
     private float u = 0.005f;       // rolling resistance coefficient
     private int Nt = 1;       // normalization for time
-    private int Ne = 5000;       // normalization for energy
+    private int Ne = 1000;       // normalization for energy
 
     private float alpha = 0.1f;     // Q-learning의 learning rate
     private float gamma = 0.9f;     // Q-learning의 discount factor
@@ -44,7 +44,7 @@ public class Car : MonoBehaviour
 
     private float[] RSU_Q_table = new float[5];       // 이전 RSU의 특정 state(destination RSU)에서의 Q-table
     public float[] nextMaxQ_value = new float[5];       // 현재 RSU의 특정 state(destination RSU)에서의 max Q-value
-    private float arrivalReward = 20.0f;        // 차량이 목적지에 도착했을 때 reward
+    private float arrivalReward = 10f;        // 차량이 목적지에 도착했을 때 reward
     private GameObject spawnObject;     // SpawnCar script를 컨포넌트로 가지고 있는 오브젝트
 
     // Start is called before the first frame update
@@ -759,10 +759,10 @@ public class Car : MonoBehaviour
             Wt = 1.0f - 0.25f * i;
             We = 0.25f * i;
 
-            reward = -0.6f * (Wt * timer / Nt + We * energy / Ne) + additionalReward;       // Q-learning의 reward 계산
+            reward = -0.6f * (Wt * timer / Nt + We * energy / Ne) / 4f + additionalReward;       // Q-learning의 reward 계산
             RSU_Q_table[i] = (1 - alpha) * RSU_Q_table[i] + alpha * (reward + gamma * nextMaxQ_value[i]);
         }
-        Debug.Log("RSU" + prev_RSU + "(DL 1 ~ 5): " + RSU_Q_table[0] + ", " + RSU_Q_table[1] + ", " + RSU_Q_table[2] + ", " + RSU_Q_table[3] + ", " + RSU_Q_table[4]);
+        //Debug.Log("RSU" + prev_RSU + "(DL 1 ~ 5): " + RSU_Q_table[0] + ", " + RSU_Q_table[1] + ", " + RSU_Q_table[2] + ", " + RSU_Q_table[3] + ", " + RSU_Q_table[4]);
 
         UpdateQ_table();
     }
@@ -786,6 +786,7 @@ public class Car : MonoBehaviour
 
         // Total Energy
         energy = (SRP + ARP + RRP) * timer;
+        //Debug.Log("timer : " + timer + " energy : " + energy);
     }
 
     // update 대상 RSU의 Q-table 가져오기

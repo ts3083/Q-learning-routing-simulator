@@ -12,13 +12,11 @@ public class TrafficLight : MonoBehaviour
     public bool isLightOn;      // 신호가 켜져 있는지 여부 저장
     public int lightOn_lineNum = 0;
     public int lineNum;
-    public float blueLightTerm;
 
     // Start is called before the first frame update
     void Start()
     {
-        lightOnTime = 20;
-        blueLightTerm = 20 / 4;
+        lightOnTime = 10;
 
         startLightOnDelay = (signalTurn - 1) * lightOnTime;
         nextLightDelay = (roadNum - 1) * lightOnTime;

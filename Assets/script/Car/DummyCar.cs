@@ -8,7 +8,7 @@ using static UnityEngine.EventSystems.EventTrigger;
 public class DummyCar : MonoBehaviour
 {
     // 차량 속도 선언 - 10, 15, 20
-    private int[] speed = new int[] { 15, 20 };
+    private int[] speed = new int[] { 10, 20 };
     private static int init_speed = 10;     // 초기 속도(10m/s)
     public int start_speed;     // 차량 출발 시 속도
     public int current_speed;      // 현재 차량의 위치에 따른 속도가 다름 => current speed 변수 선언
@@ -204,10 +204,10 @@ public class DummyCar : MonoBehaviour
             BackTriggerSettingBySpeed(speedLimit);
         }
 
-        // speed 15 제한 도로에 진입하는 경우, 경사각 X
+        // speed 10 제한 도로에 진입하는 경우, 경사각 X
         if (isCarInfoUpdateNeeded && other.CompareTag("NarrowRoadEnterAngleX"))
         {
-            BackTriggerSettingBySpeed(15);
+            BackTriggerSettingBySpeed(speed[0]);
             prev_RSU = cur_RSU;
             cur_RSU = 0;
             currentLineNum = lineNum;
@@ -216,10 +216,10 @@ public class DummyCar : MonoBehaviour
             isCarInfoUpdateNeeded = false;
         }
 
-        // speed 15 제한 도로에 진입하는 경우, 경사각 O
+        // speed 10 제한 도로에 진입하는 경우, 경사각 O
         if (isCarInfoUpdateNeeded && other.CompareTag("NarrowRoadEnterAngleO"))
         {
-            BackTriggerSettingBySpeed(15);
+            BackTriggerSettingBySpeed(speed[0]);
             prev_RSU = cur_RSU;
             cur_RSU = 0;
             currentLineNum = lineNum;
@@ -231,7 +231,7 @@ public class DummyCar : MonoBehaviour
         // speed 20 제한 도로에 진입하는 경우, 경사각 X
         if (isCarInfoUpdateNeeded && other.CompareTag("WideRoadEnter"))
         {
-            BackTriggerSettingBySpeed(20);
+            BackTriggerSettingBySpeed(speed[1]);
             prev_RSU = cur_RSU;
             cur_RSU = 0;
             currentLineNum = lineNum;
@@ -251,15 +251,15 @@ public class DummyCar : MonoBehaviour
             current_speed = init_speed;
             speedLimit = init_speed;
         }
-        // 속도가 15인 경우
-        else if (speed_ == 15)
+        // 속도가 10인 경우
+        else if (speed_ == speed[0])
         {
             //carBack.transform.localPosition = new Vector3(0, 0, -7.5f);
             current_speed = speed[0];
             speedLimit = speed[0];
         }
         // 속도가 30인 경우
-        else if (speed_ == 20)
+        else if (speed_ == speed[1])
         {
             //carBack.transform.localPosition = new Vector3(0, 0, -10f);
             current_speed = speed[1];

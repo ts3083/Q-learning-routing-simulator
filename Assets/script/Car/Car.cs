@@ -52,7 +52,7 @@ public class Car : MonoBehaviour
     [Range(0, 360)]
 
     // 차량 속도 선언 - 10, 15, 20
-    private int[] speed = new int[] { 15, 20 };
+    private int[] speed = new int[] { 10, 20 };
     private static int init_speed = 10;     // 초기 속도(10m/s)
     public int avg_speed = init_speed;      // 현재 차량의 위치에 따른 속도가 다름 => current speed 변수 선언
 
@@ -357,10 +357,10 @@ public class Car : MonoBehaviour
             BackTriggerSettingBySpeed(speedLimit);
         }
 
-        // speed 15 제한 도로에 진입하는 경우, 경사각 X
+        // speed 10 제한 도로에 진입하는 경우, 경사각 X
         if (isCarInfoUpdateNeeded && other.CompareTag("NarrowRoadEnterAngleX"))
         {
-            BackTriggerSettingBySpeed(15);
+            BackTriggerSettingBySpeed(speed[0]);
             //setLayerCar();
             prevActionIndex = curActionIndex;
             curActionIndex = -1;
@@ -372,16 +372,16 @@ public class Car : MonoBehaviour
             //getDirection = false;
         }
 
-        // speed 15 제한 도로에 진입하는 경우, 경사각 O
+        // speed 10 제한 도로에 진입하는 경우, 경사각 O
         if (isCarInfoUpdateNeeded && other.CompareTag("NarrowRoadEnterAngleO"))
         {
-            BackTriggerSettingBySpeed(15);
+            BackTriggerSettingBySpeed(speed[0]);
             //setLayerCar();
             prevActionIndex = curActionIndex;
             curActionIndex = -1;
             prev_RSU = cur_RSU;
             next_RSU = cur_RSU = 0;
-            theta = 10;     // 경사각 10
+            theta = 13;     // 경사각 10
             isCarInfoUpdateNeeded = false;
             road_length = 424.3f;
             //getDirection = false;
@@ -390,7 +390,7 @@ public class Car : MonoBehaviour
         // speed 20 제한 도로에 진입하는 경우, 경사각 X
         if (isCarInfoUpdateNeeded && other.CompareTag("WideRoadEnter"))
         {
-            BackTriggerSettingBySpeed(20);
+            BackTriggerSettingBySpeed(speed[1]);
             //setLayerCar();
             prevActionIndex = curActionIndex;
             curActionIndex = -1;
@@ -426,7 +426,7 @@ public class Car : MonoBehaviour
             curActionIndex = -1;
             prev_RSU = cur_RSU;
             cur_RSU = 0;
-            theta = 10;     // 경사각 10
+            theta = 13;     // 경사각 10
             isCarInfoUpdateNeeded = false;
             road_length = 424.3f;
             //getDirection = false;
@@ -696,15 +696,15 @@ public class Car : MonoBehaviour
             avg_speed = init_speed;
             speedLimit = init_speed;
         }
-        // 속도가 15인 경우
-        else if (speed_ == 15)
+        // 속도가 10인 경우
+        else if (speed_ == speed[0])
         {
             //carBack.transform.localPosition = new Vector3(0, 0, -5f);
             avg_speed = speed[0];
             speedLimit = speed[0];
         }
         // 속도가 30인 경우
-        else if (speed_ == 20)
+        else if (speed_ == speed[1])
         {
             //carBack.transform.localPosition = new Vector3(0, 0, -10f);
             avg_speed = speed[1];

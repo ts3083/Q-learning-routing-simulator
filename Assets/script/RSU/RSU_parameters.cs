@@ -6,11 +6,11 @@ using System.IO;
 public class RSU_parameters : MonoBehaviour
 {
     public static float RSU_effectRange = 30f;     // RSU 영향 범위
-    public static float epsilon = 0.3f;       // ϵ-greedy의 epsilon 값
+    public static float epsilon = 0.9f;       // ϵ-greedy의 epsilon 값
+    private static float epsilon_limit = 0.1f;      // ϵ(epsilon)의 수렴값(최소값)
     public static float initial_Q_value = 0f;      // Q-table의 초기 Q 값
-    private static float first_epsilonValue = 0.3f;     // ϵ-greedy의 초기 epsilon 
     private static int episodeCount = 0;        // episode 횟수
-    private static int decayValue = 1;      // 일정 횟수의 episode를 반복할 때마다 epsilon 값 감소에 사용되는 값
+    //private static int decayValue = 1;      // 일정 횟수의 episode를 반복할 때마다 epsilon 값 감소에 사용되는 값
 
     private static string txtFileName = "test.txt";
     private static string txtFilePath = Application.dataPath + "/" + txtFileName;
@@ -47,10 +47,6 @@ public class RSU_parameters : MonoBehaviour
     {
         episodeCount++;
 
-        if (episodeCount % 100 == 0)
-        {
-            decayValue++;
-            epsilon = first_epsilonValue / Mathf.Sqrt(decayValue);
-        }
+        epsilon = 0.8f * Mathf.Exp(-episodeCount / 400) + 0.1f;
     }
 }

@@ -17,8 +17,8 @@ public class TrafficLight : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        lightOnTime = 20;
-        blueLightTerm = 20 / 4;
+        lightOnTime = 12;
+        blueLightTerm = lightOnTime / 4;
 
         startLightOnDelay = (signalTurn - 1) * lightOnTime;
         nextLightDelay = (roadNum - 1) * lightOnTime;

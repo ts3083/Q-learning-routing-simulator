@@ -148,7 +148,6 @@ public class RSU5 : MonoBehaviour
                 actionIndex = Random.Range(0, actionNum);
             }
             while (actions_RSU[actionIndex] == prev_RSU);
-
         }
         // 그 이외의 경우(1 - ϵ 확률로 가장 큰 Q 값을 가지고 있는 action을 선택)
         else

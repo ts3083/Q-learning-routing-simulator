@@ -45,7 +45,7 @@ public class Car : MonoBehaviour
 
     private float[] RSU_Q_table = new float[5];       // 이전 RSU의 특정 state(destination RSU)에서의 Q-table
     public float[] nextMaxQ_value = new float[5];       // 현재 RSU의 특정 state(destination RSU)에서의 max Q-value
-    private float arrivalReward = 20.0f;        // 차량이 목적지에 도착했을 때 reward
+    private float arrivalReward = 50.0f;        // 차량이 목적지에 도착했을 때 reward
     private GameObject spawnObject;     // SpawnCar script를 컨포넌트로 가지고 있는 오브젝트
 
     // Start is called before the first frame update
@@ -281,7 +281,7 @@ public class Car : MonoBehaviour
                 RSU_parameters.decaying_epsilonValue();
 
                 Destroy(gameObject);        // 목적지에 도착한 차량 제거
-                spawnObject.GetComponent<SpawnCar>().spawnQCar(start_RSU, dest_RSU, 1, 1);
+                spawnObject.GetComponent<SpawnCar>().spawnQCar(start_RSU, dest_RSU, safetyLevel, demandLevel);
             }
             else
             {
@@ -789,7 +789,7 @@ public class Car : MonoBehaviour
             We = 0.25f * i;
 
             reward = -(Wt * timer / Nt + We * energy / Ne) + additionalReward;       // Q-learning의 reward 계산
-            Debug.Log("RSU" + prev_RSU + " → " + cur_RSU + "의 reward[DL: " + (i + 1) + "]: " + reward);
+            //Debug.Log("RSU" + prev_RSU + " → " + cur_RSU + "의 reward[DL: " + (i + 1) + "]: " + reward);
             RSU_Q_table[i] = (1 - alpha) * RSU_Q_table[i] + alpha * (reward + gamma * nextMaxQ_value[i]);
         }
         //Debug.Log("RSU" + prev_RSU + " → RSU" + cur_RSU + "(DL 1 ~ 5): " + RSU_Q_table[0] + ", " + RSU_Q_table[1] + ", " + RSU_Q_table[2] + ", " + RSU_Q_table[3] + ", " + RSU_Q_table[4]);

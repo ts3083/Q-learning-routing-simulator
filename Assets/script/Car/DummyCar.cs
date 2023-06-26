@@ -20,6 +20,7 @@ public class DummyCar : MonoBehaviour
 
     public string direction = "null";       // 차량 이동방향
     public Vector3 position;        // 월드 좌표를 기준으로 이동시킬 차량의 위치
+
     private GameObject carBack;     // 차량 뒷면 트리거
 
     private int currentLineNum;      // 현재 위치한 도로에서의 차선
@@ -35,7 +36,7 @@ public class DummyCar : MonoBehaviour
     public int next_RSU;        // 다음 RSU
     public int prev_lineNum;
 
-    private bool isCarInfoUpdateNeeded = true;     // 차량의 RSU정보 update 필요 여부
+    public bool isCarInfoUpdateNeeded = false;     // 차량의 RSU정보 update 필요 여부
 
     //public int curRoadNum;      // 현재 차선의 개수
     //public int nextRoadNum;     // 다음 차선의 개수
@@ -43,28 +44,16 @@ public class DummyCar : MonoBehaviour
     //private crossroadMove DummyCarMoveDecision = new();     // 교차로에서 DummyCar의 이동 결정
 
     // Start is called before the first frame update
-    //void Start()
-    //{
-    //    carBack = transform.GetChild(8).gameObject;     // carBack 게임 오브젝트 가져오기
-    //    BackTriggerSettingBySpeed(start_speed);      // 초기 속도(10m/s)로 CarBack 트리거 설정
-    //    beforeRotation = (int)transform.eulerAngles.y;
-    //    start_speed = init_speed;
-    //    current_speed = init_speed;
-    //    //routeListLength = routeList.Length;
-    //}
-
-    private void Awake()
+    void Start()
     {
         carBack = transform.GetChild(8).gameObject;     // carBack 게임 오브젝트 가져오기
         BackTriggerSettingBySpeed(start_speed);      // 초기 속도(10m/s)로 CarBack 트리거 설정
         beforeRotation = (int)transform.eulerAngles.y;
-        start_speed = init_speed;
-        current_speed = init_speed;
+        //routeListLength = routeList.Length;
     }
 
     private void FixedUpdate()
     {
-        Time.timeScale = 3f;
         transform.position += transform.forward * current_speed * Time.deltaTime;       // 차량 이동        
 
         // Delay 시간 측정
@@ -103,18 +92,26 @@ public class DummyCar : MonoBehaviour
         {
             //isCrossroad = true;
 
+            isCarInfoUpdateNeeded = true;
+
             // 이동방향에 따른 좌표를 받아옴
             transform.position = position;
             if (direction.Contains("left") || direction.Contains("right"))
             {
                 new_drive(direction);
             }
+
+            //routeIndex++;
+            //if (routeIndex > routeListLength - 1)
+            //{
+            //    routeIndex = 0;
+            //}
         }
 
-        if(other.CompareTag("NarrowRoadExit") || other.CompareTag("WideRoadExit"))
-        {
-            isCarInfoUpdateNeeded = true;
-        }
+        //if(other.CompareTag("NarrowRoadExit") || other.CompareTag("WideRoadExit"))
+        //{
+        //    isCarInfoUpdateNeeded = true;
+        //}
     }
 
     private void OnTriggerStay(Collider other)
@@ -133,15 +130,15 @@ public class DummyCar : MonoBehaviour
         //    }
         //}
 
-        //if (other.CompareTag("NarrowRoadEnterAngleO") || other.CompareTag("NarrowRoadEnterAngleX"))
-        //{
-        //    BackTriggerSettingBySpeed(15);
-        //}
+        if (other.CompareTag("NarrowRoadEnterAngleO") || other.CompareTag("NarrowRoadEnterAngleX"))
+        {
+            BackTriggerSettingBySpeed(speed[0]);
+        }
 
-        //if (other.CompareTag("WideRoadEnter"))
-        //{
-        //    BackTriggerSettingBySpeed(20);
-        //}
+        if (other.CompareTag("WideRoadEnter"))
+        {
+            BackTriggerSettingBySpeed(speed[1]);
+        }
 
         if (other.CompareTag("NarrowRoadExit") || other.CompareTag("WideRoadExit"))
         {
@@ -151,15 +148,15 @@ public class DummyCar : MonoBehaviour
             //    DummyCarMoveDecision.getNextDirection(prev_RSU, cur_RSU, ref lineNum, ref direction, ref position);
             //}
 
-            //방향(direction)이 null이 아닌 경우에만 이동하도록 설정
-            if (direction == "null")
-            {
-                BackTriggerSettingBySpeed(0);
-            }
-            else
-            {
-                BackTriggerSettingBySpeed(init_speed);
-            }
+            //// 방향(direction)이 null이 아닌 경우에만 이동하도록 설정
+            //if(direction == "null")
+            //{
+            //    BackTriggerSettingBySpeed(0);
+            //}
+            //else
+            //{
+            //    BackTriggerSettingBySpeed(speedLimit);
+            //}
 
             if (other.GetComponent<TrafficLight>().isLightOn == false) // red light
             {
@@ -193,6 +190,7 @@ public class DummyCar : MonoBehaviour
         {
             return true;
         }
+
         return GameObject.Find("DetectTrigger" + cur_RSU + "-" + next_RSU)
             .GetComponent<DetectTrigger>().detected;
     }
@@ -204,10 +202,9 @@ public class DummyCar : MonoBehaviour
             BackTriggerSettingBySpeed(speedLimit);
         }
 
-        // speed 10 제한 도로에 진입하는 경우, 경사각 X
+        // speed 15 제한 도로에 진입하는 경우, 경사각 X
         if (isCarInfoUpdateNeeded && other.CompareTag("NarrowRoadEnterAngleX"))
         {
-            BackTriggerSettingBySpeed(speed[0]);
             prev_RSU = cur_RSU;
             cur_RSU = 0;
             currentLineNum = lineNum;
@@ -216,10 +213,9 @@ public class DummyCar : MonoBehaviour
             isCarInfoUpdateNeeded = false;
         }
 
-        // speed 10 제한 도로에 진입하는 경우, 경사각 O
+        // speed 15 제한 도로에 진입하는 경우, 경사각 O
         if (isCarInfoUpdateNeeded && other.CompareTag("NarrowRoadEnterAngleO"))
         {
-            BackTriggerSettingBySpeed(speed[0]);
             prev_RSU = cur_RSU;
             cur_RSU = 0;
             currentLineNum = lineNum;
@@ -231,7 +227,6 @@ public class DummyCar : MonoBehaviour
         // speed 20 제한 도로에 진입하는 경우, 경사각 X
         if (isCarInfoUpdateNeeded && other.CompareTag("WideRoadEnter"))
         {
-            BackTriggerSettingBySpeed(speed[1]);
             prev_RSU = cur_RSU;
             cur_RSU = 0;
             currentLineNum = lineNum;
@@ -239,6 +234,11 @@ public class DummyCar : MonoBehaviour
             //nextRoadNum = 0;
             isCarInfoUpdateNeeded = false;
         }
+
+        //if (other.CompareTag("NarrowRoadExit") || other.CompareTag("WideRoadExit"))
+        //{
+        //    BackTriggerSettingBySpeed(speedLimit);
+        //}
     }
 
     // 차량 후면 트리거(차량간 거리 조절) 위치 조정
@@ -251,7 +251,7 @@ public class DummyCar : MonoBehaviour
             current_speed = init_speed;
             speedLimit = init_speed;
         }
-        // 속도가 10인 경우
+        // 속도가 15인 경우
         else if (speed_ == speed[0])
         {
             //carBack.transform.localPosition = new Vector3(0, 0, -7.5f);
@@ -270,7 +270,7 @@ public class DummyCar : MonoBehaviour
         {
             //carBack.transform.localPosition = new Vector3(0, 0, -4f);
             current_speed = 0;
-            speedLimit = init_speed;
+            //speedLimit = init_speed;
         }
     }
 
@@ -361,7 +361,6 @@ public class DummyCar : MonoBehaviour
             else if (direction.Equals("right135"))
             {
                 rightMove(225);
-                Debug.Log(90);
             }
         }
         else if (beforeRotation >= 130 && beforeRotation <= 140)

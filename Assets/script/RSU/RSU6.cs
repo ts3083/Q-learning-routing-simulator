@@ -33,7 +33,7 @@ public class RSU6 : MonoBehaviour
     private int[] actions_RSU = new int[actionNum] { 1, 7, 11, 12 };
 
     // RSU1방향 좌표 저장
-    private Vector3[] forward_RSU1 = new Vector3[5] { new Vector3(0,0,0), new Vector3(-316.57f,0.427f,-12.06f), new Vector3(-318.84f,0.427f,-12.06f), new Vector3(-321.14f,0.427f,-12.06f), new Vector3(-323.43f,0.427f,-12.06f)};
+    private Vector3[] forward_RSU1 = new Vector3[5] { new Vector3(0, 0, 0), new Vector3(-316.57f, 0.427f, -12.06f), new Vector3(-318.84f, 0.427f, -12.06f), new Vector3(-321.14f, 0.427f, -12.06f), new Vector3(-323.43f, 0.427f, -12.06f) };
 
     // RSU7방향 좌표 저장
     private Vector3[] forward_RSU7 = new Vector3[3] { new Vector3(0, 0, 0), new Vector3(-302f, 0.427f, -6.25f), new Vector3(-302f, 0.427f, -8.44f) };
@@ -60,7 +60,7 @@ public class RSU6 : MonoBehaviour
 
                 for (int k = 0; k < actionNum; k++)
                 {
-                    Q_table[i, j, k] = -15.0f;
+                    Q_table[i, j, k] = RSU_parameters.initial_Q_value;
                 }
             }
         }
@@ -112,6 +112,7 @@ public class RSU6 : MonoBehaviour
                         {
                             carList[i].GetComponent<Car>().nextMaxQ_value[j] = getMaxQ_value(j);
                         }
+                        //carList[i].GetComponent<Car>().isCarInfoUpdateNeeded = true;
                     }
                 }
             }
@@ -129,6 +130,7 @@ public class RSU6 : MonoBehaviour
                     carList[i].GetComponent<DummyCar>().lineNum = line_num;     // 방향 이동 후 car의 line_num 저장
                     carList[i].GetComponent<DummyCar>().cur_RSU = current_RSU;        // 현재 RSU 번호로 초기화
                     carList[i].GetComponent<DummyCar>().next_RSU = next_RSU;
+                    //carList[i].GetComponent<DummyCar>().isCarInfoUpdateNeeded = true;
                 }
             }
             else

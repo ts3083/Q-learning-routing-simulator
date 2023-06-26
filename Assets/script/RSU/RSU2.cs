@@ -21,6 +21,9 @@ public class RSU2 : MonoBehaviour
     private int next_RSU; // 다음 RSU
     private int line_num; // 차량 차선 번호
 
+    //private float epsilon;       // ϵ-greedy의 epsilon 값
+    //private int epsilonDecimalPointNum = 1;     // ϵ(epsilon) 소수점 자리수
+
     // [state(destination RSU) 수, action(neighbor RUS) 수], Demand Level [time, energy]
     public float[,,] Q_table = new float[5, stateNum, actionNum];       // Demand Level 1, [100, 0] / Demand Level 2, [75, 25] / Demand Level 3, [50, 50] / Demand Level 4, [25, 75] / Demand Level 5, [0, 100]
 
@@ -48,14 +51,14 @@ public class RSU2 : MonoBehaviour
             for (int j = 0; j < stateNum; j++)
             {
                 // state(destination RSU)가 자기 자신인 경우 스킵, 0으로 초기화 시 필요 X, RSU마다 수정 필요!
-                if(j == current_RSU - 1)
+                if (j == current_RSU - 1)
                 {
                     continue;
                 }
 
                 for (int k = 0; k < actionNum; k++)
                 {
-                    Q_table[i, j, k] = -15.0f;
+                    Q_table[i, j, k] = RSU_parameters.initial_Q_value;
                 }
             }
         }
@@ -105,6 +108,7 @@ public class RSU2 : MonoBehaviour
                         {
                             carList[i].GetComponent<Car>().nextMaxQ_value[j] = getMaxQ_value(j);
                         }
+                        //carList[i].GetComponent<Car>().isCarInfoUpdateNeeded = true;
                     }
                 }
             }
@@ -122,6 +126,7 @@ public class RSU2 : MonoBehaviour
                     carList[i].GetComponent<DummyCar>().lineNum = line_num;     // 방향 이동 후 car의 line_num 저장
                     carList[i].GetComponent<DummyCar>().cur_RSU = current_RSU;        // 현재 RSU 번호로 초기화
                     carList[i].GetComponent<DummyCar>().next_RSU = next_RSU;
+                    //carList[i].GetComponent<DummyCar>().isCarInfoUpdateNeeded = true;
                 }
             }
             else
@@ -176,7 +181,7 @@ public class RSU2 : MonoBehaviour
     public string getNextDirection(int RSU_num)
     {
         // 차량이 RSU 1에서 온 경우
-        if(prev_RSU == 1)
+        if (prev_RSU == 1)
         {
             switch (RSU_num)
             {

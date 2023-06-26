@@ -35,8 +35,9 @@ public class Car : MonoBehaviour
     private float Cw = 0.35f;       // drag coefficient
     private float A = 1.8f;     // frontal area of the car(m^2)
     private float u = 0.005f;       // rolling resistance coefficient
-    private int Nt = 1;       // normalization for time
-    private int Ne = 1000;       // normalization for energy
+    private int Nt = 5;       // normalization for time
+    private int Ne = 5000;       // normalization for energy
+    private float SRP_decrease_factor = 0.1f;       // SRP(Slope Resistance Power) 감소 인자
 
     private float alpha = 0.1f;     // Q-learning의 learning rate
     private float gamma = 0.9f;     // Q-learning의 discount factor
@@ -44,7 +45,7 @@ public class Car : MonoBehaviour
 
     private float[] RSU_Q_table = new float[5];       // 이전 RSU의 특정 state(destination RSU)에서의 Q-table
     public float[] nextMaxQ_value = new float[5];       // 현재 RSU의 특정 state(destination RSU)에서의 max Q-value
-    private float arrivalReward = 10f;        // 차량이 목적지에 도착했을 때 reward
+    private float arrivalReward = 35.0f;        // 차량이 목적지에 도착했을 때 reward
     private GameObject spawnObject;     // SpawnCar script를 컨포넌트로 가지고 있는 오브젝트
 
     // Start is called before the first frame update
@@ -90,37 +91,37 @@ public class Car : MonoBehaviour
     public int prev_lineNum;
     public int lineNum;     // 차량이 위치한 차선
 
-    public bool isCarInfoUpdateNeeded = true;     // 차량의 RSU, index 정보 update 필요 여부
+    public bool isCarInfoUpdateNeeded = false;     // 차량의 RSU, index 정보 update 필요 여부
 
-    //// 교차로에서 차량에 적용되는 레이어 - 디폴트
-    //void setLayerCar()
-    //{
-    //    this.gameObject.layer = CarLayerName;
-    //    BL.gameObject.layer = CarLayerName;
-    //    BR.gameObject.layer = CarLayerName;
-    //    door_fl.gameObject.layer = CarLayerName;
-    //    door_fr.gameObject.layer = CarLayerName;
-    //    FL.gameObject.layer = CarLayerName;
-    //    FR.gameObject.layer = CarLayerName;
-    //    SportCar2.gameObject.layer = CarLayerName;
-    //    steering_wheel.gameObject.layer = CarLayerName;
-    //    carBack.gameObject.layer = CarLayerName;
-    //}
+    // 교차로에서 차량에 적용되는 레이어 - 디폴트
+    void setLayerCar()
+    {
+        this.gameObject.layer = CarLayerName;
+        BL.gameObject.layer = CarLayerName;
+        BR.gameObject.layer = CarLayerName;
+        door_fl.gameObject.layer = CarLayerName;
+        door_fr.gameObject.layer = CarLayerName;
+        FL.gameObject.layer = CarLayerName;
+        FR.gameObject.layer = CarLayerName;
+        SportCar2.gameObject.layer = CarLayerName;
+        steering_wheel.gameObject.layer = CarLayerName;
+        carBack.gameObject.layer = CarLayerName;
+    }
 
-    //// 교차로에서 차량에 적용되는 레이어 - 현재 사용X
-    //void setLayerRotateCar()
-    //{
-    //    this.gameObject.layer = RotateLayerName;
-    //    BL.gameObject.layer = RotateLayerName;
-    //    BR.gameObject.layer = RotateLayerName;
-    //    door_fl.gameObject.layer = RotateLayerName;
-    //    door_fr.gameObject.layer = RotateLayerName;
-    //    FL.gameObject.layer = RotateLayerName;
-    //    FR.gameObject.layer = RotateLayerName;
-    //    SportCar2.gameObject.layer = RotateLayerName;
-    //    steering_wheel.gameObject.layer = RotateLayerName;
-    //    carBack.gameObject.layer = RotateLayerName;
-    //}
+    // 교차로에서 차량에 적용되는 레이어 - 현재 사용X
+    void setLayerRotateCar()
+    {
+        this.gameObject.layer = RotateLayerName;
+        BL.gameObject.layer = RotateLayerName;
+        BR.gameObject.layer = RotateLayerName;
+        door_fl.gameObject.layer = RotateLayerName;
+        door_fr.gameObject.layer = RotateLayerName;
+        FL.gameObject.layer = RotateLayerName;
+        FR.gameObject.layer = RotateLayerName;
+        SportCar2.gameObject.layer = RotateLayerName;
+        steering_wheel.gameObject.layer = RotateLayerName;
+        carBack.gameObject.layer = RotateLayerName;
+    }
 
     void Awake()
     {
@@ -260,27 +261,15 @@ public class Car : MonoBehaviour
             BackTriggerSettingBySpeed(0);
         }
 
-        if (other.CompareTag("CrossRoad"))
+        if (other.CompareTag("CrossRoad") && timer_on)
         {
             //BackTriggerSettingBySpeed(init_speed);
             //setLayerRotateCar();
             //getDirection = true;
             // 이동방향에 따른 좌표를 받아옴
             //cross();
-            transform.position = position;
-            if (direction.Contains("left") || direction.Contains("right"))
-            {
-                new_drive(direction);
-            }
-        }
 
-        if ((other.CompareTag("NarrowRoadExit") || other.CompareTag("WideRoadExit")) && timer_on)
-        {
             timer_on = false;       // 시간 측정 끝
-
-            // 차량이 교차로를 이동할 때 걸린 시간과 필요한 에너지를 합계에 포함
-            //totalTime += timer;
-            //totalEnergy += energy;
 
             // 목적지에 도착한 경우
             if (isEnd)
@@ -289,9 +278,10 @@ public class Car : MonoBehaviour
 
                 //Debug.Log("RSU" + start_RSU + " → RSU" + dest_RSU + "의 총 (시간, 에너지): (" + totalTime + ", " + totalEnergy + ")");
                 RSU_parameters.writeMaxQValue(start_RSU, dest_RSU, demandLevel);        // source RSU의 MaxQ 값을 기록
+                RSU_parameters.decaying_epsilonValue();
 
                 Destroy(gameObject);        // 목적지에 도착한 차량 제거
-                spawnObject.GetComponent<SpawnCar>().spawnQCar(start_RSU, dest_RSU, 1, 1);
+                spawnObject.GetComponent<SpawnCar>().spawnQCar(start_RSU, dest_RSU, safetyLevel, demandLevel);
             }
             else
             {
@@ -302,8 +292,46 @@ public class Car : MonoBehaviour
                 energy = 0.0f;      // 다시 0으로 초기화
 
                 isCarInfoUpdateNeeded = true;
+
+                transform.position = position;
+                if (direction.Contains("left") || direction.Contains("right"))
+                {
+                    new_drive(direction);
+                }
             }
         }
+
+        //if ((other.CompareTag("NarrowRoadExit") || other.CompareTag("WideRoadExit")) && timer_on)
+        //{
+        //    timer_on = false;       // 시간 측정 끝
+
+        //    // 차량이 교차로를 이동할 때 걸린 시간과 필요한 에너지를 합계에 포함
+        //    //totalTime += timer;
+        //    //totalEnergy += energy;
+
+        //    // 목적지에 도착한 경우
+        //    if (isEnd)
+        //    {
+        //        UpdateRSU(arrivalReward);
+
+        //        //Debug.Log("RSU" + start_RSU + " → RSU" + dest_RSU + "의 총 (시간, 에너지): (" + totalTime + ", " + totalEnergy + ")");
+        //        RSU_parameters.writeMaxQValue(start_RSU, dest_RSU, demandLevel);        // source RSU의 MaxQ 값을 기록
+        //        //RSU_parameters.decaying_epsilonValue();
+
+        //        Destroy(gameObject);        // 목적지에 도착한 차량 제거
+        //        spawnObject.GetComponent<SpawnCar>().spawnQCar(start_RSU, dest_RSU, 1, 1);
+        //    }
+        //    else
+        //    {
+        //        // 이전 RSU의 Q-table update
+        //        UpdateRSU();
+
+        //        timer = 0.0f;       // 다시 0으로 초기화
+        //        energy = 0.0f;      // 다시 0으로 초기화
+
+        //        isCarInfoUpdateNeeded = true;
+        //    }
+        //}
     }
 
     private void OnTriggerStay(Collider other)
@@ -323,7 +351,7 @@ public class Car : MonoBehaviour
                 }
                 else
                 {
-                    if (other.GetComponent<TrafficLight>().lightOn_lineNum.Equals(prev_lineNum))
+                    if (other.GetComponent<TrafficLight>().lightOn_lineNum.Equals(prev_lineNum) || isEnd)
                     {
                         BackTriggerSettingBySpeed(speedLimit);
                     }
@@ -338,14 +366,17 @@ public class Car : MonoBehaviour
 
     private bool detector()
     {
+        // cur_RSU 또는 next_RSU 값을 RSU로 부터 받지 못한 경우
         if (cur_RSU == 0)
         {
             return true;
         }
-        if (isEnd) // 목적지 rsu에 도착한 것이라면 object detect 무시
+
+        if (isEnd)
         {
             return false;
         }
+
         return GameObject.Find("DetectTrigger" + cur_RSU + "-" + next_RSU)
             .GetComponent<DetectTrigger>().detected;
     }
@@ -357,7 +388,7 @@ public class Car : MonoBehaviour
             BackTriggerSettingBySpeed(speedLimit);
         }
 
-        // speed 10 제한 도로에 진입하는 경우, 경사각 X
+        // speed 15 제한 도로에 진입하는 경우, 경사각 X
         if (isCarInfoUpdateNeeded && other.CompareTag("NarrowRoadEnterAngleX"))
         {
             BackTriggerSettingBySpeed(speed[0]);
@@ -372,7 +403,7 @@ public class Car : MonoBehaviour
             //getDirection = false;
         }
 
-        // speed 10 제한 도로에 진입하는 경우, 경사각 O
+        // speed 15 제한 도로에 진입하는 경우, 경사각 O
         if (isCarInfoUpdateNeeded && other.CompareTag("NarrowRoadEnterAngleO"))
         {
             BackTriggerSettingBySpeed(speed[0]);
@@ -381,7 +412,7 @@ public class Car : MonoBehaviour
             curActionIndex = -1;
             prev_RSU = cur_RSU;
             next_RSU = cur_RSU = 0;
-            theta = 13;     // 경사각 10
+            theta = 10;     // 경사각 10
             isCarInfoUpdateNeeded = false;
             road_length = 424.3f;
             //getDirection = false;
@@ -403,34 +434,39 @@ public class Car : MonoBehaviour
         }
 
         // Test(speed 5 제한 도로에 진입하는 경우, 경사각 X)
-        if (isCarInfoUpdateNeeded && other.CompareTag("TestNarrowRoadEnterAngleX"))
-        {
-            BackTriggerSettingBySpeed(5);
-            //setLayerCar();
-            prevActionIndex = curActionIndex;
-            curActionIndex = -1;
-            prev_RSU = cur_RSU;
-            cur_RSU = 0;
-            theta = 0;      // 경사각 0
-            isCarInfoUpdateNeeded = false;
-            road_length = 300;
-            //getDirection = false;
-        }
+        //if (isCarInfoUpdateNeeded && other.CompareTag("TestNarrowRoadEnterAngleX"))
+        //{
+        //    BackTriggerSettingBySpeed(5);
+        //    //setLayerCar();
+        //    prevActionIndex = curActionIndex;
+        //    curActionIndex = -1;
+        //    prev_RSU = cur_RSU;
+        //    cur_RSU = 0;
+        //    theta = 0;      // 경사각 0
+        //    isCarInfoUpdateNeeded = false;
+        //    road_length = 300;
+        //    //getDirection = false;
+        //}
 
         // Test(speed 15 제한 도로에 진입하는 경우, 경사각 O)
-        if (isCarInfoUpdateNeeded && other.CompareTag("TestNarrowRoadEnterAngleO"))
-        {
-            BackTriggerSettingBySpeed(5);
-            //setLayerCar();
-            prevActionIndex = curActionIndex;
-            curActionIndex = -1;
-            prev_RSU = cur_RSU;
-            cur_RSU = 0;
-            theta = 13;     // 경사각 10
-            isCarInfoUpdateNeeded = false;
-            road_length = 424.3f;
-            //getDirection = false;
-        }
+        //if (isCarInfoUpdateNeeded && other.CompareTag("TestNarrowRoadEnterAngleO"))
+        //{
+        //    BackTriggerSettingBySpeed(5);
+        //    //setLayerCar();
+        //    prevActionIndex = curActionIndex;
+        //    curActionIndex = -1;
+        //    prev_RSU = cur_RSU;
+        //    cur_RSU = 0;
+        //    theta = 10;     // 경사각 10
+        //    isCarInfoUpdateNeeded = false;
+        //    road_length = 424.3f;
+        //    //getDirection = false;
+        //}
+
+        //if (other.CompareTag("NarrowRoadExit") || other.CompareTag("WideRoadExit"))
+        //{
+        //    BackTriggerSettingBySpeed(speedLimit);
+        //}
     }
 
     private void new_drive(string direction)
@@ -696,7 +732,7 @@ public class Car : MonoBehaviour
             avg_speed = init_speed;
             speedLimit = init_speed;
         }
-        // 속도가 10인 경우
+        // 속도가 15인 경우
         else if (speed_ == speed[0])
         {
             //carBack.transform.localPosition = new Vector3(0, 0, -5f);
@@ -710,13 +746,6 @@ public class Car : MonoBehaviour
             avg_speed = speed[1];
             speedLimit = speed[1];
 
-        }
-        // Test(속도가 5인 경우)
-        else if (speed_ == 5)
-        {
-            //carBack.transform.localPosition = new Vector3(0, 0, -1f);
-            avg_speed = 5;
-            speedLimit = 5;
         }
         else // 속도가 0인 경우
         {
@@ -759,10 +788,11 @@ public class Car : MonoBehaviour
             Wt = 1.0f - 0.25f * i;
             We = 0.25f * i;
 
-            reward = -0.6f * (Wt * timer / Nt + We * energy / Ne) / 4f + additionalReward;       // Q-learning의 reward 계산
+            reward = -(Wt * timer / Nt + We * energy / Ne) + additionalReward;       // Q-learning의 reward 계산
+            //Debug.Log("RSU" + prev_RSU + " → " + cur_RSU + "의 reward[DL: " + (i + 1) + "]: " + reward);
             RSU_Q_table[i] = (1 - alpha) * RSU_Q_table[i] + alpha * (reward + gamma * nextMaxQ_value[i]);
         }
-        //Debug.Log("RSU" + prev_RSU + "(DL 1 ~ 5): " + RSU_Q_table[0] + ", " + RSU_Q_table[1] + ", " + RSU_Q_table[2] + ", " + RSU_Q_table[3] + ", " + RSU_Q_table[4]);
+        //Debug.Log("RSU" + prev_RSU + " → RSU" + cur_RSU + "(DL 1 ~ 5): " + RSU_Q_table[0] + ", " + RSU_Q_table[1] + ", " + RSU_Q_table[2] + ", " + RSU_Q_table[3] + ", " + RSU_Q_table[4]);
 
         UpdateQ_table();
     }
@@ -773,20 +803,28 @@ public class Car : MonoBehaviour
         float avg_speed = road_length / timer;
 
         // Slope Resistance Power
-        float SRP = m * g * avg_speed * Mathf.Sin(theta * Mathf.Deg2Rad);
-        //Debug.Log("(" + this.gameObject.name + ") SRP: " + SRP);
+        float SRP = m * g * avg_speed * Mathf.Sin(theta * Mathf.Deg2Rad) * SRP_decrease_factor;
+        //float SRP = m * g * avg_speed * Mathf.Sin(theta * Mathf.Deg2Rad);
+        //Debug.Log("(RSU" + prev_RSU + " → " + cur_RSU + ") SRP: " + SRP + "(time: " + timer + ")");
 
         // Air Resistance Power
         float ARP = 0.5f * p * Cw * A * Mathf.Pow(avg_speed, 3);
-        //Debug.Log("(" + this.gameObject.name + ") ARP: " + ARP);
+        //Debug.Log("(RSU" + prev_RSU + " → " + cur_RSU + ") ARP: " + ARP + "(time: " + timer + ")");
 
         // Rolling Resistance Power
         float RRP = u * m * g * avg_speed;
-        //Debug.Log("(" + this.gameObject.name + ") RRP: " + RRP);
+        //Debug.Log("(RSU" + prev_RSU + " → " + cur_RSU + ") RRP: " + RRP + "(time: " + timer + ")");
 
         // Total Energy
         energy = (SRP + ARP + RRP) * timer;
-        //Debug.Log("timer : " + timer + " energy : " + energy);
+        //if (theta == 0)
+        //{
+        //    Debug.Log("energy : " + energy);
+        //}
+        //else
+        //{
+        //    Debug.Log("theta energy : " + energy);
+        //}
     }
 
     // update 대상 RSU의 Q-table 가져오기

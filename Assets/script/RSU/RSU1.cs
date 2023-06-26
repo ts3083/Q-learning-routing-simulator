@@ -56,7 +56,7 @@ public class RSU1 : MonoBehaviour
 
                 for (int k = 0; k < actionNum; k++)
                 {
-                    Q_table[i, j, k] = -15.0f;
+                    Q_table[i, j, k] = RSU_parameters.initial_Q_value;
                 }
             }
         }
@@ -106,6 +106,7 @@ public class RSU1 : MonoBehaviour
                         {
                             carList[i].GetComponent<Car>().nextMaxQ_value[j] = getMaxQ_value(j);
                         }
+                        //carList[i].GetComponent<Car>().isCarInfoUpdateNeeded = true;
                     }
                 }
             }
@@ -123,6 +124,7 @@ public class RSU1 : MonoBehaviour
                     carList[i].GetComponent<DummyCar>().lineNum = line_num;     // 방향 이동 후 car의 line_num 저장
                     carList[i].GetComponent<DummyCar>().cur_RSU = current_RSU;        // 현재 RSU 번호로 초기화
                     carList[i].GetComponent<DummyCar>().next_RSU = next_RSU;
+                    //carList[i].GetComponent<DummyCar>().isCarInfoUpdateNeeded = true;
                 }
             }
             else
@@ -177,9 +179,9 @@ public class RSU1 : MonoBehaviour
     {
         float maxQofSource = float.MinValue;
 
-        for(int i = 0; i < actionNum; i++)
+        for (int i = 0; i < actionNum; i++)
         {
-            if(maxQofSource < Q_table[demandLevel - 1, destRSU - 1, i])
+            if (maxQofSource < Q_table[demandLevel - 1, destRSU - 1, i])
             {
                 maxQofSource = Q_table[demandLevel - 1, destRSU - 1, i];
             }

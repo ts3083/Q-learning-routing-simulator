@@ -67,9 +67,6 @@ public class RSU8 : MonoBehaviour
                 }
             }
         }
-
-        Q_table[4, 17, 1] = float.MinValue; // RSU4로 이동하지 못하게 설정
-        Q_table[4, 17, 3] = float.MinValue; // RSU9로 이동하지 못하게 설정
     }
 
     // Update is called once per frame
@@ -116,7 +113,6 @@ public class RSU8 : MonoBehaviour
                         {
                             carList[i].GetComponent<Car>().nextMaxQ_value[j] = getMaxQ_value(j);
                         }
-                        //carList[i].GetComponent<Car>().isCarInfoUpdateNeeded = true;
                     }
                 }
             }
@@ -125,7 +121,6 @@ public class RSU8 : MonoBehaviour
                 if (carList[i].GetComponent<DummyCar>().direction == "null")
                 {
                     prev_RSU = carList[i].GetComponent<DummyCar>().prev_RSU;
-                    //next_RSU = carList[i].GetComponent<DummyCar>().routeList[carList[i].GetComponent<DummyCar>().routeIndex];
                     line_num = carList[i].GetComponent<DummyCar>().lineNum;
                     carList[i].GetComponent<DummyCar>().prev_lineNum = line_num; // 차량의 이전 차선 저장
                     next_RSU = crossroadMove.DecideNextRSU(prev_RSU, current_RSU);
@@ -134,7 +129,6 @@ public class RSU8 : MonoBehaviour
                     carList[i].GetComponent<DummyCar>().lineNum = line_num;     // 방향 이동 후 car의 line_num 저장
                     carList[i].GetComponent<DummyCar>().cur_RSU = current_RSU;        // 현재 RSU 번호로 초기화
                     carList[i].GetComponent<DummyCar>().next_RSU = next_RSU;
-                    //carList[i].GetComponent<DummyCar>().isCarInfoUpdateNeeded = true;
                 }
             }
             else
